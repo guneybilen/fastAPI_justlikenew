@@ -1,0 +1,11 @@
+from sqlalchemy.ext.declarative import as_declarative, declared_attr
+from typing import Any
+
+@as_declarative()
+class Base:
+  id: Any 
+  __name__:str
+
+  # to generate tablename from classname
+  def __tablename__(klas) -> str:
+    return klas.__name__.lower()
