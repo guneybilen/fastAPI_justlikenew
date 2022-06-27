@@ -1,7 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.templating import Jinja2Templates
-from db.repository.jobs import _update_job_by_id, _delete_job_by_id, _create_new_job
-from db.repository.jobs import _list_jobs, _retrieve_jobs, _search_jobs
+from db.repository.jobs import update_job_by_id, delete_job_by_id, create_new_job
+from db.repository.jobs import list_jobs, retrieve_job, search_job
+
+from route_login import get_current_user_from_token
+from schemas.jobs import JobCreate, ShowJob
 
 from typing import List
 from typing import Optional
@@ -10,10 +13,7 @@ from db.models.users import User
 
 from db.session import get_db
 
-from schemas.jobs import JobCreate, ShowJob
 from sqlalchemy.orm import Session
-
-import route_login as _route_login  
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -34,11 +34,11 @@ def read_job(id: int, db: Session = Depends(get_db)):
   
   if not job:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-    detail=f"Job with this id {id} does not exist")
+    detail=f"Job with this id {id} not found")
 
   return job
 
-@router.get("/all", response_model=List(ShowJob))
+@router.get("/all", response_model=List[ShowJob])
 def read_jobs(db: Session = Depends(get_db)):
   jobs = list_jobs(db=db)
   return jobs
@@ -46,7 +46,7 @@ def read_jobs(db: Session = Depends(get_db)):
 @router.put("/update/{id}")
 def update_job(id: int, job: JobCreate, db: Session = Depends(get_db)):
   current_user = 1
-  message = update_job_by_id(id=id, job=job, db=db owner_id=current_user)
+  message = update_job_by_id(id=id, job=job, db=db, owner_id=current_user)
   
   if not message:
     raise HTTPException(
@@ -54,8 +54,7 @@ def update_job(id: int, job: JobCreate, db: Session = Depends(get_db)):
       detail=f"Job with id {id} not found"
     )
 
-  return {"msg": "Successfully updated data."}
-
+  return {"msg": "Successfully updated data"}
 
 
 @router.delete_job("/delete/{id}")
@@ -71,9 +70,9 @@ def delete_job(id: int,
     )
   print(job.owner_id, current_user.id, current_user.is_superuser)
   if job.owner_id == current_user.id or current_user.is_superuser:
-    _delete_job_by_id(id=id, db=db, owner=current_user.id)
+    delete_job_by_id(id=id, db=db, owner=current_user.id)
     return {"detail": "Successfully deleted"}
-  raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not permitted!")
+  raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not permitted")
 
 @router.get("/autocomplete")
 def autocomplete(term: Optional[str] = None, db: Session = Depends(get_db)):
