@@ -1,5 +1,5 @@
-$( function() {
-    $( "#autocomplete" ).autocomplete({
-      source: "/jobs/autocomplete"
-    });
-  } );
+$(function () {
+  $('#autocomplete').autocomplete({
+    source: '/items/autocomplete',
+  });
+});

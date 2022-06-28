@@ -2,8 +2,8 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# /home/bilen/Desktop/projects/fastapi/FA_JOBS/backend/core/config.py
-# /home/bilen/Desktop/projects/fastapi/FA_JOBS/backend/.env
+# /home/bilen/Desktop/projects/fastapi/justlikenew/core/config.py
+# /home/bilen/Desktop/projects/fastapi/justlikenew/.env
 # for testing change the following env_path to something
 # env_path = Path("../..") / ".env"
 
@@ -12,7 +12,7 @@ load_dotenv(dotenv_path = env_path)
 
 
 class Settings:
-  PROJECT_NAME: str = "Job Board"
+  PROJECT_NAME: str = "Electronic Item Sales Board"
   PROJECT_VERSION: str = "0.0.1"
 
   USE_SQLITE_DB: str = os.getenv("USE_SQLITE_DB")
