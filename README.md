@@ -1,6 +1,6 @@
-# This Website is based on the assistance provided by the
+### This Website is based on the knowledge taught by the
 
-# great people that created fastapitutorial.com
+### great people that created fastapitutorial.com
 
 ## Technology Stack:
 
