@@ -1,4 +1,4 @@
-from routes import routes_jobs, route_login, route_user
+from .routes import routes_jobs, route_login, route_user
 from fastapi import APIRouter
 
 api_router = APIRouter()

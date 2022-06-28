@@ -3,7 +3,7 @@ from fastapi.templating import Jinja2Templates
 from db.repository.jobs import update_job_by_id, delete_job_by_id, create_new_job
 from db.repository.jobs import list_jobs, retrieve_job, search_job
 
-from route_login import get_current_user_from_token
+from ..routes.route_login import get_current_user_from_token
 from schemas.jobs import JobCreate, ShowJob
 
 from typing import List
@@ -57,7 +57,7 @@ def update_job(id: int, job: JobCreate, db: Session = Depends(get_db)):
   return {"msg": "Successfully updated data"}
 
 
-@router.delete_job("/delete/{id}")
+@router.delete("/delete/{id}")
 def delete_job(id: int,
                db : Session = Depends(get_db),
               current_user: User = Depends(get_current_user_from_token)):

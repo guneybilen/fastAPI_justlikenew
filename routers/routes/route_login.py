@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 
-from db.utils import OAuth2PasswordBearerWithCookie
+from routers.utils import OAuth2PasswordBearerWithCookie
 
 from core.config import settings
 
