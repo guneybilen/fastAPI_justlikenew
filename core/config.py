@@ -28,7 +28,8 @@ class Settings:
   SECRET_KEY: str = os.getenv("SECRET_KEY")
   ALGORITHM = "HS256"
   ACCESS_TOKEN_EXPIRE_MINUTES = 30 #in minutes
-
+  # limit per image file
+  LIMIT_MB = 10
   TEST_USER_EMAIL = "test@example.com"
 
 

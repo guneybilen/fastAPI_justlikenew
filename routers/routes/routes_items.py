@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, status
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 from db.repository.items import update_item_by_id, delete_item_by_id, create_new_item
@@ -8,7 +8,7 @@ from schemas.items import ItemCreate, ShowItem
 from typing import List
 from typing import Optional
 from db.models.users import User
-from db.models.items import Item
+
 from db.session import get_db
 from sqlalchemy.orm import Session
 import os as _os
@@ -20,11 +20,14 @@ path = "/home/bilen/Desktop/projects/fastapi/justlikenew"
 
 
 @router.post("/create-item", response_model=ShowItem)
-def create_item(item: ItemCreate, 
-               db: Session = Depends(get_db), 
-               current_user: User = Depends(get_current_user_from_token)):
+def create_item( item: ItemCreate, 
+                 db: Session = Depends(get_db), 
+                 current_user: User = Depends(get_current_user_from_token),
+                 file: UploadFile = File(...)
+               ):
 
-               item = create_new_item(item=item, db=db, seller_id=current_user.id)
+               item = create_new_item(item=item, db=db, 
+                                      seller_id=current_user.id, file=file)
                return item
 
 
@@ -76,6 +79,7 @@ def delete_item(id: int,
                 current_user: User = Depends(get_current_user_from_token)):
 
   item = retrieve_item(id=id, db=db)
+  
   if not item: 
     return HTTPException(
       status_code=status.HTTP_404_NOT_FOUND,

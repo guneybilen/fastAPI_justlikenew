@@ -2,9 +2,29 @@ from ..models.items import Item
 from schemas.items import ItemCreate  
 from sqlalchemy.orm import Session 
 from sqlalchemy.sql import or_
+from core.config import settings
+from fastapi import HTTPException, status, UploadFile, File
 
-def create_new_item(item: ItemCreate, db: Session, seller_id: int): 
-  item_object = Item(**item.dict(), seller_id=seller_id)
+def validate_image(image):
+    print('incoming image.size is :', image.size)
+    file_size = image.size
+    limit_MB = settings.LIMIT_MB
+    if file_size > limit_MB * 1024000:
+        raise HTTPException(stattus_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                            detail="max image size is has to be less than %s MB" % limit_MB)
+
+def create_new_item(item: ItemCreate, db: Session, seller_id: int, file: UploadFile = File(...)): 
+  # item_object = Item(**item.dict(), seller_id=seller_id)
+  item_object = Item( brand = item.brand,
+                      model = item.model,
+                      location = item.location, 
+                      description = item.description,
+                      price = item.price, 
+                      item_image1 = validate_image(item.item_image1),
+                      item_image2 = validate_image(item.item_image2), 
+                      item_image3 = validate_image(item.item_image3),
+                      seller_id = seller_id
+                     )
   db.add(item_object)
   db.commit() 
   db.refresh(item_object) 
