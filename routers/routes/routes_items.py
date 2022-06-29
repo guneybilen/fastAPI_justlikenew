@@ -27,7 +27,9 @@ def create_item( item: ItemCreate,
                ):
 
                item = create_new_item(item=item, db=db, 
-                                      seller_id=current_user.id, file=file)
+                                      seller_id=current_user.id, 
+                                      current_user=current_user.username, 
+                                      file=file)
                return item
 
 

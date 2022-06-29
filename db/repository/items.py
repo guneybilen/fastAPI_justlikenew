@@ -1,9 +1,12 @@
 from ..models.items import Item
+from ..models.users import User
 from schemas.items import ItemCreate  
 from sqlalchemy.orm import Session 
 from sqlalchemy.sql import or_
 from core.config import settings
-from fastapi import HTTPException, status, UploadFile, File
+from fastapi import HTTPException, status, Depends, UploadFile, File
+from routers.routes.route_login import get_current_user_from_token
+import os as _os
 
 def validate_image(image):
     print('incoming image.size is :', image.size)
@@ -13,22 +16,46 @@ def validate_image(image):
         raise HTTPException(stattus_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
                             detail="max image size is has to be less than %s MB" % limit_MB)
 
-def create_new_item(item: ItemCreate, db: Session, seller_id: int, file: UploadFile = File(...)): 
-  # item_object = Item(**item.dict(), seller_id=seller_id)
-  item_object = Item( brand = item.brand,
-                      model = item.model,
-                      location = item.location, 
-                      description = item.description,
-                      price = item.price, 
-                      item_image1 = validate_image(item.item_image1),
-                      item_image2 = validate_image(item.item_image2), 
-                      item_image3 = validate_image(item.item_image3),
-                      seller_id = seller_id
+def create_new_item(item: ItemCreate, 
+                    db: Session, 
+                    seller_id: int,
+                    current_user: User = Depends(get_current_user_from_token), 
+                    file: UploadFile = File(...)): 
+  
+    # item_object = Item(**item.dict(), seller_id=seller_id)
+    print(file.filename)
+    print(current_user)
+    
+    # print('../'+os.path.isdir(os.getcwd()+"images"),"*************")
+    try:
+        _os.chdir("/home/bilen/Desktop/projects/fastapi/justlikenew/static/images")
+        if not _os.path.exists(f"/home/bilen/Desktop/projects/fastapi/justlikenew/static/images/{current_user}"):
+          _os.mkdir(f"{current_user}")
+        _os.chdir(f"/home/bilen/Desktop/projects/fastapi/justlikenew/static/images/{current_user}")
+        print(_os.getcwd())
+        return
+    except Exception as e:
+        print(e) 
+    file_name = file.filename.replace(" ", "-")
+    with open(file_name,'wb+') as f:
+        validate_image(file)
+        f.write(validate_image(file.file.read()))
+        f.close()
+
+    item_object = Item( brand = item.brand,
+                        model = item.model,
+                        location = item.location, 
+                        description = item.description,
+                        price = item.price, 
+                        item_image1 = file_name,
+                        #item_image2 = validate_image(item.item_image2), 
+                        #item_image3 = validate_image(item.item_image3),
+                        seller_id = seller_id
                      )
-  db.add(item_object)
-  db.commit() 
-  db.refresh(item_object) 
-  return item_object
+    db.add(item_object)
+    db.commit() 
+    db.refresh(item_object) 
+    return item_object
 
 def retrieve_item(id: int, db: Session):
   item = db.query(Item).filter(Item.id==id).first()  

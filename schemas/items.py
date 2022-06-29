@@ -15,12 +15,11 @@ class ItemBase(BaseModel):
   item_image2: Optional[str] = None
   item_image3: Optional[str] = None
 
-
+  class Config:
+    orm_mode = True
 # this will be used to validate data while creating a Item
 class ItemCreate(ItemBase):
-  brand: str
-  model: str
-
+  pass
 
 # this will be used to format the response to not to have id, owner_id etc
 class ShowItem(ItemBase):
