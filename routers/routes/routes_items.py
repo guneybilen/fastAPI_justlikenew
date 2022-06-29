@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import FileResponse
 from db.repository.items import update_item_by_id, delete_item_by_id, create_new_item
 from db.repository.items import list_items, retrieve_item, search_item
 from .route_login import get_current_user_from_token
@@ -9,9 +10,12 @@ from typing import Optional
 from db.models.users import User
 from db.session import get_db
 from sqlalchemy.orm import Session
+import os as _os
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
+
+path = "/home/bilen/Desktop/projects/fastapi/justlikenew"
 
 
 @router.post("/create-item", response_model=ShowItem)
@@ -27,11 +31,18 @@ def create_item(item: ItemCreate,
 @router.get("/get/{id}", response_model=ShowItem)
 def read_item(id: int, db: Session = Depends(get_db)):
   item = retrieve_item(id=id, db=db)
-  
+  user = db.query(User).filter(User.seller_id==item.id).first()
+  file_path1 = _os.path.join(path, f"static/images/{user.username}/{item.item_image1}.jpg")
+  file_path2 = _os.path.join(path, f"static/images/{user.username}/{item.item_image2}.jpg")
+  file_path3 = _os.path.join(path, f"static/images/{user.username}/{item.item_image3}.jpg")
+
+ 
   if not item:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
     detail=f"Item with this id {id} not found")
 
+  if _os.path.exists(file_path1 or file_path2 or file_path3):
+    return {"item": item, "images": FileResponse([file_path1, file_path2, file_path3])}
   return item
 
 

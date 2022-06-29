@@ -42,3 +42,6 @@ aiosqlite
 
 #seedir to print tree structure of folders
 seedir
+
+# for import StrEnum in User model class
+fastapi_utils
