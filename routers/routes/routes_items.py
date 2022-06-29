@@ -8,6 +8,7 @@ from schemas.items import ItemCreate, ShowItem
 from typing import List
 from typing import Optional
 from db.models.users import User
+from db.models.items import Item
 from db.session import get_db
 from sqlalchemy.orm import Session
 import os as _os
@@ -23,7 +24,7 @@ def create_item(item: ItemCreate,
                db: Session = Depends(get_db), 
                current_user: User = Depends(get_current_user_from_token)):
 
-               item = create_new_item(item=item, db=db, owner_id=current_user.id)
+               item = create_new_item(item=item, db=db, seller_id=current_user.id)
                return item
 
 
@@ -31,11 +32,12 @@ def create_item(item: ItemCreate,
 @router.get("/get/{id}", response_model=ShowItem)
 def read_item(id: int, db: Session = Depends(get_db)):
   item = retrieve_item(id=id, db=db)
-  user = db.query(User).filter(User.seller_id==item.id).first()
+
+  user = db.query(User).filter(User.id==item.seller_id).first()
+
   file_path1 = _os.path.join(path, f"static/images/{user.username}/{item.item_image1}.jpg")
   file_path2 = _os.path.join(path, f"static/images/{user.username}/{item.item_image2}.jpg")
   file_path3 = _os.path.join(path, f"static/images/{user.username}/{item.item_image3}.jpg")
-
  
   if not item:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
@@ -53,9 +55,11 @@ def read_items(db: Session = Depends(get_db)):
 
 
 @router.put("/update/{id}")
-def update_item(id: int, item: ItemCreate, db: Session = Depends(get_db)):
-  current_user = 1
-  message = update_item_by_id(id=id, item=item, db=db, owner_id=current_user)
+def update_item(id: int, item: ItemCreate, 
+                db: Session = Depends(get_db), 
+                current_user: User = Depends(get_current_user_from_token)):
+
+  message = update_item_by_id(id=id, item=item, db=db, seller_id=current_user.id)
   
   if not message:
     raise HTTPException(
@@ -68,8 +72,8 @@ def update_item(id: int, item: ItemCreate, db: Session = Depends(get_db)):
 
 @router.delete("/delete/{id}")
 def delete_item(id: int,
-               db : Session = Depends(get_db),
-              current_user: User = Depends(get_current_user_from_token)):
+                db : Session = Depends(get_db),
+                current_user: User = Depends(get_current_user_from_token)):
 
   item = retrieve_item(id=id, db=db)
   if not item: 
@@ -77,8 +81,8 @@ def delete_item(id: int,
       status_code=status.HTTP_404_NOT_FOUND,
       detail=f"Item with id {id} not found"
     )
-  print(item.owner_id, current_user.id, current_user.is_superuser)
-  if item.owner_id == current_user.id or current_user.is_superuser:
+  print(item.seller_id, current_user.id, current_user.is_superuser)
+  if item.seller_id == current_user.id or current_user.is_superuser:
     delete_item_by_id(id=id, db=db, seller_id=current_user.id)
     return {"detail": "Successfully deleted"}
   raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not permitted")
@@ -87,10 +91,10 @@ def delete_item(id: int,
 @router.get("/autocomplete")
 def autocomplete(term: Optional[str] = None, db: Session = Depends(get_db)):
   items = search_item(term, db=db)
-  item_titles = []
+  item_properties = []
   for item in items:
-    item_titles.append(item.title)
-  return item_titles
+    item_properties.append(item.description)
+  return item_properties
 
 
 

@@ -17,7 +17,7 @@ async def check_db_connected():
 
 async def check_db_disconnected():
   try:
-    if not str(SQLALCHEMY_DATABASE_URL).__contians__("sqlite"):
+    if not str(SQLALCHEMY_DATABASE_URL).__contains__("sqlite"):
       database = databases.Database(SQLALCHEMY_DATABASE_URL)
       if database.is_connected:
         await database.disconnect()

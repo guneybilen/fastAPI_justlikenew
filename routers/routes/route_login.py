@@ -64,7 +64,7 @@ def get_current_user_from_token(
   )
 
   try:
-    payload = jwt.decode(token=settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
+    payload = jwt.decode(token, settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
     username: str = payload.get("sub")
     print("usnername/email extracted is", username)
     if username is None:

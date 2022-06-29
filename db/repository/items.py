@@ -1,6 +1,7 @@
 from ..models.items import Item
 from schemas.items import ItemCreate  
 from sqlalchemy.orm import Session 
+from sqlalchemy.sql import or_
 
 def create_new_item(item: ItemCreate, db: Session, seller_id: int): 
   item_object = Item(**item.dict(), seller_id=seller_id)
@@ -17,17 +18,17 @@ def list_items(db: Session):
   items = db.query(Item).all() 
   return items  
 
-def update_item_by_id(id: int, item: ItemCreate, db: Session, owner_id):
+def update_item_by_id(id: int, item: ItemCreate, db: Session, seller_id):
   existing_item = db.query(Item).filter(Item.id == id)  
   if not existing_item.first(): 
     return 0 
 
-  item.__dict__.update(owner_id=owner_id)
+  item.__dict__.update(seller_id=seller_id)
   existing_item.update(item.__dict__) 
   db.commit() 
   return 1  
 
-def delete_item_by_id(id: int, db: Session, owner_id):
+def delete_item_by_id(id: int, db: Session, seller_id):
   existing_item = db.query(Item).filter(Item.id == id)  
   if not existing_item.first():   
     return 0 
@@ -36,5 +37,5 @@ def delete_item_by_id(id: int, db: Session, owner_id):
   return 1 
 
 def search_item(query: str, db: Session):   
-  items = db.query(Item).filter(Item.title.contains(query))   
-  return items    
+  item_description = db.query(Item).filter(Item.description.contains(query))   
+  return item_description    
