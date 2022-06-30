@@ -14,10 +14,13 @@ router = APIRouter()
 @router.put("/create-image/{id}", response_model=ShowImage)
 def create_image( id: int, db: Session = Depends(get_db),
                  current_user: User = Depends(get_current_user_from_token),
-                 file: UploadFile = File(...)
+                 file: UploadFile = File(...),
+                 file_size: bytes = File(...)
                ):
 
-               item = upload_image_by_item_id(id=id, db=db, 
-                                              current_user=current_user.username, 
-                                              file=file)
+               item = upload_image_by_item_id(  id=id, db=db, 
+                                                current_user=current_user.username, 
+                                                file=file,
+                                                file_size=file_size
+                                              )
                return item
