@@ -32,7 +32,5 @@ class User(Base):
   created_date = Column(DateTime, default=datetime.utcnow)
   updated_date = Column(DateTime, default=datetime.now, onupdate=datetime.now)   
   s_name = Column(String, nullable= False)                                                         
-  # s_name = Column("security_question", ENUM(SecurityQuestion, values_callable=lambda x: [e.value for e in x]))
-  #s_name = Column(ENUM(SecurityQuestion, values_callable=lambda x: [v for k,v in {"CITY": "In what city were you born?","PET": "What is the name of your favorite pet?" , "MAIDEN": "What is your mother's maiden name?","SCHOOL": "What is the name of your first school?", "CAR": "What was the make of your first car?", "FOOD": "What was your favorite food as a child?"}.items()]))
   s_answer = Column(String(255), nullable=False)
   refresh_token = Column(String(255), nullable=True, default=None)

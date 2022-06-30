@@ -10,10 +10,6 @@ class ItemBase(BaseModel):
   location: Optional[str] = None
   description: Optional[str] = None
   price: Optional[float] = None
-  date_posted: Optional[date] = datetime.now().date()
-  item_image1: Optional[str] = None
-  item_image2: Optional[str] = None
-  item_image3: Optional[str] = None
 
   class Config:
     orm_mode = True
@@ -23,12 +19,11 @@ class ItemCreate(ItemBase):
 
 # this will be used to format the response to not to have id, owner_id etc
 class ShowItem(ItemBase):
-  brand: str
-  model: str
+  brand:  Optional[str]
+  model:  Optional[str]
   location: Optional[str]
   description: Optional[str]
   price: Optional[float]
-  date_posted: Optional[date]
   item_image1: Optional[str]
   item_image2: Optional[str]
   item_image3: Optional[str]

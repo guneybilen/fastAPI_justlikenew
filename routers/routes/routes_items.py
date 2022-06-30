@@ -22,15 +22,14 @@ path = "/home/bilen/Desktop/projects/fastapi/justlikenew"
 @router.post("/create-item", response_model=ShowItem)
 def create_item( item: ItemCreate, 
                  db: Session = Depends(get_db), 
-                 current_user: User = Depends(get_current_user_from_token),
-                 file: UploadFile = File(...)
-               ):
+                 current_user: User = Depends(get_current_user_from_token)):
 
                item = create_new_item(item=item, db=db, 
                                       seller_id=current_user.id, 
-                                      current_user=current_user.username, 
-                                      file=file)
+                                      current_user=current_user.username) 
+                                     
                return item
+
 
 
 # if we keep just "{id}". it would start catching all routes
