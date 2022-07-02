@@ -56,10 +56,10 @@ def get_current_user_from_token(
 #   return user
 
 
-@router.get("/new_user/{current_user}", response_model=UserPreCreateShow)
-def create_user(current_user: str):
-  # user = create_new_user(user=user, current_user=current_user, db=db)
-  return {"email": current_user}
+# @router.get("/new_user/{current_user}", response_model=UserPreCreateShow)
+# def create_user(current_user: str):
+#   # user = create_new_user(user=user, current_user=current_user, db=db)
+#   return {"email": current_user}
 
 
 @router.post("/precreate", response_model=ShowUser)
@@ -69,10 +69,10 @@ async def pre_create_user(user: UserPreCreate):
   return {"user": user, "result": "please check your email inbox for completing your signup procedure..."}
 
 
-@router.get("/signup/{access_token}", response_model = bool)
+@router.get("/signup/{access_token}", response_model = UserPreCreateShow)
 def check_user(access_token: str, request: Request, db: Session = Depends(get_db)):
   current_user = get_current_user_from_token(access_token, db)
-  event = {'current_user': current_user}
-  redirect_url = request.url_for("create_user", **{'current_user': event["current_user"]})
-  return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
-
+  # event = {'current_user': current_user}
+  # redirect_url = request.url_for("create_user", **{'current_user': event["current_user"]})
+  # return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
+  return {"email": current_user}
