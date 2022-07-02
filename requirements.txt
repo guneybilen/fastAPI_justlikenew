@@ -45,3 +45,6 @@ seedir
 
 # for import StrEnum in User model class
 fastapi_utils
+
+# for sending email
+fastapi-mail
