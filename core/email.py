@@ -25,9 +25,7 @@ conf = ConnectionConfig(
 app = FastAPI()
 
 
-
-# @app.post("/email")
-async def email_for_sign_up(emails: EmailSchema, subject_line: str, html: str) -> JSONResponse:
+async def communicate(emails: EmailSchema, subject_line: str, html: str) -> JSONResponse:
 
     message = MessageSchema(
         subject=subject_line,
