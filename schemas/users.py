@@ -3,12 +3,12 @@ from enum import Enum
 from typing import Optional
 
 class SecurityEnum(str, Enum):
-   BORN_CITY = "BORN_CITY" 
-   FAVORITE_PET = "FAVORITE_PET"
-   MOTHER_MAIDEN_NAME = "MOTHER_MAIDEN_NAME"
-   GRADUATED_HIGH_SCHOOL_NAME = "GRADUATED_HIGH_SCHOOL_NAME"  
-   FIRST_CAR = "FIRST_CAR" 
-   FAVORITE_FOOD = "FAVORITE_FOOD"
+   BORN_CITY: str = "BORN_CITY" 
+   FAVORITE_PET: str = "FAVORITE_PET"
+   MOTHER_MAIDEN_NAME: str = "MOTHER_MAIDEN_NAME"
+   GRADUATED_HIGH_SCHOOL_NAME: str = "GRADUATED_HIGH_SCHOOL_NAME"  
+   FIRST_CAR: str = "FIRST_CAR" 
+   FAVORITE_FOOD: str = "FAVORITE_FOOD"
 
 
 class UserPreCreate(BaseModel):
@@ -43,3 +43,12 @@ class ShowUser(BaseModel):
 
   class Config:
     orm_mode = True
+
+
+class Response(BaseModel):
+    email: EmailStr
+    result: str
+
+    class Config:
+      orm_mode = True
+      use_enum_values = True
