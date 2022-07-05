@@ -1,6 +1,8 @@
 from pydantic import BaseModel, EmailStr
 from enum import Enum
 from typing import Optional
+from datetime import datetime
+from schemas.items import ShowItem 
 
 class SecurityEnum(str, Enum):
    BORN_CITY: str = "BORN_CITY" 
@@ -52,3 +54,18 @@ class Response(BaseModel):
     class Config:
       orm_mode = True
       use_enum_values = True
+
+
+class ShowAllImportantDataAboutUserForTheMainFronPage(BaseModel):
+     id: int
+     email: EmailStr
+     username: str
+     first_name: str
+     last_name: str
+     created_date: datetime
+     is_active: bool
+     items: Optional[list[ShowItem]]
+     
+     class Config:
+       orm_mode = True
+       use_enum_values = True

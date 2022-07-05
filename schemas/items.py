@@ -1,7 +1,8 @@
 from datetime import datetime, date
 from typing import Optional
 from pydantic import BaseModel
- 
+from schemas.images import ShowImage
+from datetime import datetime
  
 # shared properties
 class ItemBase(BaseModel):
@@ -24,9 +25,9 @@ class ShowItem(ItemBase):
   location: Optional[str]
   description: Optional[str]
   price: Optional[float]
-  item_image1: Optional[str]
-  item_image2: Optional[str]
-  item_image3: Optional[str]
+  created_date: datetime
+  updated_date: datetime
+  images: Optional[list[ShowImage]]
 
   # to convert non-dict obj to json
   class Config():

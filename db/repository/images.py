@@ -1,7 +1,7 @@
 from ..models.images import Image
 from ..models.items import Item
-from ..models.images import Image as _image
-from sqlalchemy.orm import Session
+from ..models.users import User
+from sqlalchemy.orm import Session, contains_eager,joinedload
 import sqlalchemy.sql as _sqlalchemy_sql
 import sqlalchemy.sql.functions as _func
 from sqlalchemy import delete
@@ -103,3 +103,8 @@ def upload_image_by_item_id(id: int, db: Session,
     except Exception as e:
         print(e)
 
+def list_images_with_items(db: Session):
+    # query = db.query(Image).filter(Image.id).options(contains_eager(Image.id)).all()
+    query = db.query(User).options(joinedload('*')).all()
+
+    return query

@@ -3,11 +3,13 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 from db.repository.items import update_item_by_id, delete_item_by_id, create_new_item
 from db.repository.items import list_items, retrieve_item, search_item
+from db.repository.images import list_images_with_items
 from .route_login import get_current_user_from_token
 from schemas.items import ItemCreate, ShowItem
 from typing import List
 from typing import Optional
 from db.models.users import User
+from schemas.users import ShowAllImportantDataAboutUserForTheMainFronPage
 
 from db.session import get_db
 from sqlalchemy.orm import Session
@@ -52,10 +54,14 @@ def read_item(id: int, db: Session = Depends(get_db)):
   return item
 
 
-@router.get("/all", response_model=List[ShowItem])
+
+# List[] type in response model is the most important part in order to receive the right answer
+# otherwise all data you receive will be resulted in nulls.
+# https://stackoverflow.com/questions/70634056/problem-with-python-fastapi-pydantic-and-sqlalchemy
+@router.get("/all", response_model=List[ShowAllImportantDataAboutUserForTheMainFronPage])
 def read_items(db: Session = Depends(get_db)):
-  items = list_items(db=db)
-  return items
+  images_items = list_images_with_items(db=db)
+  return images_items
 
 
 @router.put("/update/{id}")
