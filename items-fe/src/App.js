@@ -36,7 +36,7 @@ function App() {
         <Route path="/activation/:token" element={<Activation />} />
         <Route path="/login/" element={<Login />} />
         <Route path="/about" element={<About />} />
-        <Route path="items/:slug" element={<ItemPage />} />
+        <Route path="items/:id" element={<ItemPage />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/newpassword/:id/" element={<NewPassword />} />

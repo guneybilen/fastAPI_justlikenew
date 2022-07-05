@@ -1,92 +1,84 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useStoreState, useStoreActions } from 'easy-peasy';
-import { formatDistance, parseISO } from 'date-fns';
 import { useState, useEffect } from 'react';
-import { DefaultEditor } from 'react-simple-wysiwyg';
+import { IMAGES_URL } from '../constants';
+
+import {
+  getItemBrandForSingleUser,
+  getItemModelForSingleUser,
+  getItemPriceForSingleUser,
+  getItemDescriptionForSingleUser,
+  getUserUserName,
+  getUserId,
+  getUser,
+  getItemCreatedDateForSingleUser,
+  getUserUserNameWithImages,
+} from '../helpers/helperFunctions';
 
 const ItemPage = () => {
-  const { id: slug } = useParams();
+  const { id } = useParams();
   const history = useNavigate();
   const loggedInNickname = useStoreState((state) => state.loggedInNickname);
   const loggedInID = useStoreState((state) => state.loggedInID);
   const deleteItem = useStoreActions((actions) => actions.deleteItem);
   const getUserById = useStoreState((state) => state.getUserById);
 
-  const item = getUserById(slug);
-  console.log(item);
-  return null;
+  // console.log(id);
+  const users = getUserById(id)[0];
+  // const user = getUserById(id)[0];
+  // console.log(users);
 
-  if (item) {
-    localStorage.setItem('seller', item.seller);
+  if (users) {
+    // console.log(users.username);
+    localStorage.setItem('seller', users.username);
   }
 
   const [itemOwner, setItemOwner] = useState(false);
 
-  // let dt = format(parseISO(item.createdAt), 'MMMM dd, yyyy pp');
-
   const handleDelete = (slug) => {
     let confirmation = window.confirm('Are you sure for deleting the item?');
     if (confirmation) {
-      deleteItem({ slug: slug, nickname: item.get_seller_nickname });
+      deleteItem({ id: id, username: users.username });
       history('/');
     }
   };
 
-  // You may need the following code in ItemPage.js
-  //
-  //
-  // const getItemImages = () => {
-  //   return item['items'].map((singleItem) => {
-  //     return singleItem['items'].map((img, index) => {
-  //       return img['images'].map((singleImage, index) => {
-  //         return singleImage.item_image[index]
-  //           ? singleImage.item_image[index]
-  //           : '';
-  //       });
-  //     });
-  //   });
-  // };
-
   useEffect(() => {
     // console.log(item.get_seller_nickname);
-    if (item && item.get_seller_nickname === localStorage.getItem('nickname'))
+    if (users && users.username === localStorage.getItem('username'))
       setItemOwner(true);
-  }, [item, loggedInNickname, loggedInID]);
+  }, [users, loggedInNickname, loggedInID]);
 
   return (
     <main className="PostPage">
       <article className="post">
-        {item && (
+        {users && (
           <>
             <div className="h4 text-dark">
-              {item.brand.length < 16
-                ? item.brand
-                : `${item.brand?.slice(0, 15)} ...`}
+              {getItemBrandForSingleUser(users)}
               <br />
-              {item.model.length < 16
-                ? item.model
-                : `${item.model?.slice(0, 15)} ...`}
+              {getItemModelForSingleUser(users)}
             </div>
-            <p>CAD$ {item.price}</p>
-            <DefaultEditor
-              value={item?.entry}
-              contentEditable="false"
-              className="form-control wysiwyg"
-            />
+            <p>{getItemPriceForSingleUser(users)}</p>
+            <p>{getItemDescriptionForSingleUser(users)}</p>
+
             <p className="itemDate">
               ...
-              {item.createdAt &&
-                formatDistance(new Date(), parseISO(item.createdAt), {
-                  addSuffix: true,
-                })}
+              {getItemCreatedDateForSingleUser(users)}
             </p>
 
             <span className="spanImage">
               <img
-                src={item?.item_image1}
+                src={
+                  IMAGES_URL +
+                  getUserUserNameWithImages(users)[0]['singleUserUserName'] +
+                  '1/' +
+                  getUserUserNameWithImages(users)[0]['singleImage1']
+                }
                 alt="1"
                 className={
-                  !!item.item_image1 === false
+                  !!getUserUserNameWithImages(users)[0]['singleImage1'] ===
+                  false
                     ? 'itemImageonError'
                     : 'itemImageSmallEdition'
                 }
@@ -94,22 +86,33 @@ const ItemPage = () => {
             </span>
             <span className="spanImage">
               <img
-                src={item?.item_image2}
+                src={
+                  IMAGES_URL +
+                  getUserUserNameWithImages(users)[0]['singleUserUserName'] +
+                  '1/' +
+                  getUserUserNameWithImages(users)[0]['singleImage2']
+                }
                 alt="2"
                 className={
-                  !!item.item_image2 === false
+                  !!getUserUserNameWithImages(users)[0]['singleImage2'] ===
+                  false
                     ? 'itemImageonError'
                     : 'itemImageSmallEdition'
                 }
               />
             </span>
-
             <span className="spanImage">
               <img
-                src={item.item_image3}
+                src={
+                  IMAGES_URL +
+                  getUserUserNameWithImages(users)[0]['singleUserUserName'] +
+                  '1/' +
+                  getUserUserNameWithImages(users)[0]['singleImage3']
+                }
                 alt="3"
                 className={
-                  !!item.item_image3 === false
+                  !!getUserUserNameWithImages(users)[0]['singleImage3'] ===
+                  false
                     ? 'itemImageonError'
                     : 'itemImageSmallEdition'
                 }
@@ -119,12 +122,12 @@ const ItemPage = () => {
             <br />
             {itemOwner && (
               <div className="editdeletebuttons">
-                <Link to={`/edit/${item.slug}`}>
+                <Link to={`/edit/${users.id}`}>
                   <button className="editButton">Edit Item</button>
                 </Link>
                 <button
                   className="deleteButton"
-                  onClick={() => handleDelete(item.slug)}
+                  onClick={() => handleDelete(users.id)}
                 >
                   Delete Item
                 </button>

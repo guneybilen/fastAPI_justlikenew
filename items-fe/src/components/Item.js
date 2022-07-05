@@ -31,26 +31,28 @@ const Item = ({ searchItems, users }) => {
             IMAGES_URL +
             getUserUserName(users)[0]['singleUserUserName'] +
             '1/' +
-            getUserUserName(users)[0]['singleImage']
+            getUserUserName(users)[0]['singleImage1']
           }
           alt="1"
           className={
-            !!getUserUserName(users)[0]['singleImage'] === false
+            !!getUserUserName(users)[0]['singleImage1'] === false
               ? 'itemImageonError'
               : 'mainPageImage'
           }
         />
 
         <br />
-        <br />
 
         <Link
-          to={`items/${getUserId(users)}/`}
+          to={`items/${getUserId(users)}`}
           className="item-link"
           state={{ from: 'occupation' }}
         >
           <p className="postDate">...{getItemCreatedDate(users)}</p>
         </Link>
+
+        <br />
+        <br />
       </article>
     </>
   );

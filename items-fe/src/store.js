@@ -81,19 +81,16 @@ export default createStore({
   ),
 
   getUsers: action((state, payload) => {
-    console.log(state);
     return state.users;
   }),
 
-  // getUsers: computed((state) => {
-  //   console.log(state.users);
-  //   return (state) => state.users;
-  // }),
-
-  getUserById: computed((state) => {
-    return (id) => {
-      console.log(state);
-      state.users.find((user) => user.id === id);
+  getUserById: computed((state, payload) => {
+    return (payload) => {
+      return state.users.map((u) => {
+        if (parseInt(u.id) === parseInt(payload)) {
+          return u;
+        } else return false;
+      });
     };
   }),
 
