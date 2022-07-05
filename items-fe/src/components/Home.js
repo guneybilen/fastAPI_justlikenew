@@ -1,14 +1,14 @@
 import Feed from './Feed';
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 import { useStoreState } from 'easy-peasy';
 
 const Home = ({ fetchError, isLoading }) => {
   const searchResults = useStoreState((state) => state.searchResults);
   const users = useStoreState((state) => state.users);
 
-  useEffect(() => {
-    console.log(users);
-  }, [users]);
+  // useEffect(() => {
+  //   console.log(users);
+  // }, [users]);
 
   return (
     <main className="Home">
