@@ -9,7 +9,7 @@ from schemas.items import ItemCreate, ShowItem
 from typing import List
 from typing import Optional
 from db.models.users import User
-from schemas.users import ShowAllImportantDataAboutUserForTheMainFronPage
+from schemas.users import ShowAllImportantDataAboutUserForTheMainFrontPage
 
 from db.session import get_db
 from sqlalchemy.orm import Session
@@ -58,7 +58,7 @@ def read_item(id: int, db: Session = Depends(get_db)):
 # List[] type in response model is the most important part in order to receive the right answer
 # otherwise all data you receive will be resulted in nulls.
 # https://stackoverflow.com/questions/70634056/problem-with-python-fastapi-pydantic-and-sqlalchemy
-@router.get("/all", response_model=List[ShowAllImportantDataAboutUserForTheMainFronPage])
+@router.get("/all", response_model=List[ShowAllImportantDataAboutUserForTheMainFrontPage])
 def read_items(db: Session = Depends(get_db)):
   images_items = list_images_with_items(db=db)
   return images_items
