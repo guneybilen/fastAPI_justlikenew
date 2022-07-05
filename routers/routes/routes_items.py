@@ -3,13 +3,13 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 from db.repository.items import update_item_by_id, delete_item_by_id, create_new_item
 from db.repository.items import list_items, retrieve_item, search_item
-from db.repository.images import list_images_with_items
+from db.repository.images import list_images_with_items, list_images_with_item
 from .route_login import get_current_user_from_token
 from schemas.items import ItemCreate, ShowItem
 from typing import List
 from typing import Optional
 from db.models.users import User
-from schemas.users import ShowAllImportantDataAboutUserForTheMainFrontPage
+from schemas.users import ShowAllImportantDataAboutUser
 
 from db.session import get_db
 from sqlalchemy.orm import Session
@@ -35,30 +35,33 @@ def create_item( item: ItemCreate,
 
 
 # if we keep just "{id}". it would start catching all routes
-@router.get("/get/{id}", response_model=ShowItem)
+# @router.get("/items/{id}", response_model=ShowItem)
+@router.get("/items/{id}", response_model=List[ShowAllImportantDataAboutUser])
 def read_item(id: int, db: Session = Depends(get_db)):
-  item = retrieve_item(id=id, db=db)
+  # item = retrieve_item(id=id, db=db)
 
-  user = db.query(User).filter(User.id==item.seller_id).first()
+  # user = db.query(User).filter(User.id==item.seller_id).first()
 
-  file_path1 = _os.path.join(path, f"static/images/{user.username}/{item.item_image1}.jpg")
-  file_path2 = _os.path.join(path, f"static/images/{user.username}/{item.item_image2}.jpg")
-  file_path3 = _os.path.join(path, f"static/images/{user.username}/{item.item_image3}.jpg")
+  # file_path1 = _os.path.join(path, f"static/images/{user.username}/{item.item_image1}.jpg")
+  # file_path2 = _os.path.join(path, f"static/images/{user.username}/{item.item_image2}.jpg")
+  # file_path3 = _os.path.join(path, f"static/images/{user.username}/{item.item_image3}.jpg")
  
-  if not item:
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-    detail=f"Item with this id {id} not found")
+  # if not item:
+  #   raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
+  #   detail=f"Item with this id {id} not found")
 
-  if _os.path.exists(file_path1 or file_path2 or file_path3):
-    return {"item": item, "images": FileResponse([file_path1, file_path2, file_path3])}
-  return item
+  # if _os.path.exists(file_path1 or file_path2 or file_path3):
+  #   return {"item": item, "images": FileResponse([file_path1, file_path2, file_path3])}
+  # return item
+  images_item = list_images_with_item(id=id, db=db)
+  return images_item
 
 
 
 # List[] type in response model is the most important part in order to receive the right answer
 # otherwise all data you receive will be resulted in nulls.
 # https://stackoverflow.com/questions/70634056/problem-with-python-fastapi-pydantic-and-sqlalchemy
-@router.get("/all", response_model=List[ShowAllImportantDataAboutUserForTheMainFrontPage])
+@router.get("/all", response_model=List[ShowAllImportantDataAboutUser])
 def read_items(db: Session = Depends(get_db)):
   images_items = list_images_with_items(db=db)
   return images_items

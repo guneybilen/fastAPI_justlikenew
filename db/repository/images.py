@@ -106,5 +106,9 @@ def upload_image_by_item_id(id: int, db: Session,
 def list_images_with_items(db: Session):
     # query = db.query(Image).filter(Image.id).options(contains_eager(Image.id)).all()
     query = db.query(User).options(joinedload('*')).all()
+    return query
 
+def list_images_with_item(id:int, db: Session):
+    # query = db.query(Image).filter(Image.id).options(contains_eager(Image.id)).all()
+    query = db.query(User).filter_by(id=id).options(joinedload('*')).all()
     return query

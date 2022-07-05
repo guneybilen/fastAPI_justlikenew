@@ -5,14 +5,16 @@ import { useState, useEffect } from 'react';
 import { DefaultEditor } from 'react-simple-wysiwyg';
 
 const ItemPage = () => {
-  const { slug } = useParams();
+  const { id: slug } = useParams();
   const history = useNavigate();
   const loggedInNickname = useStoreState((state) => state.loggedInNickname);
   const loggedInID = useStoreState((state) => state.loggedInID);
   const deleteItem = useStoreActions((actions) => actions.deleteItem);
-  const getItemById = useStoreState((state) => state.getItemById);
+  const getUserById = useStoreState((state) => state.getUserById);
 
-  const item = getItemById(slug);
+  const item = getUserById(slug);
+  console.log(item);
+  return null;
 
   if (item) {
     localStorage.setItem('seller', item.seller);

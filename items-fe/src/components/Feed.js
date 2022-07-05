@@ -1,10 +1,10 @@
 import Item from './Item';
 
-const Feed = ({ items }) => {
+const Feed = ({ items: searchItems, users }) => {
   return (
     <>
-      {items.map((item) => (
-        <Item key={item.id} item={item} />
+      {users.map((user) => (
+        <Item key={user.id} searchItems={searchItems} users={users} />
       ))}
     </>
   );

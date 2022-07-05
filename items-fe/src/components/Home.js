@@ -1,8 +1,14 @@
 import Feed from './Feed';
+import { useEffect } from 'react';
 import { useStoreState } from 'easy-peasy';
 
 const Home = ({ fetchError, isLoading }) => {
   const searchResults = useStoreState((state) => state.searchResults);
+  const users = useStoreState((state) => state.users);
+
+  useEffect(() => {
+    console.log(users);
+  }, [users]);
 
   return (
     <main className="Home">
@@ -13,12 +19,12 @@ const Home = ({ fetchError, isLoading }) => {
         </p>
       )}
       {!isLoading &&
-        !fetchError &&
-        (searchResults && searchResults.length ? (
-          <Feed items={searchResults} />
-        ) : (
-          <p className="statusMsg">No items to display.</p>
-        ))}
+      !fetchError &&
+      (users.length || (searchResults && searchResults.length)) ? (
+        <Feed searchItems={searchResults} users={users} />
+      ) : (
+        <p className="statusMsg">No items to display.</p>
+      )}
     </main>
   );
 };

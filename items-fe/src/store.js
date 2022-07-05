@@ -7,65 +7,65 @@ axios.defaults.xsrfCookieName = 'csrftoken';
 let dest = '';
 
 export default createStore({
-  sellerNickname: '',
-  setSellerNickname: action((state, payload) => {
-    state.sellerNickname = payload;
+  // sellerNickname: '',
+  // setSellerNickname: action((state, payload) => {
+  //   state.sellerNickname = payload;
+  // }),
+
+  users: [],
+  setUsers: action((state, payload) => {
+    state.users = payload;
   }),
 
-  items: [],
-  setItems: action((state, payload) => {
-    state.items = payload;
-  }),
+  // slug: '',
+  // setSlug: action((state, payload) => {
+  //   state.slug = payload;
+  // }),
 
-  slug: '',
-  setSlug: action((state, payload) => {
-    state.slug = payload;
-  }),
+  // brand: '',
+  // setBrand: action((state, payload) => {
+  //   state.brand = payload;
+  // }),
 
-  brand: '',
-  setBrand: action((state, payload) => {
-    state.brand = payload;
-  }),
+  // model: '',
+  // setModel: action((state, payload) => {
+  //   state.model = payload;
+  // }),
 
-  model: '',
-  setModel: action((state, payload) => {
-    state.model = payload;
-  }),
+  // price: 0,
+  // setPrice: action((state, payload) => {
+  //   state.price = payload;
+  // }),
 
-  price: 0,
-  setPrice: action((state, payload) => {
-    state.price = payload;
-  }),
+  // entry: '',
+  // setEntry: action((state, payload) => {
+  //   state.entry = payload;
+  // }),
 
-  entry: '',
-  setEntry: action((state, payload) => {
-    state.entry = payload;
-  }),
+  // createdAt: '',
+  // setCreatedAt: action((state, payload) => {
+  //   state.createdAt = payload;
+  // }),
 
-  createdAt: '',
-  setCreatedAt: action((state, payload) => {
-    state.createdAt = payload;
-  }),
+  // seller: '',
+  // setSeller: action((state, payload) => {
+  //   state.seller = payload;
+  // }),
 
-  seller: '',
-  setSeller: action((state, payload) => {
-    state.seller = payload;
-  }),
+  // image1: '',
+  // setImage1: action((state, payload) => {
+  //   state.image1 = payload;
+  // }),
 
-  image1: '',
-  setImage1: action((state, payload) => {
-    state.image1 = payload;
-  }),
+  // image2: '',
+  // setImage2: action((state, payload) => {
+  //   state.image2 = payload;
+  // }),
 
-  image2: '',
-  setImage2: action((state, payload) => {
-    state.image2 = payload;
-  }),
-
-  image3: '',
-  setImage3: action((state, payload) => {
-    state.image3 = payload;
-  }),
+  // image3: '',
+  // setImage3: action((state, payload) => {
+  //   state.image3 = payload;
+  // }),
 
   search: '',
   setSearch: action((state, payload) => {
@@ -80,8 +80,21 @@ export default createStore({
     state.items?.length > 0 ? state.items.length : 0
   ),
 
-  getItemById: computed((state) => {
-    return (slug) => state.items.find((item) => item.slug.toString() === slug);
+  getUsers: action((state, payload) => {
+    console.log(state);
+    return state.users;
+  }),
+
+  // getUsers: computed((state) => {
+  //   console.log(state.users);
+  //   return (state) => state.users;
+  // }),
+
+  getUserById: computed((state) => {
+    return (id) => {
+      console.log(state);
+      state.users.find((user) => user.id === id);
+    };
   }),
 
   savePost: thunk(async (actions, data, helpers) => {

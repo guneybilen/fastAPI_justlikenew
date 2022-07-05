@@ -19,13 +19,13 @@ import { Routes, Route } from 'react-router-dom';
 // let url = '/';
 
 function App() {
-  const setItems = useStoreActions((actions) => actions.setItems);
+  const setUsers = useStoreActions((actions) => actions.setUsers);
   const { data } = useAxiosFetch(`/items/all`);
 
   useEffect(() => {
     // console.log(data);
-    setItems(data);
-  }, [data, setItems]);
+    setUsers(data);
+  }, [data, setUsers]);
 
   return (
     <div className="App">

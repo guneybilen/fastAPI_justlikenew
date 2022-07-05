@@ -56,7 +56,7 @@ class Response(BaseModel):
       use_enum_values = True
 
 
-class ShowAllImportantDataAboutUserForTheMainFrontPage(BaseModel):
+class ShowAllImportantDataAboutUser(BaseModel):
      id: int
      email: EmailStr
      username: str
