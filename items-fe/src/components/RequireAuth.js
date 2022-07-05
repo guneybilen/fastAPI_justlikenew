@@ -1,6 +1,6 @@
 import NewItem from './NewItem';
 import Profile from './Profile';
-import EditItem from './EditItem';
+import UpdateItem from './UpdateItem';
 import usePostRefreshTokenAxios from '../hooks/usePostRefreshTokenAxios';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
@@ -17,14 +17,22 @@ function RequireAuth() {
           </Auth>
         }
       />
-      <Route
-        path="/edit/:slug"
+      {/* <Route
+        path="/update/:id"
         element={
           <Auth redirectTo="/login">
-            <EditItem />
+            <UpdateItem />
           </Auth>
         }
-      />
+      /> */}
+      {/* <Route
+        path="/update/:id"
+        element={
+          <Auth redirectTo="/login">
+            <UpdateItem />
+          </Auth>
+        } YOU NEED TO USE THIS ONE WHEN THE  EDITITEM.JS COMPONENT IMPLEMENTING COMPLETE!
+      /> */}
       <Route
         path="/profile"
         element={

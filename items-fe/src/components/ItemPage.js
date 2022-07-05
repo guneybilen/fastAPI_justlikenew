@@ -16,6 +16,7 @@ import {
 } from '../helpers/helperFunctions';
 
 const ItemPage = () => {
+  const OBJECT_ACCESS_INDEX = 0;
   const { id } = useParams();
   const history = useNavigate();
   const loggedInNickname = useStoreState((state) => state.loggedInNickname);
@@ -23,62 +24,62 @@ const ItemPage = () => {
   const deleteItem = useStoreActions((actions) => actions.deleteItem);
   const getUserById = useStoreState((state) => state.getUserById);
 
-  // console.log(id);
-  const users = getUserById(id)[0];
-  // const user = getUserById(id)[0];
-  // console.log(users);
+  const user = getUserById(id)[OBJECT_ACCESS_INDEX];
 
-  if (users) {
-    // console.log(users.username);
-    localStorage.setItem('seller', users.username);
+  if (user) {
+    localStorage.setItem('seller', user.username);
   }
 
   const [itemOwner, setItemOwner] = useState(false);
 
-  const handleDelete = (slug) => {
+  const handleDelete = (id) => {
     let confirmation = window.confirm('Are you sure for deleting the item?');
     if (confirmation) {
-      deleteItem({ id: id, username: users.username });
+      deleteItem({ id: id, username: user.username });
       history('/');
     }
   };
 
   useEffect(() => {
-    // console.log(item.get_seller_nickname);
-    if (users && users.username === localStorage.getItem('username'))
+    if (user && user.username === localStorage.getItem('username'))
       setItemOwner(true);
-  }, [users, loggedInNickname, loggedInID]);
+  }, [user, loggedInNickname, loggedInID]);
 
   return (
     <main className="PostPage">
       <article className="post">
-        {users && (
+        {user && (
           <>
             <div className="h4 text-dark">
-              {getItemBrandForSingleUser(users)}
+              {getItemBrandForSingleUser(user)}
               <br />
-              {getItemModelForSingleUser(users)}
+              {getItemModelForSingleUser(user)}
             </div>
-            <p>{getItemPriceForSingleUser(users)}</p>
-            <p>{getItemDescriptionForSingleUser(users)}</p>
+            <p>{getItemPriceForSingleUser(user)}</p>
+            <p>{getItemDescriptionForSingleUser(user)}</p>
 
             <p className="itemDate">
               ...
-              {getItemCreatedDateForSingleUser(users)}
+              {getItemCreatedDateForSingleUser(user)}
             </p>
 
             <span className="spanImage">
               <img
                 src={
                   IMAGES_URL +
-                  getUserUserNameWithImages(users)[0]['singleUserUserName'] +
+                  getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
+                    'singleUserUserName'
+                  ] +
                   '1/' +
-                  getUserUserNameWithImages(users)[0]['singleImage1']
+                  getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
+                    'singleImage1'
+                  ]
                 }
                 alt="1"
                 className={
-                  !!getUserUserNameWithImages(users)[0]['singleImage1'] ===
-                  false
+                  !!getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
+                    'singleImage1'
+                  ] === false
                     ? 'itemImageonError'
                     : 'itemImageSmallEdition'
                 }
@@ -88,14 +89,19 @@ const ItemPage = () => {
               <img
                 src={
                   IMAGES_URL +
-                  getUserUserNameWithImages(users)[0]['singleUserUserName'] +
+                  getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
+                    'singleUserUserName'
+                  ] +
                   '1/' +
-                  getUserUserNameWithImages(users)[0]['singleImage2']
+                  getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
+                    'singleImage2'
+                  ]
                 }
                 alt="2"
                 className={
-                  !!getUserUserNameWithImages(users)[0]['singleImage2'] ===
-                  false
+                  !!getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
+                    'singleImage2'
+                  ] === false
                     ? 'itemImageonError'
                     : 'itemImageSmallEdition'
                 }
@@ -105,14 +111,19 @@ const ItemPage = () => {
               <img
                 src={
                   IMAGES_URL +
-                  getUserUserNameWithImages(users)[0]['singleUserUserName'] +
+                  getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
+                    'singleUserUserName'
+                  ] +
                   '1/' +
-                  getUserUserNameWithImages(users)[0]['singleImage3']
+                  getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
+                    'singleImage3'
+                  ]
                 }
                 alt="3"
                 className={
-                  !!getUserUserNameWithImages(users)[0]['singleImage3'] ===
-                  false
+                  !!getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
+                    'singleImage3'
+                  ] === false
                     ? 'itemImageonError'
                     : 'itemImageSmallEdition'
                 }
@@ -120,14 +131,14 @@ const ItemPage = () => {
             </span>
             <br />
             <br />
-            {itemOwner && (
+            {true && (
               <div className="editdeletebuttons">
-                <Link to={`/edit/${users.id}`}>
+                <Link to={`/update/${user.id}`}>
                   <button className="editButton">Edit Item</button>
                 </Link>
                 <button
                   className="deleteButton"
-                  onClick={() => handleDelete(users.id)}
+                  onClick={() => handleDelete(user.id)}
                 >
                   Delete Item
                 </button>

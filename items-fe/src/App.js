@@ -3,6 +3,7 @@ import Nav from './components/Nav';
 import Footer from './components/Footer';
 import About from './components/About';
 import Home from './components/Home';
+import UpdateItem from './components/UpdateItem';
 import Login from './auth/Login';
 import Signup from './auth/Signup';
 import NewPassword from './auth/NewPassword';
@@ -40,6 +41,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/newpassword/:id/" element={<NewPassword />} />
+        <Route path="/update/:id/" element={<UpdateItem />} />
       </Routes>
       <RequireAuth />
       <Footer />

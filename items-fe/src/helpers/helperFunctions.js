@@ -129,7 +129,7 @@ export const getItemModelForSingleUser = (users) => {
 
 export const getItemPriceForSingleUser = (users) => {
   return users['items'].map((singleItem) => {
-    return singleItem.price ? 'CAD$ ' + singleItem.price : '';
+    return singleItem.price ? singleItem.price : '';
   });
 };
 
