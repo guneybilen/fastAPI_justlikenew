@@ -1,0 +1,586 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 20px;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  background-color: lightgrey;
+}
+
+.canada {
+  float: left;
+}
+
+h1 {
+  font-size: 1.25rem;
+}
+
+.searchInput {
+  color: black;
+  float: left;
+  background-color: rgb(232, 240, 254);
+  margin-left: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+
+  height: 3rem;
+  text-decoration: none;
+  font-size: 1.15rem;
+  width: 30%;
+}
+
+#root {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.App {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.Header {
+  width: 100%;
+  text-align: left;
+  padding: 0.1rem;
+}
+
+.Header h1 {
+  font-size: 1rem;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  font-size: medium;
+  background-color: lightgrey;
+  color: black;
+  text-align: center;
+}
+
+.Nav {
+  width: 100%;
+  background-color: #0b5ed7;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.btn-primary {
+  background-color: #0b5ed7;
+}
+
+.btn-primary:hover {
+  background-color: #0d6efd;
+}
+
+.searchForm input[type='text'] {
+  font-family: 'Open Sans', sans-serif;
+  width: 100%;
+  font-size: 1rem;
+  border-radius: 0.25rem;
+  padding-top: rem;
+  outline: none;
+  background-color: rgb(232, 240, 254);
+}
+
+.form-control {
+  background-color: rgb(232, 240, 254);
+}
+
+.form-select {
+  background-color: rgb(232, 240, 254);
+}
+
+.searchForm label {
+  position: absolute;
+  left: -99999px;
+}
+
+ul {
+  list-style-type: none;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+li {
+  padding-top: 0.5rem;
+  padding-right: 1rem;
+  padding-bottom: 0.5rem;
+}
+
+li a {
+  color: darkblue;
+  text-decoration: none;
+  font-size: 1.25rem;
+}
+
+li:hover a {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.active {
+  font-weight: bold;
+  font-style: italic;
+}
+
+.NewPost,
+.LoginPage,
+.PostPage,
+.SignupPage,
+.About,
+.Missing {
+  width: 80%;
+  flex-grow: 1;
+  margin-bottom: 5rem;
+}
+
+.About {
+  padding-bottom: 5rem;
+}
+
+.post {
+  margin-top: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid lightgray;
+}
+
+.Home .post a {
+  text-decoration: none;
+}
+
+.Home .post a,
+.Home .post a:visited {
+  color: #000;
+}
+
+.post:first-child {
+  margin-top: 0;
+}
+
+.post:last-child {
+  border-bottom: none;
+}
+
+.postDate {
+  font-size: 0.75rem;
+}
+
+.postBody {
+  margin: 1rem 0;
+}
+
+.newPostForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.newPostForm label {
+  margin-top: 1rem;
+}
+
+.newPostForm input[type='text'],
+.newPostForm textarea {
+  font-family: 'Open Sans', sans-serif;
+  width: 100%;
+  min-height: 48px;
+  font-size: 1rem;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  margin-right: 0.25rem;
+  outline: none;
+}
+
+.newPostForm textarea {
+  height: 100px;
+}
+
+.newPostForm button {
+  margin-top: 1rem;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 10px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.Missing h2,
+.PostPage h2,
+.Missing p,
+.PostPage p {
+  margin-bottom: 1rem;
+}
+
+.PostPage button {
+  height: 48px;
+  min-width: 48px;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  background-color: red;
+  color: #fff;
+  cursor: pointer;
+}
+
+.statusMsg {
+  margin-top: 2rem;
+}
+
+.editButton {
+  background-color: #333 !important;
+  margin-right: 10px;
+}
+
+@media only screen and (min-width: 610px) {
+  html {
+    font-size: 16px;
+  }
+
+  .Header h1 {
+    font-size: 1.25rem;
+  }
+
+  .Nav {
+    /* flex-direction: row; */
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: left;
+  }
+
+  label {
+    font-size: 1.25em;
+  }
+
+  .searchForm {
+    padding: 0.1rem 0;
+  }
+
+  .searchForm input[type='text'] {
+    margin-left: 0.5rem;
+  }
+
+  .newPostForm textarea {
+    height: 300px;
+  }
+  .footer {
+    font-size: small;
+  }
+}
+
+.item-link {
+  text-decoration: none;
+}
+
+article {
+  margin-top: 1rem;
+  zoom: 1.6;
+}
+
+article:not(:first-of-type) {
+  margin-top: 12rem;
+}
+
+hr {
+  position: relative;
+  margin-top: -2.25rem;
+  border: 1px solid #0d6efd;
+}
+
+/* article:first-child > hr {
+  display: none;
+}*/
+
+article:last-child hr {
+  display: none;
+}
+
+.alert {
+  padding: 20px;
+  background-color: #f44336;
+  color: white;
+}
+
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.closebtn:hover {
+  color: black;
+}
+.form-control {
+  display: inline;
+}
+
+.nickname {
+  color: white;
+  float: right;
+  padding: 0.5rem;
+  padding-right: 2rem;
+  font-size: 1.25rem;
+}
+
+.logout:hover {
+  color: black;
+}
+
+.login,
+.logout,
+.nickname-navbar {
+  color: white;
+  float: right;
+  padding: 0.5rem;
+  text-decoration: none;
+  padding-right: 1rem;
+  font-size: 1.5rem;
+}
+
+.signup {
+  color: white;
+  float: right;
+  padding: 0.5rem;
+  text-decoration: none;
+  padding-right: 1rem;
+  font-size: 1.5rem;
+}
+.signup:hover {
+  color: rgb(232, 240, 254);
+  text-decoration: underline;
+}
+
+.login:hover {
+  color: rgb(232, 240, 254);
+  text-decoration: underline;
+}
+
+.login:hover {
+  text-decoration: underline;
+}
+
+@media only screen and (min-width: 992px) {
+  .footer {
+    font-size: medium;
+  }
+  .Header h1 {
+    font-size: 1rem;
+  }
+
+  label {
+    font-size: 1.5em;
+  }
+
+  li a {
+    font-size: 2rem;
+  }
+}
+
+#forImageButton2,
+#forImageButton3 {
+  display: none;
+}
+
+#forImageButton1 {
+  display: inline-block;
+}
+
+#buttonForRemove1,
+#buttonForRemove2 #buttonForRemove3 {
+  display: none;
+}
+
+#undobuttonForRemove1 {
+  display: none;
+}
+
+.construction {
+  position: absolute;
+  width: 35%;
+  height: 45%;
+  top: 10%;
+  margin-left: auto;
+  margin-right: auto;
+  transform: rotate(-45deg);
+}
+
+.itemImage,
+.spanImage {
+  width: 15rem !important;
+  height: 15rem !important;
+
+  border-radius: 8px;
+  float: center;
+}
+
+.itemImageonError {
+  opacity: 0;
+  width: 0px;
+  height: 0px;
+}
+
+.hidden {
+  display: none;
+}
+
+.btn-sm {
+  float: right;
+  margin-top: 1rem;
+}
+
+.itemImageonError {
+  max-width: 0px;
+  max-height: 0px;
+}
+
+main {
+  max-width: 110vh;
+  text-align: center;
+}
+
+.loader {
+  position: absolute;
+  margin-top: 2%;
+  z-index: 1000;
+}
+
+.blur {
+  background-image: url(../public/bye.jpeg);
+  height: 75vh;
+  width: 75vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 50%;
+}
+
+.like {
+  background-image: url(../public/like.jpg);
+  height: 75vh;
+  width: 75vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 50%;
+  height: 60rem;
+}
+
+.spinner-grow {
+  position: absolute !important;
+  margin-top: 55% !important;
+}
+
+label {
+  font-size: 1.25em;
+}
+
+.humancheckbox {
+  width: 2rem;
+  height: 2rem;
+  margin-right: 1rem;
+}
+
+input[type='checkbox'] {
+  vertical-align: middle;
+  outline: 0.2rem solid #0b5ed7 !important;
+  border-radius: 50% !important;
+}
+
+.no-update-image {
+  float: left;
+}
+
+.editdeletebuttons {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  /* float: center; */
+}
+
+.rsw-editor {
+  height: 15rem;
+  overflow: auto;
+  background-color: rgb(232, 240, 254) !important;
+  text-align: left;
+}
+
+article > .rsw-editor > .rsw-toolbar {
+  background-color: lightgray !important;
+  padding-left: 5rem;
+  height: 15rem;
+  overflow: auto;
+  display: none;
+}
+
+div.wysiwyg-home {
+  width: 15rem;
+  height: 5rem;
+}
+
+div.wysiwyg-home > .rsw-editor {
+  width: 15rem;
+  height: 5rem;
+}
+
+div.wysiwyg-home > .rsw-editor > .rsw-toolbar {
+  display: none;
+}
+
+.signupForm {
+  pointer-events: none;
+}
+
+.signupForm-enabled {
+  pointer-events: auto;
+}
+
+.mainPageImage {
+  border-radius: 8px;
+  float: center;
+  height: 10rem !important;
+  width: 15rem !important;
+  margin-top: 1vh;
+}
+
+.itemImageSmallEdition {
+  height: 10rem !important;
+  width: 10rem !important;
+  padding: 0.5rem;
+}
+
+.h4-mainpage {
+  color: darkblue;
+}
+
+.h4-mainpage:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
