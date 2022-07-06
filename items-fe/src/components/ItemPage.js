@@ -28,6 +28,7 @@ const ItemPage = () => {
 
   if (user) {
     localStorage.setItem('seller', user.username);
+    localStorage.setItem('seller_id', user.id);
   }
 
   const [itemOwner, setItemOwner] = useState(false);

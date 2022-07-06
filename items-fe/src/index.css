@@ -562,6 +562,7 @@ div.wysiwyg-home > .rsw-editor > .rsw-toolbar {
   pointer-events: auto;
 }
 
+.spanImage,
 .mainPageImage {
   border-radius: 8px;
   float: center;

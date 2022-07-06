@@ -1,61 +1,142 @@
-import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useState, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 import { useStoreState, useStoreActions } from 'easy-peasy';
-import { formatDistance, parseISO } from 'date-fns';
 import { DefaultEditor } from 'react-simple-wysiwyg';
 import { IMAGES_URL } from '../constants';
+import Uploady from '@rpldy/uploady';
+import UploadPreview from '@rpldy/upload-preview';
+import { asUploadButton } from '@rpldy/upload-button';
 
 import {
   getItemBrandForSingleUser,
   getItemModelForSingleUser,
   getItemPriceForSingleUser,
   getItemDescriptionForSingleUser,
-  getUserUserName,
-  getUserId,
-  getUser,
   getItemCreatedDateForSingleUser,
   getUserUserNameWithImages,
 } from '../helpers/helperFunctions';
 
+const filterBySize = (file) => {
+  //filter out images larger than 5MB
+  return file.size <= 5242880;
+};
+
+const DivUploadButton = asUploadButton((props) => {
+  return (
+    <div {...props} style={{ cursor: 'pointer' }} className="btn-primary">
+      Upload Image Button (One at a time...)
+    </div>
+  );
+});
+
+const brandInputElement = (getUserLocal, setBrand) => {
+  return (
+    <input
+      type="text"
+      id="itemBrand"
+      required
+      value={getItemBrandForSingleUser(getUserLocal)}
+      onChange={(e) => setBrand(e.target.value)}
+    />
+  );
+};
+
+const getItemModelForSingleUserInput = (getUserLocal, setModel) => {
+  return (
+    <input
+      type="text"
+      id="itemBrand"
+      required
+      value={getItemModelForSingleUser(getUserLocal)}
+      onChange={(e) => setModel(e.target.value)}
+    />
+  );
+};
+
+const getItemPriceForSingleUserInput = (getUserLocal, setPrice) => {
+  return (
+    <input
+      type="text"
+      id="itemBrand"
+      required
+      value={getItemPriceForSingleUser(getUserLocal)}
+      onChange={(e) => setPrice(e.target.value)}
+    />
+  );
+};
+
+const getUserNameWithImagesImageTag = (
+  getUserLocal,
+  imageNumber,
+  OBJECT_ACCESS_INDEX
+) => {
+  return (
+    <img
+      src={
+        IMAGES_URL +
+        getUserUserNameWithImages(getUserLocal)[OBJECT_ACCESS_INDEX][
+          'singleUserUserName'
+        ] +
+        '1/' +
+        getUserUserNameWithImages(getUserLocal)[OBJECT_ACCESS_INDEX][
+          `singleImage${imageNumber}`
+        ]
+      }
+      alt="1"
+      height="100"
+      width="100"
+    />
+  );
+};
+
 const UpdateItem = () => {
   const OBJECT_ACCESS_INDEX = 0;
-  const getUserById = useStoreState((state) => state.getUserById);
+  const ARRAY_ACCESS_INDEX = 0;
   const { id } = useParams();
-  const user = getUserById(id)[OBJECT_ACCESS_INDEX];
+  const getUserById = useStoreState((state) => state.getUserById);
 
-  const history = useNavigate();
+  const userLocal = getUserById(id)[OBJECT_ACCESS_INDEX];
 
   const scrollRef = useRef(null);
 
   const formEl = useRef(null);
-
-  const { slug } = useParams();
 
   const [error, setError] = useState('');
   const [closeButtonShouldShow, setCloseButtonShouldShow] = useState(false);
 
   const [dt, setDt] = useState('');
 
-  const [deleteImage1, setDeleteImage1] = useState(false);
-  const [deleteImage2, setDeleteImage2] = useState(false);
   const [brand, setBrand] = useState('');
+  const [getUserLocal, setUserLocal] = useState('');
   const [model, setModel] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
-  const [imageUpload1, setImageUpload1] = useState(null);
-  const [imageUpload2, setImageUpload2] = useState(null);
-  const [imageUpload3, setImageUpload3] = useState(null);
 
-  const [deleteImage3, setDeleteImage3] = useState(false);
+  const forSettingDescription = getUserLocal
+    ? getItemDescriptionForSingleUser(getUserLocal)
+    : '';
 
-  const [html, setHtml] = useState(`${getItemDescriptionForSingleUser(user)}`);
+  const [html, setHtml] = useState('');
 
   const scrollTo = (ref) => {
     if (ref && ref.current /* + other conditions */) {
       ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
+
+  useEffect(() => {
+    setUserLocal(userLocal);
+  }, [getUserLocal, userLocal]);
+
+  useEffect(() => {
+    if (getUserLocal)
+      setHtml(
+        getItemDescriptionForSingleUser(getUserLocal)[ARRAY_ACCESS_INDEX]
+      );
+    else setHtml('');
+  }, [getUserLocal]);
 
   function onChange(e) {
     setHtml(e.target.value);
@@ -66,17 +147,11 @@ const UpdateItem = () => {
 
     let form_data = new FormData();
 
-    if (imageUpload1) form_data.append('item_image1', imageUpload1);
-    if (imageUpload2) form_data.append('item_image2', imageUpload2);
-    if (imageUpload3) form_data.append('item_image3', imageUpload3);
-
     form_data.append('brand', brand);
     form_data.append('price', price);
     form_data.append('entry', html);
     form_data.append('model', model);
-    form_data.append('deleteImage1', deleteImage1);
-    form_data.append('deleteImage2', deleteImage2);
-    form_data.append('deleteImage3', deleteImage3);
+
     form_data.append('seller', localStorage.getItem('seller'));
     form_data.append('nickname', localStorage.getItem('nickname'));
   };
@@ -96,7 +171,9 @@ const UpdateItem = () => {
         </div>
       )}
       <h2>Update Item</h2>
-      <h5 className="">...{getItemCreatedDateForSingleUser(user)}</h5>
+      <h5 className="">
+        ...{getUserLocal ? getItemCreatedDateForSingleUser(getUserLocal) : ''}
+      </h5>
       <form
         action=""
         className="newPostForm"
@@ -104,28 +181,15 @@ const UpdateItem = () => {
         encType="multipart/form-data"
       >
         <label htmlFor="itemBrand">Brand:</label>
-        <input
-          type="text"
-          id="itemBrand"
-          required
-          value={getItemBrandForSingleUser(user)}
-          onChange={(e) => setBrand(e.target.value)}
-        />
+        {getUserLocal ? brandInputElement(getUserLocal, setBrand) : ''}
         <label htmlFor="itemModel">Model:</label>
-        <input
-          type="text"
-          id="itemModel"
-          required
-          value={getItemModelForSingleUser(user)}
-          onChange={(e) => setModel(e.target.value)}
-        />
+        {getUserLocal
+          ? getItemModelForSingleUserInput(getUserLocal, setModel)
+          : ''}
         <label htmlFor="itemPrice">CAD$ Price:</label>
-        <input
-          type="text"
-          id="itemPrice"
-          value={getItemPriceForSingleUser(user)}
-          onChange={(e) => setPrice(e.target.value)}
-        />
+        {getUserLocal
+          ? getItemPriceForSingleUserInput(getUserLocal, setPrice)
+          : ''}
         <label htmlFor="itemBody">
           Description (enter your contact details, as well):
         </label>
@@ -135,83 +199,55 @@ const UpdateItem = () => {
           onChange={onChange}
         />
         <br />
-        <span className="spanImage">
-          <img
-            src={
-              IMAGES_URL +
-              getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
-                'singleUserUserName'
-              ] +
-              '1/' +
-              getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
-                'singleImage1'
-              ]
-            }
-            alt="1"
-            className={
-              !!getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
-                'singleImage1'
-              ] === false
-                ? 'itemImageonError'
-                : 'itemImageSmallEdition'
-            }
-          />
-        </span>
-        <span className="spanImage">
-          <img
-            src={
-              IMAGES_URL +
-              getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
-                'singleUserUserName'
-              ] +
-              '1/' +
-              getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
-                'singleImage2'
-              ]
-            }
-            alt="2"
-            className={
-              !!getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
-                'singleImage2'
-              ] === false
-                ? 'itemImageonError'
-                : 'itemImageSmallEdition'
-            }
-          />
-        </span>
-        <span className="spanImage">
-          <img
-            src={
-              IMAGES_URL +
-              getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
-                'singleUserUserName'
-              ] +
-              '1/' +
-              getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
-                'singleImage3'
-              ]
-            }
-            alt="3"
-            className={
-              !!getUserUserNameWithImages(user)[OBJECT_ACCESS_INDEX][
-                'singleImage3'
-              ] === false
-                ? 'itemImageonError'
-                : 'itemImageSmallEdition'
-            }
-          />
-        </span>
-        <button
-          type="submit"
-          onClick={(e) => {
-            handleEdit(e);
-          }}
-          className="btn btn-primary btn-lg w-100"
-        >
-          Submit
-        </button>
+        <br />
+        <div className="" style={{ float: 'center' }}>
+          {getUserLocal
+            ? getUserNameWithImagesImageTag(
+                getUserLocal,
+                1,
+                OBJECT_ACCESS_INDEX
+              )
+            : ''}
+          {getUserLocal
+            ? getUserNameWithImagesImageTag(
+                getUserLocal,
+                2,
+                OBJECT_ACCESS_INDEX
+              )
+            : ''}
+          {getUserLocal
+            ? getUserNameWithImagesImageTag(
+                getUserLocal,
+                2,
+                OBJECT_ACCESS_INDEX
+              )
+            : ''}
+          <br />
+          <button
+            type="submit"
+            onClick={(e) => {
+              handleEdit(e);
+            }}
+            className="btn btn-primary btn-lg w-100"
+          >
+            Submit
+          </button>
+          <br />
+          <br />
+        </div>
       </form>
+
+      <Uploady
+        destination={{ url: 'my-server.com/upload' }}
+        fileFilter={filterBySize}
+        accept="image/*"
+        multiple={false}
+      >
+        <DivUploadButton />
+        <UploadPreview />
+      </Uploady>
     </main>
   );
 };
+
 export default UpdateItem;

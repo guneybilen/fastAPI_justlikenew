@@ -24,8 +24,8 @@ function App() {
   const { data } = useAxiosFetch(`/items/all`);
 
   useEffect(() => {
-    // console.log(data);
     setUsers(data);
+    // console.log(data);
   }, [data, setUsers]);
 
   return (
@@ -41,7 +41,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/newpassword/:id/" element={<NewPassword />} />
-        <Route path="/update/:id/" element={<UpdateItem />} />
+        <Route path="update/:id/" element={<UpdateItem />} />
       </Routes>
       <RequireAuth />
       <Footer />

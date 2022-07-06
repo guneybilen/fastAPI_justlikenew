@@ -117,16 +117,6 @@ export const getItemModelForSingleUser = (users) => {
   });
 };
 
-// const getItemImages = () => {
-//   return users.map((singleUser) => {
-//     return singleUser['items'].map((img) => {
-//       return img['images'].map((singleImage) => {
-//         return singleImage.item_image1 ? singleImage.item_image1 : '';
-//       });
-//     });
-//   });
-// };
-
 export const getItemPriceForSingleUser = (users) => {
   return users['items'].map((singleItem) => {
     return singleItem.price ? singleItem.price : '';
