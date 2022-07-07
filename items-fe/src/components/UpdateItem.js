@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStoreState, useStoreActions } from 'easy-peasy';
@@ -7,6 +7,8 @@ import { IMAGES_URL } from '../constants';
 import Uploady from '@rpldy/uploady';
 import UploadPreview from '@rpldy/upload-preview';
 import { asUploadButton } from '@rpldy/upload-button';
+import styled from 'styled-components';
+import { useItemProgressListener } from '@rpldy/uploady';
 
 import {
   getItemBrandForSingleUser,
@@ -16,6 +18,7 @@ import {
   getItemCreatedDateForSingleUser,
   getUserUserNameWithImages,
 } from '../helpers/helperFunctions';
+import { bg } from 'date-fns/locale';
 
 const filterBySize = (file) => {
   //filter out images larger than 5MB
@@ -90,7 +93,37 @@ const getUserNameWithImagesImageTag = (
   );
 };
 
+const Content = styled.div`
+  border: 1px solid #000;
+  background-image: url(${(props) =>
+    props.imgObj ? props.imgObj.url : props.bg.url})
+  width: 50px;
+  height: 50px;
+`;
+
+const PreviewImage = styled.img`
+  margin: 5px;
+  max-width: 200px;
+  height: auto;
+  transition: opacity 0.4s;
+  ${({ completed }) => `opacity: ${completed / 100};`}
+`;
+
+const CustomImagePreview = ({ id, url }) => {
+  const [completed, setCompleted] = useState(0);
+
+  useItemProgressListener((item) => {
+    if (item.id === id) {
+      setCompleted(item.completed);
+    }
+  });
+
+  return <PreviewImage src={url} completed={completed} />;
+};
+
 const UpdateItem = () => {
+  const getPreviewProps = useCallback((item) => ({ id: item.id }), []);
+
   const OBJECT_ACCESS_INDEX = 0;
   const ARRAY_ACCESS_INDEX = 0;
   const { id } = useParams();
@@ -159,6 +192,15 @@ const UpdateItem = () => {
     e.preventDefault();
     setCloseButtonShouldShow(false);
   };
+
+  const [getImageChangeState, setImageChangeState] = useState({});
+
+  const handleChangeImage = (e) => {
+    setImageChangeState(URL.createObjectURL(e.target.files[0]));
+    // <CustomImagePreview url={getImageChangeState[e.target.name]} />;
+  };
+
+  const u = 'bg.jpeg';
 
   return (
     <main className="NewPost">
@@ -236,6 +278,21 @@ const UpdateItem = () => {
           <br />
         </div>
       </form>
+      <input
+        type="file"
+        id="img"
+        name="img"
+        accept="image/*"
+        className="w-100"
+        onChange={handleChangeImage}
+      />
+      {/* {console.log(Object.keys(getImageChangeState).length === 0)} */}
+
+      {Object.keys(getImageChangeState).length === 0 ? (
+        <img src={u} alt="1"></img>
+      ) : (
+        <PreviewImage src={getImageChangeState} alt="1"></PreviewImage>
+      )}
 
       <Uploady
         destination={{ url: 'my-server.com/upload' }}
@@ -244,7 +301,13 @@ const UpdateItem = () => {
         multiple={false}
       >
         <DivUploadButton />
-        <UploadPreview />
+        <div>
+          <br />
+          <UploadPreview
+            previewComponentProps={getPreviewProps}
+            PreviewComponent={CustomImagePreview}
+          />
+        </div>
       </Uploady>
     </main>
   );
