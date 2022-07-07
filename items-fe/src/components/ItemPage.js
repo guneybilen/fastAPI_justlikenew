@@ -8,9 +8,7 @@ import {
   getItemModelForSingleUser,
   getItemPriceForSingleUser,
   getItemDescriptionForSingleUser,
-  getUserUserName,
-  getUserId,
-  getUser,
+  getItemIdForSingleUser,
   getItemCreatedDateForSingleUser,
   getUserUserNameWithImages,
 } from '../helpers/helperFunctions';
@@ -29,6 +27,7 @@ const ItemPage = () => {
   if (user) {
     localStorage.setItem('seller', user.username);
     localStorage.setItem('seller_id', user.id);
+    localStorage.setItem('item_id', getItemIdForSingleUser(user));
   }
 
   const [itemOwner, setItemOwner] = useState(false);

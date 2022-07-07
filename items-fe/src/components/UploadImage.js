@@ -5,9 +5,7 @@ import { useStoreState } from 'easy-peasy';
 import { DefaultEditor } from 'react-simple-wysiwyg';
 import { IMAGES_URL } from '../constants';
 import Uploady from '@rpldy/uploady';
-import { asUploadButton } from '@rpldy/upload-button';
 import styled from 'styled-components';
-import { useItemProgressListener } from '@rpldy/uploady';
 
 import {
   getItemBrandForSingleUser,
@@ -15,8 +13,13 @@ import {
   getItemPriceForSingleUser,
   getItemDescriptionForSingleUser,
   getItemCreatedDateForSingleUser,
-  getItemIdForSingleUser,
+  getUserUserNameWithImages,
 } from '../helpers/helperFunctions';
+
+const filterBySize = (file) => {
+  //filter out images larger than 5MB
+  return file.size <= 5242880;
+};
 
 const brandInputElement = (getUserLocal, setBrand) => {
   return (
@@ -54,6 +57,38 @@ const getItemPriceForSingleUserInput = (getUserLocal, setPrice) => {
   );
 };
 
+const getUserNameWithImagesImageTag = (
+  getUserLocal,
+  imageNumber,
+  OBJECT_ACCESS_INDEX
+) => {
+  return (
+    <img
+      src={
+        IMAGES_URL +
+        getUserUserNameWithImages(getUserLocal)[OBJECT_ACCESS_INDEX][
+          'singleUserUserName'
+        ] +
+        '1/' +
+        getUserUserNameWithImages(getUserLocal)[OBJECT_ACCESS_INDEX][
+          `singleImage${imageNumber}`
+        ]
+      }
+      alt="1"
+      height="100"
+      width="100"
+    />
+  );
+};
+
+const PreviewImage = styled.img`
+  margin: 5px;
+  max-width: 200px;
+  height: auto;
+  transition: opacity 0.4s;
+  ${({ completed }) => `opacity: ${completed / 100};`}
+`;
+
 const UpdateItem = () => {
   const OBJECT_ACCESS_INDEX = 0;
   const ARRAY_ACCESS_INDEX = 0;
@@ -78,6 +113,10 @@ const UpdateItem = () => {
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
 
+  const forSettingDescription = getUserLocal
+    ? getItemDescriptionForSingleUser(getUserLocal)
+    : '';
+
   const [html, setHtml] = useState('');
 
   const scrollTo = (ref) => {
@@ -85,8 +124,6 @@ const UpdateItem = () => {
       ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
-
-  const updateURL = `/update/getItemIdForSingleUser(${getUserLocal})`;
 
   useEffect(() => {
     setUserLocal(userLocal);
@@ -111,20 +148,25 @@ const UpdateItem = () => {
 
     form_data.append('brand', brand);
     form_data.append('price', price);
-    form_data.append('description', html);
+    form_data.append('entry', html);
     form_data.append('model', model);
 
-    form_data.append('seller_id', localStorage.getItem('seller_id'));
-    form_data.append(
-      'item_id',
-      localStorage.getItem(getItemIdForSingleUser(getUserLocal))
-    );
     form_data.append('seller', localStorage.getItem('seller'));
+    form_data.append('nickname', localStorage.getItem('nickname'));
   };
   const displayNone = (e) => {
     e.preventDefault();
     setCloseButtonShouldShow(false);
   };
+
+  const [getImageChangeState, setImageChangeState] = useState({});
+
+  const handleChangeImage = (e) => {
+    setImageChangeState(URL.createObjectURL(e.target.files[0]));
+    // <CustomImagePreview url={getImageChangeState[e.target.name]} />;
+  };
+
+  const u = 'bg.jpeg';
 
   return (
     <main className="NewPost">
@@ -141,7 +183,7 @@ const UpdateItem = () => {
         ...{getUserLocal ? getItemCreatedDateForSingleUser(getUserLocal) : ''}
       </h5>
       <form
-        action={updateURL}
+        action=""
         className="newPostForm"
         ref={formEl}
         encType="multipart/form-data"
@@ -166,18 +208,74 @@ const UpdateItem = () => {
         />
         <br />
         <br />
-        <button
-          type="submit"
-          onClick={(e) => {
-            handleEdit(e);
-          }}
-          className="btn btn-primary btn-lg w-100"
+        <div className="" style={{ float: 'center' }}>
+          {getUserLocal
+            ? getUserNameWithImagesImageTag(
+                getUserLocal,
+                1,
+                OBJECT_ACCESS_INDEX
+              )
+            : ''}
+          {getUserLocal
+            ? getUserNameWithImagesImageTag(
+                getUserLocal,
+                2,
+                OBJECT_ACCESS_INDEX
+              )
+            : ''}
+          {getUserLocal
+            ? getUserNameWithImagesImageTag(
+                getUserLocal,
+                2,
+                OBJECT_ACCESS_INDEX
+              )
+            : ''}
+          <br />
+          <button
+            type="submit"
+            onClick={(e) => {
+              handleEdit(e);
+            }}
+            className="btn btn-primary btn-lg w-100"
+          >
+            Submit
+          </button>
+          <br />
+          <br />
+          <Uploady
+            destination={{ url: 'my-server.com/upload' }}
+            fileFilter={filterBySize}
+            accept="image/*"
+            multiple={false}
+          ></Uploady>
+        </div>
+
+        <input
+          type="file"
+          id="img"
+          name="img"
+          accept="image/*"
+          className="w-100"
+          onChange={handleChangeImage}
         >
-          Submit
-        </button>
-        <br />
-        <br />
+          Upload an image one at a time
+        </input>
+
+        <Uploady
+          destination={{ url: 'my-server.com/upload' }}
+          fileFilter={filterBySize}
+          accept="image/*"
+          multiple={false}
+        ></Uploady>
+
+        {Object.keys(getImageChangeState).length === 0 ? (
+          <img src={u} alt="1"></img>
+        ) : (
+          <PreviewImage src={getImageChangeState} alt="1"></PreviewImage>
+        )}
       </form>
+
+      {/* {console.log(Object.keys(getImageChangeState).length === 0)} */}
     </main>
   );
 };

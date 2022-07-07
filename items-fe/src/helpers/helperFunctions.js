@@ -123,6 +123,12 @@ export const getItemPriceForSingleUser = (users) => {
   });
 };
 
+export const getItemIdForSingleUser = (users) => {
+  return users['items'].map((singleItem) => {
+    return singleItem.id ? singleItem.id : '';
+  });
+};
+
 export const getItemDescriptionForSingleUser = (users) => {
   return users['items'].map((singleItem) => {
     return singleItem.description?.length < 25
