@@ -142,3 +142,13 @@ export const getItemCreatedDateForSingleUser = (users) => {
     return formatDistance(new Date(), parseISO(singleItem.created_date));
   });
 };
+
+export const getSellerIdForSingleUser = (users) => {
+  return users['items'].map((singleItem) => {
+    return singleItem.seller_id ? singleItem.seller_id : '';
+  });
+};
+
+export const getSellerNameForSingleUser = (users) => {
+  return users.username;
+};

@@ -1,7 +1,9 @@
 from .routes import routes_items, route_login, route_image, routes_user
 from fastapi import APIRouter
 
+
 api_router = APIRouter()
+
 
 api_router.include_router(routes_user.router, prefix="/users", tags=["users"])
 api_router.include_router(routes_items.router, prefix="/items", tags=["items"])

@@ -1,13 +1,10 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStoreState } from 'easy-peasy';
 import { DefaultEditor } from 'react-simple-wysiwyg';
-import { IMAGES_URL } from '../constants';
-import Uploady from '@rpldy/uploady';
-import { asUploadButton } from '@rpldy/upload-button';
-import styled from 'styled-components';
-import { useItemProgressListener } from '@rpldy/uploady';
+import { ITEMS_URL } from '../constants';
+import axios from 'axios';
 
 import {
   getItemBrandForSingleUser,
@@ -16,40 +13,42 @@ import {
   getItemDescriptionForSingleUser,
   getItemCreatedDateForSingleUser,
   getItemIdForSingleUser,
+  getSellerIdForSingleUser,
+  getSellerNameForSingleUser,
 } from '../helpers/helperFunctions';
 
-const brandInputElement = (getUserLocal, setBrand) => {
+const getItemModelForSingleUserInput = (getModel, setModel) => {
   return (
     <input
       type="text"
       id="itemBrand"
       required
-      value={getItemBrandForSingleUser(getUserLocal)}
-      onChange={(e) => setBrand(e.target.value)}
-    />
-  );
-};
-
-const getItemModelForSingleUserInput = (getUserLocal, setModel) => {
-  return (
-    <input
-      type="text"
-      id="itemBrand"
-      required
-      value={getItemModelForSingleUser(getUserLocal)}
+      value={getModel}
       onChange={(e) => setModel(e.target.value)}
     />
   );
 };
 
-const getItemPriceForSingleUserInput = (getUserLocal, setPrice) => {
+const getItemPriceForSingleUserInput = (getPrice, setPrice) => {
   return (
     <input
       type="text"
       id="itemBrand"
       required
-      value={getItemPriceForSingleUser(getUserLocal)}
+      value={getPrice}
       onChange={(e) => setPrice(e.target.value)}
+    />
+  );
+};
+
+const brandInputElement = (getBrand, setBrand) => {
+  return (
+    <input
+      type="text"
+      id="itemBrand"
+      required
+      value={getBrand}
+      onChange={(e) => setBrand(e.target.value)}
     />
   );
 };
@@ -67,60 +66,83 @@ const UpdateItem = () => {
   const formEl = useRef(null);
 
   const [error, setError] = useState('');
+
   const [closeButtonShouldShow, setCloseButtonShouldShow] = useState(false);
 
-  const [dt, setDt] = useState('');
-
-  const [brand, setBrand] = useState('');
+  let [getBrand, setBrand] = useState('');
   const [getUserLocal, setUserLocal] = useState('');
-  const [model, setModel] = useState('');
-  const [price, setPrice] = useState('');
-  const [description, setDescription] = useState('');
-  const [date, setDate] = useState('');
+  const [getModel, setModel] = useState('');
+  const [getPrice, setPrice] = useState('');
+  const [getItemId, setItemId] = useState('');
+  const [getURL, setURL] = useState('');
 
-  const [html, setHtml] = useState('');
+  const [getHtmlForWYSIWYGEditor, setHtmlForWYSIWYGEditor] = useState('');
 
-  const scrollTo = (ref) => {
-    if (ref && ref.current /* + other conditions */) {
-      ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
-  const updateURL = `/update/getItemIdForSingleUser(${getUserLocal})`;
+  const [getSellerId, setSellerId] = useState(0);
+  const [getSeller, setSeller] = useState('');
 
   useEffect(() => {
     setUserLocal(userLocal);
   }, [getUserLocal, userLocal]);
 
   useEffect(() => {
-    if (getUserLocal)
-      setHtml(
+    if (getUserLocal) {
+      setHtmlForWYSIWYGEditor(
         getItemDescriptionForSingleUser(getUserLocal)[ARRAY_ACCESS_INDEX]
       );
-    else setHtml('');
-  }, [getUserLocal]);
+      setItemId(getItemIdForSingleUser(userLocal));
+      setBrand(getItemBrandForSingleUser(getUserLocal));
+      setURL(`update/${getUserLocal.id}`);
+      setPrice(getItemPriceForSingleUser(getUserLocal));
+      setModel(getItemModelForSingleUser(getUserLocal));
+      setSellerId(getSellerIdForSingleUser(getUserLocal));
+      setSeller(getSellerNameForSingleUser(getUserLocal));
+    } else {
+      setHtmlForWYSIWYGEditor('');
+      setURL('');
+      setPrice('');
+      setModel('');
+      setBrand('');
+      setItemId('');
+    }
+  }, [getUserLocal, userLocal]);
+
+  // console.log(getSellerId);
 
   function onChange(e) {
-    setHtml(e.target.value);
+    setHtmlForWYSIWYGEditor(e.target.value);
   }
+
+  let form_data = new FormData();
 
   const handleEdit = (e) => {
     e.preventDefault();
 
-    let form_data = new FormData();
+    form_data.append('brand', getBrand);
+    form_data.append('price', getPrice);
+    form_data.append('description', getHtmlForWYSIWYGEditor);
+    form_data.append('model', getModel);
 
-    form_data.append('brand', brand);
-    form_data.append('price', price);
-    form_data.append('description', html);
-    form_data.append('model', model);
+    form_data.append('seller_Id', getSellerId);
+    form_data.append('id', getItemId);
+    form_data.append('seller', getSeller);
 
-    form_data.append('seller_id', localStorage.getItem('seller_id'));
-    form_data.append(
-      'item_id',
-      localStorage.getItem(getItemIdForSingleUser(getUserLocal))
-    );
-    form_data.append('seller', localStorage.getItem('seller'));
+    axios({
+      method: 'PUT',
+      url: ITEMS_URL + getURL,
+      data: form_data,
+      'Content-Type': 'application/x-www-form-urlencoded',
+      // access: `Bearer ${localStorage.getItem('access')}`,
+      // refresh: `Bearer ${localStorage.getItem('refresh')}`,
+    })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (response) {
+        console.log(response);
+      });
   };
+
   const displayNone = (e) => {
     e.preventDefault();
     setCloseButtonShouldShow(false);
@@ -140,27 +162,18 @@ const UpdateItem = () => {
       <h5 className="">
         ...{getUserLocal ? getItemCreatedDateForSingleUser(getUserLocal) : ''}
       </h5>
-      <form
-        action={updateURL}
-        className="newPostForm"
-        ref={formEl}
-        encType="multipart/form-data"
-      >
+      <form action="#" className="newPostForm" ref={formEl}>
         <label htmlFor="itemBrand">Brand:</label>
-        {getUserLocal ? brandInputElement(getUserLocal, setBrand) : ''}
+        {getUserLocal ? brandInputElement(getBrand, setBrand) : ''}
         <label htmlFor="itemModel">Model:</label>
-        {getUserLocal
-          ? getItemModelForSingleUserInput(getUserLocal, setModel)
-          : ''}
+        {getUserLocal ? getItemModelForSingleUserInput(getModel, setModel) : ''}
         <label htmlFor="itemPrice">CAD$ Price:</label>
-        {getUserLocal
-          ? getItemPriceForSingleUserInput(getUserLocal, setPrice)
-          : ''}
+        {getUserLocal ? getItemPriceForSingleUserInput(getPrice, setPrice) : ''}
         <label htmlFor="itemBody">
           Description (enter your contact details, as well):
         </label>
         <DefaultEditor
-          value={html}
+          value={getHtmlForWYSIWYGEditor}
           className="form-control"
           onChange={onChange}
         />

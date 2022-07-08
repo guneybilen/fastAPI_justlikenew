@@ -20,6 +20,7 @@ class ItemCreate(ItemBase):
 
 # this will be used to format the response to not to have id, owner_id etc
 class ShowItem(ItemBase):
+  id: Optional[int]
   brand:  Optional[str]
   model:  Optional[str]
   location: Optional[str]
@@ -27,6 +28,7 @@ class ShowItem(ItemBase):
   price: Optional[float]
   created_date: datetime
   updated_date: datetime
+  seller_id: Optional[int]
   images: Optional[list[ShowImage]]
 
   # to convert non-dict obj to json
