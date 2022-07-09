@@ -1,29 +1,37 @@
 import axios from 'axios';
+import { LOGIN_URL } from '../constants';
 
-let server = '';
-
-const login_api = async (username, password, success, fail) => {
-  const json = JSON.stringify({ email: username, password: password });
-  let response = await axios.post(`${server}/login/`, json, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (response.data.status === 401 || response.data.status === 403) {
-    fail(response.data.status);
-  } else if (response.status === 500) {
-    fail(response.data);
-  } else if (response.status === 200) {
-    localStorage.setItem('access', response.data.access_token);
-    localStorage.setItem('refresh', response.data.refresh_token);
-    localStorage.setItem('nickname', response.data['user']['nickname']);
-    localStorage.setItem('loggedInId', response.data['user']['id']);
-    success();
-  } else {
-    console.log('login in failed ');
-    fail(response.data);
-  }
+const login_api = async (form_data, success, fail) => {
+  // const form_data = JSON.stringify({ username: username, password: password });
+  await axios({
+    method: 'POST',
+    url: LOGIN_URL,
+    data: form_data,
+    'Content-Type': 'application/x-www-form-urlencoded',
+  })
+    .then(function (response) {
+      console.log(response);
+      if (response.status === 401 || response.status === 403) {
+        fail(response.status);
+      } else if (response.status === 500) {
+        fail(response.data);
+      } else if (response.status === 200) {
+        localStorage.setItem('access_token', response.data.access_token);
+        localStorage.setItem('token_type', response.data.token_type);
+        // localStorage.setItem('refresh', response.data.refresh_token);
+        localStorage.setItem(
+          'loggedin_username',
+          response.data.loggedin_username
+        );
+        // localStorage.setItem('loggedInId', response['user']['id']);
+        success();
+      }
+    })
+    .catch(function (response) {
+      console.log(response);
+      console.log('login in failed ');
+      fail(response.data);
+    });
 };
 
 export default login_api;

@@ -149,6 +149,12 @@ export const getSellerIdForSingleUser = (users) => {
   });
 };
 
+export const getSellerLocationForSingleUser = (users) => {
+  return users['items'].map((singleItem) => {
+    return singleItem.location ? singleItem.location : '';
+  });
+};
+
 export const getSellerNameForSingleUser = (users) => {
   return users.username;
 };

@@ -69,22 +69,22 @@ const Nav = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            {localStorage.getItem('nickname') && (
+            {localStorage.getItem('loggedin_username') && (
               <>
                 <a href="/" className="logout" onClick={(e) => handleLogout(e)}>
                   | Logout
                 </a>
                 <span className="nickname nickname-navbar">
-                  Hey, {localStorage.getItem('nickname')}!
+                  Hey, {localStorage.getItem('loggedin_username')}!
                 </span>
               </>
             )}
-            {!localStorage.getItem('nickname') && (
+            {!localStorage.getItem('loggedin_username') && (
               <NavLink to="/signup" className="signup">
                 | Signup
               </NavLink>
             )}
-            {!localStorage.getItem('nickname') && (
+            {!localStorage.getItem('loggedin_username') && (
               <NavLink to="/login" className="login">
                 Login
               </NavLink>

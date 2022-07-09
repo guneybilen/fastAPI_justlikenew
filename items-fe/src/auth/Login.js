@@ -83,7 +83,10 @@ export default function Login() {
 
   const tryLogin = async (e) => {
     e.preventDefault();
-    await login_api(username, password, success, fail);
+    let form_data = new FormData();
+    form_data.append('username', username);
+    form_data.append('password', password);
+    await login_api(form_data, success, fail);
   };
 
   const displayNone = (e) => {

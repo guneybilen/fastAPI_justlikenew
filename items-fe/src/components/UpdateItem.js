@@ -15,6 +15,7 @@ import {
   getItemIdForSingleUser,
   getSellerIdForSingleUser,
   getSellerNameForSingleUser,
+  getSellerLocationForSingleUser,
 } from '../helpers/helperFunctions';
 
 const getItemModelForSingleUserInput = (getModel, setModel) => {
@@ -41,7 +42,7 @@ const getItemPriceForSingleUserInput = (getPrice, setPrice) => {
   );
 };
 
-const brandInputElement = (getBrand, setBrand) => {
+const getBrandInputElement = (getBrand, setBrand) => {
   return (
     <input
       type="text"
@@ -49,6 +50,18 @@ const brandInputElement = (getBrand, setBrand) => {
       required
       value={getBrand}
       onChange={(e) => setBrand(e.target.value)}
+    />
+  );
+};
+
+const getLocationInputElement = (getLocation, setLocation) => {
+  return (
+    <input
+      type="text"
+      id="itemBrand"
+      required
+      value={getLocation}
+      onChange={(e) => setLocation(e.target.value)}
     />
   );
 };
@@ -69,12 +82,13 @@ const UpdateItem = () => {
 
   const [closeButtonShouldShow, setCloseButtonShouldShow] = useState(false);
 
-  let [getBrand, setBrand] = useState('');
+  const [getBrand, setBrand] = useState('');
   const [getUserLocal, setUserLocal] = useState('');
   const [getModel, setModel] = useState('');
   const [getPrice, setPrice] = useState('');
   const [getItemId, setItemId] = useState('');
   const [getURL, setURL] = useState('');
+  const [getLocation, setLocation] = useState('');
 
   const [getHtmlForWYSIWYGEditor, setHtmlForWYSIWYGEditor] = useState('');
 
@@ -97,6 +111,7 @@ const UpdateItem = () => {
       setModel(getItemModelForSingleUser(getUserLocal));
       setSellerId(getSellerIdForSingleUser(getUserLocal));
       setSeller(getSellerNameForSingleUser(getUserLocal));
+      setLocation(getSellerLocationForSingleUser(getUserLocal));
     } else {
       setHtmlForWYSIWYGEditor('');
       setURL('');
@@ -104,6 +119,7 @@ const UpdateItem = () => {
       setModel('');
       setBrand('');
       setItemId('');
+      setLocation('');
     }
   }, [getUserLocal, userLocal]);
 
@@ -113,28 +129,48 @@ const UpdateItem = () => {
     setHtmlForWYSIWYGEditor(e.target.value);
   }
 
-  let form_data = new FormData();
-
   const handleEdit = (e) => {
     e.preventDefault();
+    // let form_data = new FormData();
 
-    form_data.append('brand', getBrand);
-    form_data.append('price', getPrice);
-    form_data.append('description', getHtmlForWYSIWYGEditor);
-    form_data.append('model', getModel);
+    // form_data.append('brand', getBrand);
+    // form_data.append('price', getPrice);
+    // form_data.append('description', getHtmlForWYSIWYGEditor);
+    // form_data.append('model', getModel);
+    // form_data.append('location', getLocation);
+    // form_data.append('id', getItemId);
 
-    form_data.append('seller_Id', getSellerId);
-    form_data.append('id', getItemId);
-    form_data.append('seller', getSeller);
+    const item = {
+      brand: getBrand,
+      price: getPrice,
+      description: getHtmlForWYSIWYGEditor,
+      model: getModel,
+      location: getLocation,
+    };
 
-    axios({
-      method: 'PUT',
-      url: ITEMS_URL + getURL,
-      data: form_data,
-      'Content-Type': 'application/x-www-form-urlencoded',
-      // access: `Bearer ${localStorage.getItem('access')}`,
-      // refresh: `Bearer ${localStorage.getItem('refresh')}`,
-    })
+    alert(getBrand.toString());
+
+    axios
+      .put(
+        'http://localhost:8000/items/update/1',
+        {
+          id: getItemId,
+          item: {
+            brand: getBrand.toString(),
+            price: getPrice.toString(),
+            description: getHtmlForWYSIWYGEditor.toString(),
+            model: getModel.toString(),
+            location: getLocation.toString(),
+          },
+        },
+
+        {
+          'Content-Type': 'application/json',
+          access_token: `Bearer ${localStorage.getItem('access_token')}`,
+          // token_type: localStorage.getItem('token_type'),
+          // refresh: `Bearer ${localStorage.getItem('refresh')}`,
+        }
+      )
       .then(function (response) {
         console.log(response);
       })
@@ -164,11 +200,13 @@ const UpdateItem = () => {
       </h5>
       <form action="#" className="newPostForm" ref={formEl}>
         <label htmlFor="itemBrand">Brand:</label>
-        {getUserLocal ? brandInputElement(getBrand, setBrand) : ''}
+        {getUserLocal ? getBrandInputElement(getBrand, setBrand) : ''}
         <label htmlFor="itemModel">Model:</label>
         {getUserLocal ? getItemModelForSingleUserInput(getModel, setModel) : ''}
         <label htmlFor="itemPrice">CAD$ Price:</label>
         {getUserLocal ? getItemPriceForSingleUserInput(getPrice, setPrice) : ''}
+        <label htmlFor="itemLocation">Location:</label>
+        {getUserLocal ? getLocationInputElement(getLocation, setLocation) : ''}
         <label htmlFor="itemBody">
           Description (enter your contact details, as well):
         </label>
