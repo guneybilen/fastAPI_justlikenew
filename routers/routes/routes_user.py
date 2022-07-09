@@ -2,11 +2,11 @@ from schemas.users import ShowUser, SecurityEnum, UserPreCreate, Response, UserP
 from fastapi import APIRouter, Depends
 from db.session import get_db
 from sqlalchemy.orm import Session
-from fastapi import APIRouter, Depends, HTTPException, status, Form
+from fastapi import APIRouter, Depends, HTTPException, status, Form, Security
 from routers.utils import OAuth2PasswordBearerWithCookie
 from core.communication import communicate_for_forgotten_password
 from core.communication import pre_create_new_user_communication
-from core.security import get_current_user_from_token
+from core.security import get_current_user_from_token, get_current_active_user
 from db.session import get_db
 from db.repository.users import create_new_user
 from fastapi.responses import RedirectResponse
@@ -15,14 +15,12 @@ from sqlalchemy.orm import Session
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from email_validator import validate_email, EmailNotValidError
+from schemas.users import ShowUser
 
 
 router = APIRouter()
 
 app = FastAPI()
-
-oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="/login/token")
-
 
 @router.post("/precreate", response_model=ShowUser)
 async def pre_create_user(user: UserPreCreate):
@@ -153,3 +151,19 @@ async def create_user(
                 
                 return {"email": returned_user.email, "result": "user has been signed up copmpletely"}
 
+
+@router.get("/users/me/", response_model=ShowUser)
+async def read_users_me(current_user: ShowUser = Depends(get_current_active_user)):
+    return current_user
+
+
+@router.get("/users/me/items/")
+async def read_own_items(
+    current_user: ShowUser = Security(get_current_active_user, scopes=["items"])
+):
+    return [{"item_id": "Foo", "owner": current_user.username}]
+
+
+@router.get("/status/")
+async def read_system_status(current_user: ShowUser = Depends(get_current_user_from_token)):
+    return {"status": "ok"}

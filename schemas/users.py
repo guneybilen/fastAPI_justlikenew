@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Optional
 from datetime import datetime
 from schemas.items import ShowItem 
+from typing import List, Union
 
 class SecurityEnum(str, Enum):
    BORN_CITY: str = "BORN_CITY" 
@@ -38,10 +39,10 @@ class UserCreate(BaseModel):
 
 
 class ShowUser(BaseModel):
-  username: Optional[str]
-  email: Optional[EmailStr]
-  is_active: Optional[bool]
-  result: Optional[str]
+  username: Union[str, None] = None
+  email: Union[EmailStr, None] = None
+  is_active: bool
+  result: Union[str, None] = None
 
   class Config:
     orm_mode = True

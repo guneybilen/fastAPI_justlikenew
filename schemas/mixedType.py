@@ -1,7 +1,4 @@
 from pydantic import BaseModel
-from schemas.tokens import Token
-from schemas.users import ShowAllImportantDataAboutUser
-from typing import Optional
 
 
 class MixedType(BaseModel):
