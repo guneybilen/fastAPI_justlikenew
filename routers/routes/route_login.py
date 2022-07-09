@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status, Request 
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 
-from routers.utils import OAuth2PasswordBearerWithCookie
+from routers.utils import OAuth2PasswordBearerWithCookie, OAuth2PasswordBearer
 
 from core.config import settings
 
@@ -10,10 +10,11 @@ from core.hashing import Hasher
 from core.security import create_access_token
 from db.repository.login import get_user
 from db.session import get_db
-
+from typing import List
 
 from jose import jwt, JWTError
 from schemas.tokens import Token
+from schemas.mixedType import MixedType
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -28,10 +29,11 @@ def authenticate_user(username: str, password: str, db: Session = Depends(get_db
   return user
 
 
-@router.post("/token", response_model=Token)
-def login_for_access_token(response: Response, 
-                           form_data: OAuth2PasswordRequestForm = Depends(),
+@router.post("/token", response_model=MixedType)
+def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
                            db: Session = Depends(get_db)):
+
+                           print(form_data)
 
                            user = authenticate_user(form_data.username, form_data.password, db)
 
@@ -46,32 +48,41 @@ def login_for_access_token(response: Response,
                             data={"sub": user.email}, expires_delta=access_token_expires
                            )
 
-                           response.set_cookie(
-                            key="access_token", value=f"Bearer {access_token}", httponly=True
-                           )
+                           # For My Information: cross-domain cookie can not be set up and and also
+                           # canot be read due to browser security architecture.
+                           #  response.set_cookie(
+                           #   key="access_token", value=f"Bearer {access_token}", httponly=True
+                           #  )
 
-                           return {"access_token": access_token, "token_type": "bearer"}
+                           return {"access_token": access_token, "token_type": "bearer", "loggedin_username": user.username}
 
 
-oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="/login/token")
+# For My Information: cross-domain cookie can not be set up and and also
+# canot be read due to browser security architecture. That is why we do not \
+# use OAuth2PasswordBearerWithCookie and rather use OAuth2PasswordBearer class only.
+# oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="/login/token")
 
-def get_current_user_from_token(
-  token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
 
-  credentials_exception = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED, 
-    detail="Could not validate credentials"
-  )
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token")
 
-  try:
-    payload = jwt.decode(token, settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
-    username: str = payload.get("sub")
-    print("usnername/email extracted is", username)
-    if username is None:
-      raise credentials_exception
-  except JWTError:
-    raise credentials_exception
-  user = get_user(username=username, db=db)
-  if user is None:
-    raise credentials_exception
-  return user
+
+# def get_current_user_from_token(
+#   token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+  
+#   credentials_exception = HTTPException(
+#     status_code=status.HTTP_401_UNAUTHORIZED, 
+#     detail="Could not validate credentials"
+#   )
+
+#   try:
+#     payload = jwt.decode(token, settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
+#     username: str = payload.get("sub")
+#     print("usnername/email extracted is", username)
+#     if username is None:
+#       raise credentials_exception
+#   except JWTError:
+#     raise credentials_exception
+#   user = get_user(username=username, db=db)
+#   if user is None:
+#     raise credentials_exception
+#   return user

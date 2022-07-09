@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql import or_
 from core.config import settings
 from fastapi import HTTPException, status, Depends, UploadFile, File
-from routers.routes.route_login import get_current_user_from_token
+# from routers.routes.route_login import get_current_user_from_token
+from core.security import get_current_user_from_token
 import os as _os
 
 def validate_image(image_size: int):

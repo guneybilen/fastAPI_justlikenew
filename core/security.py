@@ -12,6 +12,7 @@ from db.models.users import User
 
 from jose import jwt, JWTError
 from sqlalchemy.orm import Session
+from fastapi import Request
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
@@ -31,7 +32,9 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 
 def get_current_user_from_token(
-  access_token: str, db: Session = Depends(get_db)):
+  access_token: list[str] = Depends(Request), db: Session = Depends(get_db)):
+
+  print(dir(access_token))
 
   credentials_exception = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED, 

@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, status
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, status, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 from db.repository.items import update_item_by_id, delete_item_by_id, create_new_item
 from db.repository.items import list_items, retrieve_item, search_item
 from db.repository.images import list_images_with_items, list_images_with_item
-from .route_login import get_current_user_from_token
+# from .route_login import get_current_user_from_token
+from core.security import get_current_user_from_token
 from schemas.items import ItemCreate, ShowItem
 from typing import List
 from typing import Optional
@@ -69,8 +70,10 @@ def read_items(db: Session = Depends(get_db)):
 
 @router.put("/update/{id}")
 def update_item(id: int, item: ItemCreate, 
+                request: Request,
                 db: Session = Depends(get_db), 
                 current_user: User = Depends(get_current_user_from_token)):
+
 
   message = update_item_by_id(id=id, item=item, db=db, seller_id=current_user.id)
   
