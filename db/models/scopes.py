@@ -31,7 +31,7 @@ class Scope(Base):
   created_date=Column(DateTime(),default=datetime.utcnow)
   updated_date = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
   user = relationship("User", back_populates="scopes")
-  permissio = Column(ARRAY(String), default=["READ", "WRITE", "BOTH"], nullable= False)                                                         
+  permission = Column(ARRAY(String), default=["READ", "WRITE", "BOTH"], nullable= False)                                                         
   permission_to_model = Column(ARRAY(String), default=["IMAGES", "USERS", "ITEMS"], nullable=False)
   permission_to_user = Column(String(50), default="OWNER", nullable=False)
   token = relationship("Token", back_populates="scopes")

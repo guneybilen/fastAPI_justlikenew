@@ -36,10 +36,10 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 async def get_current_user_from_token(
     scopes: SecurityScopes, access_token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
-    # if security_scopes.scopes:
-    #     authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
-    # else:
-    #     authenticate_value = f"Bearer"
+    if scopes.scopes:
+        authenticate_value = f'Bearer scope="{scopes.scope_str}"'
+    else:
+        authenticate_value = f"Bearer"
 
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -60,7 +60,7 @@ async def get_current_user_from_token(
     user = db.query(User).filter_by(username=token_data.username).first()
     if user is None:
         raise credentials_exception
-    for scope in security_scopes.scopes:
+    for scope in scopes.scopes:
         if scope not in token_data.scopes:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,

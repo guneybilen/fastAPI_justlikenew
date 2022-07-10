@@ -6,13 +6,13 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 
 
-class Token(Base):
+class Entry(Base):
   id = Column(Integer, primary_key=True, index=True)
   username = Column(String, ForeignKey("users.username"))
   scopes = Column(ARRAY(String), nullable=True)
   date_created=Column(DateTime(),default=datetime.utcnow)
-  user = relationship("User", back_populates="token")
+  user = relationship("User", back_populates="entry")
   scope_id = Column(Integer, ForeignKey("scope.id"))
-  scopes = relationship("Scope", back_populates="token")
+  scopes = relationship("Scope", back_populates="entry")
   access_token: Column(String, nullable=True)
   token_type: Column(String, nullable=False, default="bearer")

@@ -9,4 +9,5 @@ class Base:
   # to generate tablename from classname
   @declared_attr
   def __tablename__(klas) -> str:
+    print(klas.__name__.lower())
     return klas.__name__.lower()
