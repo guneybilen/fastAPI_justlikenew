@@ -3,7 +3,8 @@ from enum import Enum
 from typing import Optional
 from datetime import datetime
 from schemas.items import ShowItem 
-from typing import List, Union
+from typing import Union
+from schemas.scopes import Scope
 
 class SecurityEnum(str, Enum):
    BORN_CITY: str = "BORN_CITY" 
@@ -66,6 +67,7 @@ class ShowAllImportantDataAboutUser(BaseModel):
      created_date: datetime
      is_active: bool
      items: Optional[list[ShowItem]]
+     scopes: list[Scope]
      
      class Config:
        orm_mode = True

@@ -74,6 +74,8 @@ const UpdateItem = () => {
 
   const userLocal = getUserById(id)[OBJECT_ACCESS_INDEX];
 
+  console.log(userLocal);
+
   const scrollRef = useRef(null);
 
   const formEl = useRef(null);
@@ -139,14 +141,6 @@ const UpdateItem = () => {
     // form_data.append('model', getModel);
     // form_data.append('location', getLocation);
     // form_data.append('id', getItemId);
-
-    const item = {
-      brand: getBrand,
-      price: getPrice,
-      description: getHtmlForWYSIWYGEditor,
-      model: getModel,
-      location: getLocation,
-    };
 
     alert(getBrand.toString());
 

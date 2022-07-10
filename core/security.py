@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from core.config import Settings as settings
 from db.session import get_db
 from db.models.users import User
-from db.models.tokendata import TokenData
+from db.models.scopes import Scope
 from jose import jwt, JWTError
 from fastapi import Depends, HTTPException, Security, status
 from fastapi.security import (
@@ -34,12 +34,12 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
   return encoded_jwt
 
 async def get_current_user_from_token(
-    security_scopes: SecurityScopes, access_token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+    scopes: SecurityScopes, access_token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
-    if security_scopes.scopes:
-        authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
-    else:
-        authenticate_value = f"Bearer"
+    # if security_scopes.scopes:
+    #     authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
+    # else:
+    #     authenticate_value = f"Bearer"
 
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -54,7 +54,7 @@ async def get_current_user_from_token(
       if user is None:
             raise credentials_exception
       token_scopes = payload.get("scopes", [])
-      token_data = TokenData(scopes=token_scopes, username=user.username)
+      token_data = Scope(scopes=token_scopes, username=user.username)
     except (JWTError, ValidationError):
         raise credentials_exception
     user = db.query(User).filter_by(username=token_data.username).first()

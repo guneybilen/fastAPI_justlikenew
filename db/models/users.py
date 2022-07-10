@@ -1,8 +1,6 @@
-from typing import Dict
 from ..base_db import Base 
 from sqlalchemy import Boolean, Column, DateTime
 from sqlalchemy import Integer, String
-from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import relationship 
 from datetime import datetime
 from fastapi_utils.enums import StrEnum
@@ -20,6 +18,7 @@ class SecurityQuestion(StrEnum):
 
 class User(Base):
   items = relationship('Item', back_populates="user")
+  scopes = relationship("Scope", back_populates="user")
   id = Column(Integer, primary_key=True, index=True)
   username = Column(String, unique=True, nullable=False)
   email = Column(String, nullable=False, unique=True, index=True) 
