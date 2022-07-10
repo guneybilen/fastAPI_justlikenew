@@ -11,7 +11,7 @@ class Token(Base):
   username = Column(String, ForeignKey("users.username"))
   scopes = Column(ARRAY(String), nullable=True)
   date_created=Column(DateTime(),default=datetime.utcnow)
-  user = relationship("User", back_populates="token_data")
+  user = relationship("User", back_populates="token")
   scope_id = Column(Integer, ForeignKey("scope.id"))
   scopes = relationship("Scope", back_populates="token")
   access_token: Column(String, nullable=True)
