@@ -3,11 +3,11 @@ from sqlalchemy import Boolean, Column, Date, ForeignKey, DateTime
 from sqlalchemy import Integer, String, Float, Text
 from sqlalchemy.orm import relationship 
 from datetime import datetime
-
+from db.models import *
 
 class Item(Base):
-  user = relationship("User", back_populates="items")
-  images = relationship('Image', back_populates="items")
+  image = relationship("Image", backref="items")
+  # images = relationship('Image', back_ref="items")
   id = Column(Integer, primary_key=True, index=True)
   brand = Column(String, nullable=True) 
   model = Column(String, nullable=True)

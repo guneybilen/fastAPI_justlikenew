@@ -1,5 +1,5 @@
 from core.hashing import Hasher  
-from ..models.users import User    
+from ..models.user import User    
 from schemas.users import UserCreate 
 from sqlalchemy.orm import Session  
 from fastapi import HTTPException, status

@@ -21,12 +21,12 @@ import { Routes, Route } from 'react-router-dom';
 
 function App() {
   const setUsers = useStoreActions((actions) => actions.setUsers);
-  const { data } = useAxiosFetch(`/items/all`);
+  // const { data } = useAxiosFetch(`/items/all`);
 
-  useEffect(() => {
-    setUsers(data);
-    // console.log(data);
-  }, [data, setUsers]);
+  // useEffect(() => {
+  //   setUsers(data);
+  //   // console.log(data);
+  // }, [data, setUsers]);
 
   return (
     <div className="App">

@@ -6,8 +6,8 @@ from db.session import get_db
 from sqlalchemy.orm import Session
 from core.config import Settings as settings
 from db.session import get_db
-from db.models.users import User
-from db.models.scopes import Scope
+from db.models.user import User
+from db.models.area import Area
 from jose import jwt, JWTError
 from fastapi import Depends, HTTPException, Security, status
 from fastapi.security import (

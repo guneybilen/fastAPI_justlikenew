@@ -21,7 +21,7 @@ def configure_static(app):
 
 
 def create_tables():
-  print("databases being created")
+  print("databases would be created at this point, but we are using alembic tool now.")
   Base.metadata.create_all(bind=engine)
 
 

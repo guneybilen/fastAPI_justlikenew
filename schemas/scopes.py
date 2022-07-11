@@ -9,7 +9,7 @@ from typing import List, Union
 from pydantic import BaseModel
 from datetime import datetime
 
-class Permission(StrEnum):
+class Scope(StrEnum):
   READ = "READ" 
   WRITE =  "WRITE"
   BOTH =  "BOTH"
@@ -30,6 +30,10 @@ class Scope(BaseModel):
   date_created: datetime
   updated_date: datetime
   user = str
-  permission = [Permission]                                                        
+  scope = [Scope]                                                        
   permission_to_model = [PermissionToModel]
   permission_to_user = [PermissionToUser]
+
+  @staticmethod
+  def get_scope():
+    return Scope

@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, status, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
-from db.repository.items import update_item_by_id, delete_item_by_id, create_new_item
-from db.repository.items import list_items, retrieve_item, search_item
-from db.repository.images import list_images_with_items, list_images_with_item
+from db.repository.item import update_item_by_id, delete_item_by_id, create_new_item
+from db.repository.item import list_items, retrieve_item, search_item
+from db.repository.image import list_images_with_items, list_images_with_item
 from core.security import get_current_user_from_token
 from schemas.items import ItemCreate, ShowItem
 from typing import List
 from typing import Optional
-from db.models.users import User
+from db.models.user import User
 from schemas.users import ShowAllImportantDataAboutUser
 
 from db.session import get_db

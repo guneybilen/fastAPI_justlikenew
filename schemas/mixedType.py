@@ -8,7 +8,7 @@ class MixedType(BaseModel):
   access_token: str
   token_type: str
   loggedin_username: str
-  scopes = list[Scope]
+  scopes = list[Scope.get_scope]
 
   class Config:
     orm_mode = True

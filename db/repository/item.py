@@ -1,5 +1,5 @@
-from ..models.items import Item
-from ..models.users import User
+from ..models.item import Item
+from ..models.user import User
 from schemas.items import ItemCreate 
 from schemas.images import ImageCreate   
 from sqlalchemy.orm import Session 

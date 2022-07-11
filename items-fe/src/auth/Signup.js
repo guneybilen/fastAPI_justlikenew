@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-
-let backend = '/securityquestions/';
+import { SECURITY_ENUM_URL, USER_CREATE_URL } from '../constants';
 
 const Signup = () => {
   const scrollRef = useRef(null);
@@ -15,7 +14,7 @@ const Signup = () => {
 
   const [password1, setPassword1] = useState('');
   const [password2, setPassword2] = useState('');
-  const [nickname, setNickname] = useState('');
+  const [username, setUsername] = useState('');
   const [alert, setAlert] = useState('');
   const [ckbox, setCkbox] = useState(false);
   const [show, setShow] = useState(false);
@@ -28,10 +27,17 @@ const Signup = () => {
 
   useEffect(() => {
     const grab = async () => {
-      const result = await axios.get(backend);
-      // console.log(result.data);
-      setNames(result.data.names);
-      setValues(result.data.values);
+      const result = await axios.get(SECURITY_ENUM_URL);
+      console.log(Object.keys(result.data));
+      console.log(Object.values(result.data));
+      // for (const [key, value] of Object.entries(result.data)) {
+      //   console.log(key);
+      //   console.log(value);
+      //   setNames([...key]);
+      //   setValues([...value]);
+      // }
+      setNames(Object.keys(result.data));
+      setValues(Object.values(result.data));
     };
 
     grab();
@@ -49,15 +55,13 @@ const Signup = () => {
       email: email,
       password: password1,
       passwordConfirm: password2,
-      nickname: nickname,
-      s_name: forsend,
-      s_answer: answer,
+      username: username,
+      security_name: forsend,
+      security_answer: answer,
     };
 
-    let url = '/users/';
-
     axios
-      .post(url, user, {
+      .post(USER_CREATE_URL, user, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -195,16 +199,16 @@ const Signup = () => {
               required
             />{' '}
             <br />
-            <label htmlFor="nickname" className="form-label">
-              Nickname:
+            <label htmlFor="username" className="form-label">
+              Username:
             </label>{' '}
             <br />
             <input
-              name="nickname"
+              name="username"
               type="text"
-              value={nickname}
+              value={username}
               className="form-control"
-              onChange={(e) => setNickname(e.target.value)}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
             <br />

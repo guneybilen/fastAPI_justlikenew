@@ -1,6 +1,6 @@
-from ..models.images import Image
-from ..models.items import Item
-from ..models.users import User
+from ..models.image import Image
+from ..models.item import Item
+from ..models.user import User
 from sqlalchemy.orm import Session, contains_eager,joinedload
 import sqlalchemy.sql as _sqlalchemy_sql
 import sqlalchemy.sql.functions as _func
@@ -105,7 +105,10 @@ def upload_image_by_item_id(id: int, db: Session,
 
 def list_images_with_items(db: Session):
     # query = db.query(Image).filter(Image.id).options(contains_eager(Image.id)).all()
-    query = db.query(User).options(joinedload('*')).all()
+    # query = db.query(User).options(joinedload('*')).all()
+    query = db.query(Item).filter((Item.seller_id == User.id) |
+            (Item.seller_id == None)).all()
+    # query = db.query(User)..all()
     return query
 
 def list_images_with_item(id:int, db: Session):

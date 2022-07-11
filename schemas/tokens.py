@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import List, Union
 from datetime import datetime
  
-class Entry(BaseModel):
+class Token(BaseModel):
   username: Union[str, None] = None
   scopes: List[str] = []
   date_created: datetime

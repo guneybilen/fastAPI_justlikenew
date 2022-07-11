@@ -1,4 +1,5 @@
 from schemas.users import ShowUser, SecurityEnum, UserPreCreate, Response, UserPreCreateShow
+from schemas.users import SecurityEnum
 from fastapi import APIRouter, Depends
 from db.session import get_db
 from sqlalchemy.orm import Session
@@ -8,14 +9,16 @@ from core.communication import communicate_for_forgotten_password
 from core.communication import pre_create_new_user_communication
 from core.security import get_current_user_from_token, get_current_active_user
 from db.session import get_db
-from db.repository.users import create_new_user
-from fastapi.responses import RedirectResponse
+from db.repository.user import create_new_user
+from fastapi.responses import RedirectResponse, JSONResponse
 from starlette.requests import Request
 from sqlalchemy.orm import Session
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from email_validator import validate_email, EmailNotValidError
 from schemas.users import ShowUser
+from typing import List
+import json
 
 
 router = APIRouter()
@@ -68,72 +71,72 @@ def forgot_password_request_accept(access_token: str, db: Session = Depends(get_
          }
 
 
-@router.get("/user_create", response_class=HTMLResponse)
-def create_user():
+# @router.get("/user_create", response_class=HTMLResponse)
+# def create_user():
 
-  return f"""
-       <form method="POST" enctype="application/x-www-form-urlencoded" action="/users/completing_user_create">
+#   return f"""
+#        <form method="POST" enctype="application/x-www-form-urlencoded" action="/users/completing_user_create">
 
-          <p>
-          <label>First Name
-          <input type="text" name="first_name" required>
-          </label> 
-          </p>
+#           <p>
+#           <label>First Name
+#           <input type="text" name="first_name" required>
+#           </label> 
+#           </p>
 
-          <p>
-          <label>Last Name
-          <input type="text" name="last_name" required>
-          </label> 
-          </p>
+#           <p>
+#           <label>Last Name
+#           <input type="text" name="last_name" required>
+#           </label> 
+#           </p>
 
-          <p>
-          <label>Username
-          <input type="text" name="username" required>
-          </label> 
-          </p>
+#           <p>
+#           <label>Username
+#           <input type="text" name="username" required>
+#           </label> 
+#           </p>
 
-          <p>
-          <label>Email 
-          <input type="email" name="email" value="{app.state.current_user}">
-          </label>
-          </p>
+#           <p>
+#           <label>Email 
+#           <input type="email" name="email" value="{app.state.current_user}">
+#           </label>
+#           </p>
 
-          <p>
-          <label>Password 
-          <input type="password" name="password">
-          </label>
-          </p>
+#           <p>
+#           <label>Password 
+#           <input type="password" name="password">
+#           </label>
+#           </p>
 
-          <fieldset>
-          <legend>ENTER THE ONE AND ONLY ONE EXACTLY TO THE TEXTBOX BESIDE THE LABEL, PLEASE</legend>
-              <p><label> FAVORITE_PET <input type="text" name="s_name"> </label></p>
-              <p><label> BORN_CITY <input type="text" name="s_name"> </label></p>
-              <p><label> MOTHER_MAIDEN_NAME <input type="text" name="s_name"> </label></p>
-              <p><label> GRADUATED_HIGH_SCHOOL_NAME <input type="text" name="s_name"> </label></p>
-              <p><label> FIRST_CAR <input type="text" name="s_name"> </label></p>
-              <p><label> FAVORITE_FOOD <input type="text" name="s_name"> </label></p>
-          </fieldset>
+#           <fieldset>
+#           <legend>ENTER THE ONE AND ONLY ONE EXACTLY TO THE TEXTBOX BESIDE THE LABEL, PLEASE</legend>
+#               <p><label> FAVORITE_PET <input type="text" name="s_name"> </label></p>
+#               <p><label> BORN_CITY <input type="text" name="s_name"> </label></p>
+#               <p><label> MOTHER_MAIDEN_NAME <input type="text" name="s_name"> </label></p>
+#               <p><label> GRADUATED_HIGH_SCHOOL_NAME <input type="text" name="s_name"> </label></p>
+#               <p><label> FIRST_CAR <input type="text" name="s_name"> </label></p>
+#               <p><label> FAVORITE_FOOD <input type="text" name="s_name"> </label></p>
+#           </fieldset>
 
-          <p>
-          <label>Secret Answer 
-          <input type="text" name="s_answer">
-          </label>
-          </p>
+#           <p>
+#           <label>Secret Answer 
+#           <input type="text" name="s_answer">
+#           </label>
+#           </p>
 
-          <p><button>Submit</button></p>
-          </form>
-  """
+#           <p><button>Submit</button></p>
+#           </form>
+#   """
 
 
-@router.post("/completing_user_create", response_model=Response)
+@router.post("/user_create", response_model=Response)
 async def create_user(
-                s_name: str = SecurityEnum,
+                security_name: str = SecurityEnum,
                 username: str = Form(...), 
                 password: str = Form(...),
                 first_name: str = Form(...),
                 last_name: str = Form(...),
                 email: str = Form(...),
-                s_answer: str = Form(...),
+                security_answer: str = Form(...),
                 db: Session = Depends(get_db)):
 
                 user = {
@@ -142,10 +145,10 @@ async def create_user(
                   "last_name": last_name,
                   "email": email,
                   "password": password,
-                  "s_answer": s_answer
+                  "security_answer": security_answer
                 }
 
-                casted_for_list = list(s_name)
+                casted_for_list = list(security_name)
 
                 returned_user = await create_new_user(user, casted_for_list, current_user = {app.state.current_user}, db=db,)
                 
@@ -167,3 +170,15 @@ async def read_own_items(
 @router.get("/status/")
 async def read_system_status(current_user: ShowUser = Depends(get_current_user_from_token)):
     return {"status": "ok"}
+
+
+@router.get("/security_questions")
+async def security_questions():
+    return {"BORN_CITY": SecurityEnum.BORN_CITY, 
+            "FAVORITE_PET": SecurityEnum.FAVORITE_PET, 
+            "MOTHER_MAIDEN_NAME": SecurityEnum.MOTHER_MAIDEN_NAME,
+            "GRADUATED_HIGH_SCHOOL_NAME": SecurityEnum.GRADUATED_HIGH_SCHOOL_NAME,
+            "FIRST_CAR": SecurityEnum.FIRST_CAR,
+            "FAVORITE_FOOD": SecurityEnum.FAVORITE_FOOD,
+            }
+

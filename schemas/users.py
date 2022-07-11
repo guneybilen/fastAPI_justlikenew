@@ -72,3 +72,11 @@ class ShowAllImportantDataAboutUser(BaseModel):
      class Config:
        orm_mode = True
        use_enum_values = True
+
+
+class ShowSecurityEnum(BaseModel):
+    security_enum: SecurityEnum
+
+    class Config:
+      orm_mode = True
+      use_enum_values = True

@@ -52,7 +52,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
                            #   key="access_token", value=f"Bearer {access_token}", httponly=True
                            #  )
 
-                           return {"access_token": access_token, "token_type": "bearer", "loggedin_username": user.username}
+                           return {"scopes": MixedType.scopes, "access_token": access_token, "token_type": "bearer", "loggedin_username": user.username}
 
 
 
