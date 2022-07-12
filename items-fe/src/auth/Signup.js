@@ -15,6 +15,8 @@ const Signup = () => {
   const [password1, setPassword1] = useState('');
   const [password2, setPassword2] = useState('');
   const [username, setUsername] = useState('');
+  const [firstname, setFirstname] = useState('');
+  const [lastname, setLastname] = useState('');
   const [alert, setAlert] = useState('');
   const [ckbox, setCkbox] = useState(false);
   const [show, setShow] = useState(false);
@@ -26,21 +28,19 @@ const Signup = () => {
   };
 
   useEffect(() => {
-    const grab = async () => {
+    const grab_security_enum = async () => {
       const result = await axios.get(SECURITY_ENUM_URL);
-      console.log(Object.keys(result.data));
-      console.log(Object.values(result.data));
-      // for (const [key, value] of Object.entries(result.data)) {
-      //   console.log(key);
-      //   console.log(value);
-      //   setNames([...key]);
-      //   setValues([...value]);
-      // }
       setNames(Object.keys(result.data));
       setValues(Object.values(result.data));
     };
 
-    grab();
+    const grab_email = async () => {
+      const result = await axios.get(SECURITY_ENUM_URL);
+      setEmail(result.config.email);
+    };
+
+    grab_security_enum();
+    grab_email();
   }, []);
 
   const onSubmit = (e) => {
@@ -51,21 +51,37 @@ const Signup = () => {
       .getElementsByClassName('signupForm')[0]
       .classList.remove('signupForm-enabled');
 
-    const user = {
-      email: email,
-      password: password1,
-      passwordConfirm: password2,
-      username: username,
-      security_name: forsend,
-      security_answer: answer,
-    };
+    let form_data = new FormData();
+
+    form_data.append('email', email);
+    form_data.append('password', password1);
+    form_data.append('username', username);
+    form_data.append('firstname', firstname);
+    form_data.append('lastname', lastname);
+    form_data.append('security_name', forsend);
+    form_data.append('security_answer', answer);
 
     axios
-      .post(USER_CREATE_URL, user, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
+      .post(
+        USER_CREATE_URL,
+
+        JSON.stringify({
+          email: email,
+          password: password1,
+          username: username,
+          first_name: firstname,
+          last_name: lastname,
+          security_name: forsend,
+          security_answer: answer,
+        }),
+
+        // { data: { form_data: JSON.stringify(form_data) } },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
       .then((response) => {
         return response.data;
       })
@@ -162,12 +178,14 @@ const Signup = () => {
               Email Address:
             </label>{' '}
             <br />
+            {/* For My Information: No onChange() event handler for the email 
+            input field below, # since email is coming from the server as a
+            response to email sent to inbox of the # prospective user. */}
             <input
               name="email"
               type="email"
               className="form-control"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
               required
             />{' '}
             <br />
@@ -209,6 +227,33 @@ const Signup = () => {
               value={username}
               className="form-control"
               onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+            <br />
+            <label htmlFor="firstname" className="form-label">
+              First name:
+            </label>{' '}
+            <br />
+            <input
+              name="firstname"
+              type="text"
+              value={firstname}
+              className="form-control"
+              onChange={(e) => setFirstname(e.target.value)}
+              required
+            />
+            <br />
+            <br />
+            <label htmlFor="lastname" className="form-label">
+              Last name:
+            </label>{' '}
+            <br />
+            <input
+              name="lastname"
+              type="text"
+              value={lastname}
+              className="form-control"
+              onChange={(e) => setLastname(e.target.value)}
               required
             />
             <br />

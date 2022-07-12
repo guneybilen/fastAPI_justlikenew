@@ -1,10 +1,9 @@
-from schemas.users import ShowUser, SecurityEnum, UserPreCreate, Response, UserPreCreateShow
-from schemas.users import SecurityEnum
+from schemas.user import ShowUser, SecurityEnum, UserCreate, UserPreCreate, UserPreCreateShow
+from schemas.user import SecurityEnum
 from fastapi import APIRouter, Depends
 from db.session import get_db
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, status, Form, Security
-from routers.utils import OAuth2PasswordBearerWithCookie
 from core.communication import communicate_for_forgotten_password
 from core.communication import pre_create_new_user_communication
 from core.security import get_current_user_from_token, get_current_active_user
@@ -14,10 +13,10 @@ from fastapi.responses import RedirectResponse, JSONResponse
 from starlette.requests import Request
 from sqlalchemy.orm import Session
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+# from fastapi.responses import HTMLResponse
 from email_validator import validate_email, EmailNotValidError
-from schemas.users import ShowUser
-from typing import List
+from schemas.user import ShowUser, UserResponse
+from typing import Optional
 import json
 
 
@@ -25,18 +24,27 @@ router = APIRouter()
 
 app = FastAPI()
 
-@router.post("/precreate", response_model=ShowUser)
-async def pre_create_user(user: UserPreCreate):
-  user = await pre_create_new_user_communication(user=user)
-  return {"user": user, "result": "please check your email inbox for completing your signup procedure..."}
+@router.post("/precreate")
+async def pre_create_user(user: UserPreCreate, db: Session = Depends(get_db)):
+  user = await pre_create_new_user_communication(user=user, db=db)
+  if user == False:
+     return {"result": "this email is found in database. please, enroll with another email."}
+  else:
+     return {"result": "please, check your email inbox for completing your signup procedure..."}
+
 
 
 @router.get("/signup/{access_token}", response_model = UserPreCreateShow)
-def check_user(access_token: str, request: Request, db: Session = Depends(get_db)):
+def check_user(access_token: str, db: Session = Depends(get_db)):
   current_user = get_current_user_from_token(access_token, db)
   app.state.current_user = current_user
-  # return {"email": current_user}
-  return RedirectResponse("/users/user_create", status_code=status.HTTP_302_FOUND)
+  return RedirectResponse("/users/create_procedure", status_code=status.HTTP_302_FOUND)
+
+
+@router.get("/create_procedure")
+def create_procedure():
+  return {"email":  app.state.current_user}
+
 
 @router.post("/forgot_password_request_email/")
 async def forgot_password(user: UserPreCreate):
@@ -128,29 +136,22 @@ def forgot_password_request_accept(access_token: str, db: Session = Depends(get_
 #   """
 
 
-@router.post("/user_create", response_model=Response)
-async def create_user(
-                security_name: str = SecurityEnum,
-                username: str = Form(...), 
-                password: str = Form(...),
-                first_name: str = Form(...),
-                last_name: str = Form(...),
-                email: str = Form(...),
-                security_answer: str = Form(...),
-                db: Session = Depends(get_db)):
+@router.post("/user_create", response_model=UserResponse)
+async def post_user_create(data: UserCreate, db: Session = Depends(get_db)):
 
                 user = {
-                  "username": username,
-                  "first_name": first_name,
-                  "last_name": last_name,
-                  "email": email,
-                  "password": password,
-                  "security_answer": security_answer
+                  "username": data.username,
+                  "first_name": data.first_name,
+                  "last_name": data.last_name,
+                  "email": data.email,
+                  "password": data.password,
+                  "security_answer": data.security_answer,
+                  "security_name": data.security_name,
                 }
 
-                casted_for_list = list(security_name)
+                # casted_for_list = list(data.security_name)
 
-                returned_user = await create_new_user(user, casted_for_list, current_user = {app.state.current_user}, db=db,)
+                returned_user = await create_new_user(user, current_user = user, db=db,)
                 
                 return {"email": returned_user.email, "result": "user has been signed up copmpletely"}
 

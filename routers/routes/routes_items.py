@@ -5,11 +5,11 @@ from db.repository.item import update_item_by_id, delete_item_by_id, create_new_
 from db.repository.item import list_items, retrieve_item, search_item
 from db.repository.image import list_images_with_items, list_images_with_item
 from core.security import get_current_user_from_token
-from schemas.items import ItemCreate, ShowItem
+from schemas.item import ItemCreate, ShowItem
 from typing import List
 from typing import Optional
 from db.models.user import User
-from schemas.users import ShowAllImportantDataAboutUser
+from schemas.user import ShowAllImportantDataAboutUser
 
 from db.session import get_db
 from sqlalchemy.orm import Session

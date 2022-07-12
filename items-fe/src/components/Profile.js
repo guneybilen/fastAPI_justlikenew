@@ -54,8 +54,8 @@ const Profile = () => {
       password: password1,
       passwordConfirm: password2,
       nickname: nickname,
-      s_name: forsend,
-      s_answer: answer,
+      security_name: forsend,
+      security_answer: answer,
     };
 
     let url = '/updateuser/';

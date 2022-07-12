@@ -1,11 +1,5 @@
-from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy import Column, DateTime
-from sqlalchemy import Integer, String
-from sqlalchemy.orm import relationship 
 from datetime import datetime
 from fastapi_utils.enums import StrEnum
-from typing import List, Union
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -25,12 +19,11 @@ class PermissionToUser(StrEnum):
   ALL_USERS =  "ALL_USERS"
 
 
-class Scope(BaseModel):
-  username: str
-  date_created: datetime
+class Area(BaseModel):
+  created_date: datetime
   updated_date: datetime
   user = str
-  scope = [Scope]                                                        
+  scopes = [Scope]                                                        
   permission_to_model = [PermissionToModel]
   permission_to_user = [PermissionToUser]
 

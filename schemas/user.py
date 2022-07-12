@@ -2,9 +2,9 @@ from pydantic import BaseModel, EmailStr
 from enum import Enum
 from typing import Optional
 from datetime import datetime
-from schemas.items import ShowItem 
+from schemas.item import ShowItem 
 from typing import Union
-from schemas.scopes import Scope
+from schemas.area import Scope
 
 class SecurityEnum(str, Enum):
    BORN_CITY: str = "BORN_CITY" 
@@ -30,13 +30,15 @@ class UserCreate(BaseModel):
   email: EmailStr
   username: str
   password: str
-  first_name: str
-  last_name: str
-  s_name: SecurityEnum
-  s_answer: str
-  password: str
+  first_name: Optional[str]
+  last_name: Optional[str]
+  security_name: SecurityEnum
+  security_answer: str
+  
   class Config:
     orm_mode = True
+    use_enum_values = True
+
 
 
 class ShowUser(BaseModel):
@@ -49,7 +51,7 @@ class ShowUser(BaseModel):
     orm_mode = True
 
 
-class Response(BaseModel):
+class UserResponse(BaseModel):
     email: EmailStr
     result: str
 
@@ -74,9 +76,9 @@ class ShowAllImportantDataAboutUser(BaseModel):
        use_enum_values = True
 
 
-class ShowSecurityEnum(BaseModel):
-    security_enum: SecurityEnum
+# class ShowSecurityEnum(BaseModel):
+#     security_enum: SecurityEnum
 
-    class Config:
-      orm_mode = True
-      use_enum_values = True
+#     class Config:
+#       orm_mode = True
+#       use_enum_values = True

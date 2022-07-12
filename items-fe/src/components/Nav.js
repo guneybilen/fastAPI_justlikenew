@@ -80,7 +80,7 @@ const Nav = () => {
               </>
             )}
             {!localStorage.getItem('loggedin_username') && (
-              <NavLink to="/signup" className="signup">
+              <NavLink to="/presignup" className="signup">
                 | Signup
               </NavLink>
             )}

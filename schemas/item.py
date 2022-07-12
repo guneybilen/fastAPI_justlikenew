@@ -1,7 +1,7 @@
 from datetime import datetime, date
 from typing import Optional
 from pydantic import BaseModel
-from schemas.images import ShowImage
+from schemas.image import ShowImage
 from datetime import datetime
  
 # shared properties

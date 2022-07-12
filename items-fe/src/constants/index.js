@@ -4,3 +4,4 @@ export const IMAGES_URL = 'http://localhost:8000/static/images/';
 export const SECURITY_ENUM_URL =
   'http://localhost:8000/users/security_questions';
 export const USER_CREATE_URL = 'http://localhost:8000/users/user_create';
+export const PRE_CREATE_URL = 'http://localhost:8000/users/precreate';

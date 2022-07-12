@@ -1,6 +1,7 @@
 from core.email import communicate
 from core.security import create_access_token
-from schemas.users import UserPreCreate
+from schemas.user import UserPreCreate
+from db.models.user import User
 from datetime import timedelta
 from dotenv import load_dotenv
 from pathlib import Path
@@ -11,15 +12,20 @@ env_path = Path(".") / ".env"
 load_dotenv(dotenv_path = env_path)
 
 
-async def pre_create_new_user_communication(user: UserPreCreate):
-  
+async def pre_create_new_user_communication(user: UserPreCreate, db):
+
+  searching_for_email_in_database = db.query(User).filter(User.email==user.email).first()
+
+  if(searching_for_email_in_database is not None):
+    return False
+
   # expires_delta is measured in minutes
   access_token = create_access_token(
                             data={"sub": user.email}, expires_delta = timedelta(minutes=10)
                            )  
-  UR_FOR_SIGNUP = _os.getenv('SIGNUP_URL') + f"{access_token}"
+  URL_FOR_SIGNUP = _os.getenv('SIGNUP_URL') + f"{access_token}"
   
-  html = f"<br /><br /><br /><p>thanks for signing up at our website.</p><p>please follow the link below to complete your sign up process</p><a href={UR_FOR_SIGNUP}>{UR_FOR_SIGNUP}</a><p>sincerely,<br />admin</p>"
+  html = f"<br /><br /><br /><p>thanks for signing up at our website.</p><p>please follow the link below to complete your sign up process</p><a href={URL_FOR_SIGNUP}>{URL_FOR_SIGNUP}</a><p>sincerely,<br />admin</p>"
   subject_line = "for completing signing up..."
 
   # creating list       

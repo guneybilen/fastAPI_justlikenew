@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, File, UploadFile
 from db.repository.image import upload_image_by_item_id
 # from .route_login import get_current_user_from_token
 from core.security import get_current_user_from_token
-from schemas.images import ImageCreate, ShowImage
+from schemas.image import ImageCreate, ShowImage
 
 from db.models.user import User
 
