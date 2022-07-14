@@ -5,3 +5,4 @@ export const SECURITY_ENUM_URL =
   'http://localhost:8000/users/security_questions';
 export const USER_CREATE_URL = 'http://localhost:8000/users/user_create';
 export const PRE_CREATE_URL = 'http://localhost:8000/users/precreate';
+export const CREATE_PROCEDURE = 'http://localhost:8000/users/create_procedure';

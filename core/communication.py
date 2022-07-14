@@ -30,7 +30,8 @@ async def pre_create_new_user_communication(user: UserPreCreate, db):
 
   # creating list       
   list = [] 
-  
+  print(user.email)
+    
   # appending instances to list 
   list.append(['email', user.email])
 

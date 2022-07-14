@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 from core.config import settings
 from jose import jwt
+from jose.exceptions import ExpiredSignatureError
 from db.session import get_db
 from sqlalchemy.orm import Session
 from core.config import Settings as settings
@@ -33,6 +34,23 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
   )
   return encoded_jwt
 
+
+async def get_current_user_from_token_during_signup(access_token: str, db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "email does not match the signed up request attempt"},
+    )
+    try:
+        payload = jwt.decode(access_token, settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
+    except ExpiredSignatureError:
+        return None
+    user_email: str = payload.get("sub")
+    print("usnername/email extracted is", user_email)
+    if user_email is None:
+        raise credentials_exception
+    return user_email
+
 async def get_current_user_from_token(
     scopes: SecurityScopes, access_token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
@@ -54,7 +72,7 @@ async def get_current_user_from_token(
       if user is None:
             raise credentials_exception
       token_scopes = payload.get("scopes", [])
-      token_data = Scope(scopes=token_scopes, username=user.username)
+      token_data = Area(scopes=token_scopes, username=user.username)
     except (JWTError, ValidationError):
         raise credentials_exception
     user = db.query(User).filter_by(username=token_data.username).first()

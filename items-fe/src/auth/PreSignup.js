@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { PRE_CREATE_URL } from '../constants';
 
-const Signup = () => {
+const PreSignup = () => {
   const [email, setEmail] = useState('');
   const [error, setError] = useState(false);
 
@@ -34,19 +34,19 @@ const Signup = () => {
         return response.data;
       })
       .then((data) => {
-        console.log(data.result);
-
         if (data.result) {
           // setShow(false);
           // setError(true);
           // setAlert(data.result);
           document.getElementById('resultLabel').innerHTML = data.result;
+          document.getElementById('extraInfo').innerHTML =
+            'You can exit this browser window now.';
           document.getElementById('human').checked = false;
           setShow(false);
         }
       })
       .catch((error) => {
-        //   console.log(error);
+        console.log(error);
         //   setShow(false);
         //   document
         //     .getElementsByClassName('signupForm')[0]
@@ -139,8 +139,11 @@ const Signup = () => {
       <br />
       <br />
       <label id="resultLabel"></label>
+      <br />
+      <br />
+      <label id="extraInfo"></label>
     </div>
   );
 };
 
-export default Signup;
+export default PreSignup;

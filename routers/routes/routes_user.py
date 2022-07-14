@@ -6,10 +6,10 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, status, Form, Security
 from core.communication import communicate_for_forgotten_password
 from core.communication import pre_create_new_user_communication
-from core.security import get_current_user_from_token, get_current_active_user
+from core.security import get_current_user_from_token, get_current_active_user, get_current_user_from_token_during_signup
 from db.session import get_db
 from db.repository.user import create_new_user
-from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi.responses import RedirectResponse, Response
 from starlette.requests import Request
 from sqlalchemy.orm import Session
 from fastapi import FastAPI
@@ -18,6 +18,9 @@ from email_validator import validate_email, EmailNotValidError
 from schemas.user import ShowUser, UserResponse
 from typing import Optional
 import json
+from fastapi.responses import RedirectResponse
+from sqlalchemy.exc import IntegrityError
+
 
 
 router = APIRouter()
@@ -28,21 +31,25 @@ app = FastAPI()
 async def pre_create_user(user: UserPreCreate, db: Session = Depends(get_db)):
   user = await pre_create_new_user_communication(user=user, db=db)
   if user == False:
-     return {"result": "this email is found in database. please, enroll with another email."}
+     return {"result": "this email is found in the database. <br />please, enroll with another email."}
   else:
-     return {"result": "please, check your email inbox for completing your signup procedure..."}
+     return {"result": "please, check your email inbox <br />for completing your signup procedure..."}
 
 
 
-@router.get("/signup/{access_token}", response_model = UserPreCreateShow)
-def check_user(access_token: str, db: Session = Depends(get_db)):
-  current_user = get_current_user_from_token(access_token, db)
+@router.get("/signup/{access_token}", response_class=RedirectResponse)
+async def check_user(access_token: str, db: Session = Depends(get_db)):
+  current_user = await get_current_user_from_token_during_signup(access_token, db)
   app.state.current_user = current_user
-  return RedirectResponse("/users/create_procedure", status_code=status.HTTP_302_FOUND)
+  print(app.state.current_user)
+  if app.state.current_user is None:
+    return RedirectResponse("http://localhost:3000/Error")
+  else:
+    return RedirectResponse("http://localhost:3000/signup", status_code=status.HTTP_302_FOUND)
 
 
 @router.get("/create_procedure")
-def create_procedure():
+async def create_procedure():
   return {"email":  app.state.current_user}
 
 
@@ -139,22 +146,29 @@ def forgot_password_request_accept(access_token: str, db: Session = Depends(get_
 @router.post("/user_create", response_model=UserResponse)
 async def post_user_create(data: UserCreate, db: Session = Depends(get_db)):
 
-                user = {
-                  "username": data.username,
-                  "first_name": data.first_name,
-                  "last_name": data.last_name,
-                  "email": data.email,
-                  "password": data.password,
-                  "security_answer": data.security_answer,
-                  "security_name": data.security_name,
-                }
+            if data.password != data.password_confirm:
+              return {"result": "password and password confirmation boxes inputs do not match."}
+
+            else: 
+
+              user = {
+                "username": data.username,
+                "first_name": data.first_name,
+                "last_name": data.last_name,
+                "email": data.email,
+                "password": data.password,
+                "security_answer": data.security_answer,
+                "security_name": data.security_name,
+              }
 
                 # casted_for_list = list(data.security_name)
 
-                returned_user = await create_new_user(user, current_user = user, db=db,)
-                
-                return {"email": returned_user.email, "result": "user has been signed up copmpletely"}
-
+              returned_user_or_error = await create_new_user(user, current_user = user, db=db,)
+              if (isinstance(returned_user_or_error, IntegrityError)):
+                  return {"result": returned_user_or_error.orig}
+              return {"email": returned_user_or_error.email,
+                      "username": returned_user_or_error.username, 
+                      "result": "Signed up completely. Please, Click on Home link."}
 
 @router.get("/users/me/", response_model=ShowUser)
 async def read_users_me(current_user: ShowUser = Depends(get_current_active_user)):

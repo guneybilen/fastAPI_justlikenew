@@ -492,7 +492,11 @@ main {
 
 .spinner-grow {
   position: absolute !important;
-  margin-top: 55% !important;
+  margin-top: 35% !important;
+}
+
+#spinner {
+  margin-bottom: 2%;
 }
 
 label {
@@ -589,4 +593,13 @@ div.wysiwyg-home > .rsw-editor > .rsw-toolbar {
 #uploadPreview > img {
   width: 50px;
   height: 50px;
+}
+
+#email_field_for_signing_up_after_coming_from_access_token {
+  background-color: lightgray;
+  text-align: center;
+}
+
+.signupForm {
+  margin-bottom: 100px;
 }

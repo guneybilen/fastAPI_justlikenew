@@ -18,11 +18,12 @@ const Nav = () => {
   const handleLogout = (e) => {
     e.preventDefault();
     setShow(true);
-    logout_api()
-      .then(() => {
-        setShow(false);
-      })
-      .catch(() => {});
+    // logout_api()
+    localStorage.clear();
+    //   .then(() => {
+    //     setShow(false);
+    //   })
+    //   .catch(() => {});
     setCloseOnClick(false);
     history('/');
   };

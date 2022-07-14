@@ -4,6 +4,7 @@ from schemas.user import UserCreate
 from sqlalchemy.orm import Session  
 from fastapi import HTTPException, status
 from schemas.user import SecurityEnum
+from sqlalchemy.exc import IntegrityError
 
 
 async def create_new_user(user: UserCreate, current_user: str, db: Session):  
@@ -34,9 +35,12 @@ async def create_new_user(user: UserCreate, current_user: str, db: Session):
   )
   
   # if list(current_user)[0] == user['email']:  
-  db.add(user_being_saved)
-  db.commit() 
-  db.refresh(user_being_saved)
+  try: 
+    db.add(user_being_saved)
+    db.commit() 
+    db.refresh(user_being_saved)
+  except IntegrityError as error:
+    return IntegrityError(params=[], statement=[], orig="either the email or username already exists and is being used. please, correct the problem(s).")
   return user_being_saved
   # raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="user sign up and required user email confirmation does not match")
 

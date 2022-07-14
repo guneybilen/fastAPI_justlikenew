@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, constr
 from enum import Enum
 from typing import Optional
 from datetime import datetime
@@ -28,8 +28,9 @@ class UserPreCreateShow(BaseModel):
 
 class UserCreate(BaseModel):
   email: EmailStr
-  username: str
-  password: str
+  username: constr(strip_whitespace=True, min_length=3, max_length=50)
+  password: constr(strip_whitespace=True, min_length=7, max_length=50)
+  password_confirm: constr(strip_whitespace=True, min_length=7, max_length=50)
   first_name: Optional[str]
   last_name: Optional[str]
   security_name: SecurityEnum
@@ -52,8 +53,10 @@ class ShowUser(BaseModel):
 
 
 class UserResponse(BaseModel):
-    email: EmailStr
-    result: str
+    email: Optional[EmailStr]
+    username: Optional[str]
+    result: Optional[str]
+    detail : Optional[str]
 
     class Config:
       orm_mode = True

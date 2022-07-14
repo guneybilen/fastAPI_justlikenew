@@ -35,5 +35,9 @@ async def communicate(emails: EmailSchema, subject_line: str, html: str) -> JSON
     )
 
     fm = FastMail(conf)
-    await fm.send_message(message)
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    try:
+        await fm.send_message(message)
+    except Exception as e:
+        print(e)
     return JSONResponse(status_code=200, content={"message": "email has been sent"})  
