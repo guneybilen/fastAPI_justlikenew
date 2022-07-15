@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useStoreState, useStoreActions } from 'easy-peasy';
-import logout_api from '../api/logout_api';
+// import logout_api from '../api/logout_api';
 
 const Nav = () => {
   const history = useNavigate();

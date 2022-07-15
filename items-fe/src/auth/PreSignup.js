@@ -40,7 +40,7 @@ const PreSignup = () => {
           // setAlert(data.result);
           document.getElementById('resultLabel').innerHTML = data.result;
           document.getElementById('extraInfo').innerHTML =
-            'You can exit this browser window now.';
+            'You can close this browser tab now.';
           document.getElementById('human').checked = false;
           setShow(false);
         }

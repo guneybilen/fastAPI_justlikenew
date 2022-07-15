@@ -3,25 +3,27 @@ from schemas.user import SecurityEnum
 from fastapi import APIRouter, Depends
 from db.session import get_db
 from sqlalchemy.orm import Session
-from fastapi import APIRouter, Depends, HTTPException, status, Form, Security
+from fastapi import APIRouter, Depends, HTTPException, status, Security
 from core.communication import communicate_for_forgotten_password
 from core.communication import pre_create_new_user_communication
 from core.security import get_current_user_from_token, get_current_active_user, get_current_user_from_token_during_signup
 from db.session import get_db
 from db.repository.user import create_new_user
-from fastapi.responses import RedirectResponse, Response
-from starlette.requests import Request
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from fastapi import FastAPI
 # from fastapi.responses import HTMLResponse
 from email_validator import validate_email, EmailNotValidError
 from schemas.user import ShowUser, UserResponse
-from typing import Optional
-import json
 from fastapi.responses import RedirectResponse
 from sqlalchemy.exc import IntegrityError
+from dotenv import load_dotenv
+from pathlib import Path
+import os as _os
 
 
+env_path = Path(".") / ".env"
+load_dotenv(dotenv_path = env_path)
 
 router = APIRouter()
 
@@ -43,9 +45,9 @@ async def check_user(access_token: str, db: Session = Depends(get_db)):
   app.state.current_user = current_user
   print(app.state.current_user)
   if app.state.current_user is None:
-    return RedirectResponse("http://localhost:3000/Error")
+    return RedirectResponse(f"{_os.getenv('FRONT_END_URL')}/Error")
   else:
-    return RedirectResponse("http://localhost:3000/signup", status_code=status.HTTP_302_FOUND)
+    return RedirectResponse(f"{_os.getenv('FRONT_END_URL')}/signup", status_code=status.HTTP_302_FOUND)
 
 
 @router.get("/create_procedure")
