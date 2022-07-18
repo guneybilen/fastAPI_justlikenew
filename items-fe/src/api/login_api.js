@@ -10,9 +10,8 @@ const login_api = async (form_data, success, fail) => {
     'Content-Type': 'application/x-www-form-urlencoded',
   })
     .then(function (response) {
-      console.log(response);
       if (response.status === 401 || response.status === 403) {
-        fail(response.status);
+        fail(response);
       } else if (response.status === 500) {
         fail(response.data);
       } else if (response.status === 200) {
@@ -27,10 +26,9 @@ const login_api = async (form_data, success, fail) => {
         success();
       }
     })
-    .catch(function (response) {
-      console.log(response);
+    .catch(function (error) {
       console.log('login in failed ');
-      fail(response.data);
+      fail(error.response.status);
     });
 };
 
