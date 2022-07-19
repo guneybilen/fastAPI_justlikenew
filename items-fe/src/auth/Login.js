@@ -3,10 +3,11 @@ import login_api from '../api/login_api';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 
 export default function Login() {
   const myRef = useRef(null);
-  const history = useNavigate();
+  const nav = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
@@ -15,6 +16,8 @@ export default function Login() {
 
   const [ckbox, setCkbox] = useState(false);
   const [show, setShow] = useState(false);
+  const { state } = useLocation();
+  const { from } = state;
 
   useEffect(() => {
     document.getElementById('sbn-btn').disabled = true;
@@ -63,7 +66,8 @@ export default function Login() {
 
   const success = () => {
     console.log('Authenticated!');
-    history('/');
+    console.log(from);
+    nav(from);
   };
 
   const fail = (status) => {

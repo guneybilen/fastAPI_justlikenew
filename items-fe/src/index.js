@@ -13,7 +13,7 @@ ReactDOM.render(
     <StoreProvider store={store}>
       <Router>
         <Routes>
-          <Route path="*" element={<App />} />
+          <Route path="*" element={<App />} />{' '}
         </Routes>
       </Router>
     </StoreProvider>

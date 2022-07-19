@@ -4,6 +4,7 @@ import Footer from './components/Footer';
 import About from './components/About';
 import Home from './components/Home';
 import UpdateItem from './components/UpdateItem';
+import NewItem from './components/NewItem';
 import Login from './auth/Login';
 import Signup from './auth/Signup';
 import Error from './auth/Error';
@@ -23,31 +24,54 @@ import { Routes, Route } from 'react-router-dom';
 
 function App() {
   const setUsers = useStoreActions((actions) => actions.setUsers);
-  // const { data } = useAxiosFetch(`/items/all`);
+  const { data } = useAxiosFetch(`/items/all`);
 
-  // useEffect(() => {
-  //   setUsers(data);
-  //   // console.log(data);
-  // }, [data, setUsers]);
+  useEffect(() => {
+    setUsers(data);
+    // console.log(data);
+  }, [data, setUsers]);
 
   return (
     <div className="App">
       <Header title="electronics guru" />
       <Nav />
+
       <Routes>
         <Route forceRefresh={true} path="/" element={<Home />} />
-        <Route path="/activation/:token" element={<Activation />} />
-        <Route path="/login/" element={<Login />} />
-        <Route path="/about" element={<About />} />
-        <Route path="items/:id" element={<ItemPage />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/activation/:token" element={<Activation />} />
+        <Route path="/about" element={<About />} />
         <Route path="/error" element={<Error />} />
         <Route path="/presignup" element={<PreSignup />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
-        <Route path="/newpassword/:id/" element={<NewPassword />} />
-        <Route path="update/:id/" element={<UpdateItem />} />
+        <Route path="/newpassword/:id" element={<NewPassword />} />
+        <Route
+          path="/item"
+          element={
+            <RequireAuth>
+              <NewItem />
+            </RequireAuth>
+          }
+        ></Route>
+        <Route
+          path="items/:id"
+          element={
+            <RequireAuth>
+              <ItemPage />
+            </RequireAuth>
+          }
+        ></Route>
+        <Route
+          path="/update/:id"
+          element={
+            <RequireAuth>
+              <UpdateItem />
+            </RequireAuth>
+          }
+        ></Route>
       </Routes>
-      <RequireAuth />
+
       <Footer />
     </div>
   );

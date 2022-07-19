@@ -1,59 +1,32 @@
-import NewItem from './NewItem';
-import Profile from './Profile';
-import UpdateItem from './UpdateItem';
-import usePostRefreshTokenAxios from '../hooks/usePostRefreshTokenAxios';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import useAxiosFetch from '../hooks/useAxiosFetch';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { CHECK_IF_TOKEN_EXPIRED } from '../constants';
+import { useEffect, useState } from 'react';
 
-function RequireAuth() {
-  usePostRefreshTokenAxios();
+function RequireAuth({ children }) {
+  const [datastate, setDatastate] = useState('');
+  const { data } = useAxiosFetch(CHECK_IF_TOKEN_EXPIRED);
+  let location = useLocation();
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    setDatastate(data);
+    if (datastate === null || datastate === undefined) {
+      navigate('/login', { state: { from: location.pathname } });
+    }
+  }, [data, datastate, location.pathname, navigate]);
+
+  // if (datastate === null || datastate === undefined) {
+  //   // Redirect them to the /login page, but save the current location they were
+  //   // trying to go to when they were redirected. This allows us to send them
+  //   // along to that page after they login, which is a nicer user experience
+  //   // than dropping them off on the home page.
+  //   // return <Navigate to="/login" state={{ from: location.pathname }} />;
+  //   navigate('/login', { state: { from: location.pathname } });
+  // }
   return (
-    <Routes>
-      <Route
-        path="/item"
-        element={
-          <Auth redirectTo="/login">
-            <NewItem />
-          </Auth>
-        }
-      />
-      {/* <Route
-        path="/update/:id"
-        element={
-          <Auth redirectTo="/login">
-            <UpdateItem />
-          </Auth>
-        }
-      /> */}
-      <Route
-        path="/update/:id"
-        element={
-          <Auth redirectTo="/login">
-            <UpdateItem />
-          </Auth>
-        } //YOU NEED TO USE THIS ONE WHEN THE  EDITITEM.JS COMPONENT IMPLEMENTING COMPLETE!
-      />
-      <Route
-        path="/profile"
-        element={
-          <Auth redirectTo="/login">
-            <Profile />
-          </Auth>
-        }
-      />
-    </Routes>
+    datastate !== null && datastate !== '' && datastate.length !== 0 && children
   );
 }
 
 export default RequireAuth;
-
-function Auth({ children, redirectTo }) {
-  let refresh;
-  try {
-    refresh = localStorage.getItem('refresh');
-  } catch (e) {
-    refresh = false;
-  }
-
-  return !!refresh ? children : <Navigate to={redirectTo} />;
-}

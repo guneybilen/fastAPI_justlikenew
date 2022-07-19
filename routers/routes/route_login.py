@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status 
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 
@@ -7,7 +7,7 @@ from datetime import timedelta
 from core.config import settings
 
 from core.hashing import Hasher
-from core.security import create_access_token
+from core.security import create_access_token, check_token_expiration
 from db.repository.login import get_user
 from db.session import get_db
 from typing import List
@@ -25,6 +25,12 @@ def authenticate_user(username: str, password: str, db: Session = Depends(get_db
   if not Hasher.verify_password(password, user.hashed_password):
     return False
   return user
+  
+
+@router.get("/check_if_token_expired")
+async def check_if_token_expired(req: Request, db: Session = Depends(get_db)):
+  user_or_error = await check_token_expiration(req.headers['access_token'], db)
+  return user_or_error
 
 
 @router.post("/token", response_model=MixedType)

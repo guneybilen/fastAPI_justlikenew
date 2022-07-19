@@ -19,8 +19,7 @@ const useAxiosFetch = (dataUrl) => {
           params: {},
           cancelToken: source.token,
           headers: {
-            access: `Bearer ${localStorage.getItem('access')}`,
-            refresh: `Bearer ${localStorage.getItem('refresh')}`,
+            access_token: `Bearer ${localStorage.getItem('access_token')}`,
           },
         });
 
