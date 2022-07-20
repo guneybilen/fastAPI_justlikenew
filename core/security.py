@@ -49,7 +49,7 @@ async def get_current_user_from_token_during_signup(access_token: str, db: Sessi
     except JWTError:
         return None
     user_email: str = payload.get("sub")
-    print("usnername/email extracted is", user_email)
+    print("username/email extracted is", user_email)
     user = db.query(User).filter(User.email == user_email).first()
     print(user.username)
     if user.username is None:
@@ -60,43 +60,54 @@ async def get_current_user_from_token_during_signup(access_token: str, db: Sessi
 async def check_token_expiration(access_token: str, db: Session):
     acces_token_parsed = access_token.split(" ")[1]
     result = await get_current_user_from_token_during_signup(acces_token_parsed, db)
+    print('result ', result)
     return result
 
-async def get_current_user_from_token(
-    scopes: SecurityScopes, access_token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+# TODO: take care of scoping
+# async def get_current_user_from_token(
+#     scopes: SecurityScopes, access_token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+# ):
+async def get_current_user_from_token(access_token: str, db: Session = Depends(get_db)
 ):
-    if scopes.scopes:
-        authenticate_value = f'Bearer scope="{scopes.scope_str}"'
-    else:
-        authenticate_value = f"Bearer"
+    # if scopes.scopes:
+    #     authenticate_value = f'Bearer scope="{scopes.scope_str}"'
+    # else:
+    #     authenticate_value = f"Bearer"
 
+    # credentials_exception = HTTPException(
+    #     status_code=status.HTTP_401_UNAUTHORIZED,
+    #     detail="Could not validate credentials",
+    #     headers={"WWW-Authenticate": authenticate_value},
+    # )
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
-        headers={"WWW-Authenticate": authenticate_value},
+        headers={"WWW-Authenticate": "Not authenticated"},
     )
-    try:
-      payload = jwt.decode(access_token, settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
-      email: str = payload.get("sub")
-      user = db.query(User).filter_by (email = email).first()
-      print("usnername/email extracted is", user)
-      if user is None:
-            raise credentials_exception
-      token_scopes = payload.get("scopes", [])
-      token_data = Area(scopes=token_scopes, username=user.username)
-    except (JWTError, ValidationError):
-        raise credentials_exception
-    user = db.query(User).filter_by(username=token_data.username).first()
+    # try:
+    print("access_token", access_token)
+    payload = jwt.decode(access_token, settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
+    email: str = payload.get("sub")
+    user = db.query(User).filter(User.email == email).first()
+    print("usnername/email extracted is", user.email)
+#   if user is None:
+    #         raise credentials_exception
+    #   token_scopes = payload.get("scopes", [])
+    #   token_data = Area(scopes=token_scopes, username=user.username)
+    # except (JWTError, ValidationError):
+    #     raise credentials_exception
+    # user = db.query(User).filter_by(username=token_data.username).first()
     if user is None:
         raise credentials_exception
-    for scope in scopes.scopes:
-        if scope not in token_data.scopes:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Not enough permissions",
-                headers={"WWW-Authenticate": authenticate_value},
-            )
-    return user
+    # for scope in scopes.scopes:
+    #     if scope not in token_data.scopes:
+    #         raise HTTPException(
+    #             status_code=status.HTTP_401_UNAUTHORIZED,
+    #             detail="Not enough permissions",
+    #             headers={"WWW-Authenticate": authenticate_value},
+    #        )
+    else:
+      return user
 
 
 async def get_current_active_user(

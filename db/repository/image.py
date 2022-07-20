@@ -103,12 +103,12 @@ def upload_image_by_item_id(id: int, db: Session,
     except Exception as e:
         print(e)
 
-def list_images_with_items(db: Session):
+def list_images_with_items(email: str, db: Session):
     # query = db.query(Image).filter(Image.id).options(contains_eager(Image.id)).all()
     # query = db.query(User).options(joinedload('*')).all()
-    query = db.query(Item).filter((Item.seller_id == User.id) |
-            (Item.seller_id == None)).all()
-    # query = db.query(User)..all()
+    # query = db.query(Item).filter((Item.seller_id == User.id) |
+            # (Item.seller_id == None)).all()
+    query = db.query(User).options(joinedload('*')).all()[:10]
     return query
 
 def list_images_with_item(id:int, db: Session):

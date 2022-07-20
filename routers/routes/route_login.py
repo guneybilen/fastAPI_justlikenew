@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import FastAPI, APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 
@@ -17,8 +17,11 @@ from sqlalchemy.orm import Session
 
 router = APIRouter()
 
+app = FastAPI()
+
 def authenticate_user(username: str, password: str, db: Session = Depends(get_db)):
   user = get_user(username=username, db=db)
+  app.state.current_user = user
   print(user.username)
   if not user: 
     return False

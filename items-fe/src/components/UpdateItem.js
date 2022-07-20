@@ -48,7 +48,7 @@ const getBrandInputElement = (getBrand, setBrand) => {
       type="text"
       id="itemBrand"
       required
-      value={getBrand}
+      value={getBrand === undefined ? 'hello' : getBrand}
       onChange={(e) => setBrand(e.target.value)}
     />
   );
@@ -71,6 +71,8 @@ const UpdateItem = () => {
   const ARRAY_ACCESS_INDEX = 0;
   const { id } = useParams();
   const getUserById = useStoreState((state) => state.getUserById);
+
+  console.log(getUserById());
 
   const userLocal = getUserById(id)[OBJECT_ACCESS_INDEX];
 
@@ -133,14 +135,6 @@ const UpdateItem = () => {
 
   const handleEdit = (e) => {
     e.preventDefault();
-    // let form_data = new FormData();
-
-    // form_data.append('brand', getBrand);
-    // form_data.append('price', getPrice);
-    // form_data.append('description', getHtmlForWYSIWYGEditor);
-    // form_data.append('model', getModel);
-    // form_data.append('location', getLocation);
-    // form_data.append('id', getItemId);
 
     alert(getBrand.toString());
 
@@ -162,7 +156,6 @@ const UpdateItem = () => {
           'Content-Type': 'application/json',
           access_token: `Bearer ${localStorage.getItem('access_token')}`,
           // token_type: localStorage.getItem('token_type'),
-          // refresh: `Bearer ${localStorage.getItem('refresh')}`,
         }
       )
       .then(function (response) {
@@ -194,7 +187,7 @@ const UpdateItem = () => {
       </h5>
       <form action="#" className="newPostForm" ref={formEl}>
         <label htmlFor="itemBrand">Brand:</label>
-        {getUserLocal ? getBrandInputElement(getBrand, setBrand) : ''}
+        {getUserLocal && getBrandInputElement(getBrand, setBrand)}
         <label htmlFor="itemModel">Model:</label>
         {getUserLocal ? getItemModelForSingleUserInput(getModel, setModel) : ''}
         <label htmlFor="itemPrice">CAD$ Price:</label>

@@ -17,7 +17,7 @@ export default function Login() {
   const [ckbox, setCkbox] = useState(false);
   const [show, setShow] = useState(false);
   const { state } = useLocation();
-  const { from } = state;
+  const from = state === null ? '/' : state.from;
 
   useEffect(() => {
     document.getElementById('sbn-btn').disabled = true;

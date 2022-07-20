@@ -28,7 +28,7 @@ const login_api = async (form_data, success, fail) => {
     })
     .catch(function (error) {
       console.log('login in failed ');
-      fail(error.response.status);
+      fail(error.response);
     });
 };
 

@@ -96,17 +96,31 @@ export default createStore({
 
   savePost: thunk(async (actions, data, helpers) => {
     const { items } = helpers.getState();
-    const form_data = data.form_data;
+    const form_data = data.item;
     const cb = data.cb;
-    axios
-      .post(`${dest}/item/`, form_data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          accept: 'application/json',
-          access: `Bearer ${localStorage.getItem('access')}`,
-          refresh: `Bearer ${localStorage.getItem('refresh')}`,
-        },
-      })
+    console.log(form_data.get('brand'));
+    axios({
+      method: 'post',
+      url: 'http://localhost:8000/items/create-item/',
+      // data: {
+      //   item: {
+      //     brand: form_data.get('brand'),
+      //     description: form_data.get('description'),
+      //     price: form_data.get('price'),
+      //     location: form_data.get('location'),
+      //     model: form_data.get('model'),
+      //     item_image1: form_data.get('item_image1'),
+      //     item_image2: form_data.get('item_image2'),
+      //     item_image3: form_data.get('item_image3'),
+      //   },
+      // },
+      data: form_data,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        // accept: 'application/json',
+        access_token: `${localStorage.getItem('access_token')}`,
+      },
+    })
       .then((response) => {
         if (response.data['error'])
           return cb(response.data['error'], null, null);

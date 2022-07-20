@@ -18,17 +18,18 @@ import { useEffect } from 'react';
 import useAxiosFetch from './hooks/useAxiosFetch';
 import RequireAuth from './components/RequireAuth';
 import { Routes, Route } from 'react-router-dom';
+import { ITEMS_ALL } from './constants';
 
 // for api variable see /etc/nginx/sites-enabled
 // let url = '/';
 
 function App() {
   const setUsers = useStoreActions((actions) => actions.setUsers);
-  const { data } = useAxiosFetch(`/items/all`);
+  const { data } = useAxiosFetch(ITEMS_ALL);
 
   useEffect(() => {
     setUsers(data);
-    // console.log(data);
+    console.log('data ' + data);
   }, [data, setUsers]);
 
   return (

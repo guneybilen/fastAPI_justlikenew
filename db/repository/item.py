@@ -1,5 +1,6 @@
 from ..models.item import Item
 from ..models.user import User
+from ..models.image import Image
 from schemas.item import ItemCreate 
 from schemas.image import ImageCreate   
 from sqlalchemy.orm import Session 
@@ -9,6 +10,8 @@ from fastapi import HTTPException, status, Depends, UploadFile, File
 # from routers.routes.route_login import get_current_user_from_token
 from core.security import get_current_user_from_token
 import os as _os
+from sqlalchemy.orm import Session
+from db.session import get_db
 
 def validate_image(image_size: int):
     # print(image_size)
@@ -20,20 +23,38 @@ def validate_image(image_size: int):
 
 def create_new_item(item: ItemCreate, 
                     db: Session, 
-                    seller_id: int,
-                    current_user: User = Depends(get_current_user_from_token)): 
-  
+                   current_user_id: int): 
+
+    user = db.query(User).filter(User.id==current_user_id).first()
+    print('brand', item)
+
     item_object = Item( brand = item.brand,
                         model = item.model,
                         location = item.location, 
                         description = item.description,
                         price = item.price, 
-                        seller_id = seller_id
+                        seller_id = current_user_id
                      )
-    db.add(item_object)
-    db.commit() 
+    item = db.query(Item).filter(Item.seller_id==current_user_id).first()
+
+    image_object = Image(item_image1 = item.item_image1, 
+                  item_image2 = item.item_image2, 
+                  item_image3 = item.item_image3,
+                  item_id = item.id)
+
+    session = Session(get_db)
+
+    session.add(item_object())
+    session.add(image_object())
+
+    session.commit() 
+
+    # db.add(item_object)
+    # db.commit() 
     db.refresh(item_object) 
-    return item_object
+    db.refresh(image_object) 
+
+    return [item_object, image_object]
 
 def retrieve_item(id: int, db: Session):
   item = db.query(Item).filter(Item.id==id).first()  

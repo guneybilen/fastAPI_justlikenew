@@ -2,6 +2,7 @@ import { useStoreActions } from 'easy-peasy';
 import { useNavigate } from 'react-router-dom';
 import { useState, useRef } from 'react';
 import { DefaultEditor } from 'react-simple-wysiwyg';
+// const FormData = require('form-data');
 
 const NewPost = () => {
   const history = useNavigate();
@@ -9,7 +10,7 @@ const NewPost = () => {
 
   const [brand, setBrand] = useState('');
   const [model, setModel] = useState('');
-  // const [entry, setEntry] = useState('');
+  const [location, setLocation] = useState('');
   const [price, setPrice] = useState('');
   const [image1, setImage1] = useState(false);
   const [image2, setImage2] = useState(false);
@@ -19,7 +20,7 @@ const NewPost = () => {
   const [imageUpload3, setImageUpload3] = useState(null);
   const [error, setError] = useState('');
   const [closeButtonShouldShow, setCloseButtonShouldShow] = useState(false);
-  const [html, setHtml] = useState('You can start typing here...');
+  const [html, setHtml] = useState('');
 
   const scrollTo = (ref) => {
     if (ref && ref.current /* + other conditions */) {
@@ -32,18 +33,18 @@ const NewPost = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    let form_data = new FormData();
-    if (imageUpload1) form_data.append('item_image1', imageUpload1);
-    if (imageUpload2) form_data.append('item_image2', imageUpload2);
-    if (imageUpload3) form_data.append('item_image3', imageUpload3);
-    form_data.append('brand', brand);
-    form_data.append('price', price);
-    form_data.append('entry', html);
-    form_data.append('model', model);
-    form_data.append('seller', localStorage.getItem('loggedInId'));
+    let item = new FormData(e.form);
+    if (imageUpload1) item.append('item_image1', imageUpload1);
+    if (imageUpload2) item.append('item_image2', imageUpload2);
+    if (imageUpload3) item.append('item_image3', imageUpload3);
+    item.append('brand', brand);
+    item.append('price', price);
+    item.append('description', html);
+    item.append('location', location);
+    item.append('model', model);
 
     savePost({
-      form_data: form_data,
+      item: item,
       cb: (brandormodelerror, error, status) => {
         let error_sentence = null;
         if (brandormodelerror) {
@@ -106,6 +107,15 @@ const NewPost = () => {
             value={model}
             onChange={(e) => setModel(e.target.value)}
           />
+          <label htmlFor="itemModel">Location:</label>
+          <input
+            type="text"
+            id="itemLocation"
+            required
+            className="form-control"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+          />
           <label htmlFor="itemPrice">CAD$ Price:</label>
           <input
             type="text"
@@ -115,10 +125,12 @@ const NewPost = () => {
             onChange={(e) => setPrice(e.target.value)}
           />
           <label htmlFor="itemBody">
-            Entry (enter your non-private contact details also, so buyers can reach you!):
+            Entry (enter your non-private contact details also, so buyers can
+            reach you!):
           </label>
           <DefaultEditor
             value={html}
+            placeholder="You can start typing here..."
             className="form-control"
             onChange={onChange}
           />
