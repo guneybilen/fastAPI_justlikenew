@@ -5,7 +5,7 @@ import { DefaultEditor } from 'react-simple-wysiwyg';
 // const FormData = require('form-data');
 
 const NewPost = () => {
-  const history = useNavigate();
+  const navigate = useNavigate();
   const scrollRef = useRef(null);
 
   const [brand, setBrand] = useState('');
@@ -34,9 +34,12 @@ const NewPost = () => {
     e.preventDefault();
 
     let item = new FormData(e.form);
-    if (imageUpload1) item.append('item_image1', imageUpload1);
-    if (imageUpload2) item.append('item_image2', imageUpload2);
-    if (imageUpload3) item.append('item_image3', imageUpload3);
+    if (imageUpload1) item.append('item_image1a', imageUpload1);
+    if (imageUpload1) item.append('item_image1b', imageUpload1);
+    if (imageUpload2) item.append('item_image2a', imageUpload2);
+    if (imageUpload2) item.append('item_image2b', imageUpload2);
+    if (imageUpload3) item.append('item_image3a', imageUpload3);
+    if (imageUpload3) item.append('item_image3b', imageUpload3);
     item.append('brand', brand);
     item.append('price', price);
     item.append('description', html);
@@ -45,26 +48,29 @@ const NewPost = () => {
 
     savePost({
       item: item,
-      cb: (brandormodelerror, error, status) => {
-        let error_sentence = null;
-        if (brandormodelerror) {
-          setError(brandormodelerror);
-          setCloseButtonShouldShow(true);
-          scrollTo(scrollRef);
-        } else {
-          error_sentence =
-            status === 400 &&
-            (error?.item_image1 ||
-              error?.item_image2 ||
-              error?.item_image3 ||
-              error?.price);
-          setError(error_sentence);
-          setCloseButtonShouldShow(true);
-          scrollTo(scrollRef);
-        }
-
-        if (!brandormodelerror && !error_sentence) history('/');
+      cb: (id) => {
+        navigate('/items/' + id);
       },
+      // cb: (brandormodelerror, error, status) => {
+      //   let error_sentence = null;
+      //   if (brandormodelerror) {
+      //     setError(brandormodelerror);
+      //     setCloseButtonShouldShow(true);
+      //     scrollTo(scrollRef);
+      //   } else {
+      //     error_sentence =
+      //       status === 400 &&
+      //       (error?.item_image1 ||
+      //         error?.item_image2 ||
+      //         error?.item_image3 ||
+      //         error?.price);
+      //     setError(error_sentence);
+      //     setCloseButtonShouldShow(true);
+      //     scrollTo(scrollRef);
+      //   }
+
+      // if (!brandormodelerror && !error_sentence) navigate('/');
+      // },
     });
   };
 

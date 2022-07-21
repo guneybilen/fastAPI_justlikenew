@@ -84,21 +84,23 @@ async def get_current_user_from_token(access_token: str, db: Session = Depends(g
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Not authenticated"},
     )
-    # try:
-    print("access_token", access_token)
-    payload = jwt.decode(access_token, settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
-    email: str = payload.get("sub")
-    user = db.query(User).filter(User.email == email).first()
-    print("usnername/email extracted is", user.email)
-#   if user is None:
-    #         raise credentials_exception
-    #   token_scopes = payload.get("scopes", [])
-    #   token_data = Area(scopes=token_scopes, username=user.username)
-    # except (JWTError, ValidationError):
+    try:
+        print("access_token", access_token)
+        payload = jwt.decode(access_token, settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
+        email: str = payload.get("sub")
+        user = db.query(User).filter(User.email == email).first()
+        print("usnername/email extracted is", user.email)
+        return user
+        # if user is None:
+        #         raise credentials_exception
+        #   token_scopes = payload.get("scopes", [])
+        #   token_data = Area(scopes=token_scopes, username=user.username)
+    except (JWTError, ValidationError, ExpiredSignatureError):
+        return "access_token_error"
+        #     raise credentials_exception
+        # user = db.query(User).filter_by(username=token_data.username).first()
+    # if user is None:
     #     raise credentials_exception
-    # user = db.query(User).filter_by(username=token_data.username).first()
-    if user is None:
-        raise credentials_exception
     # for scope in scopes.scopes:
     #     if scope not in token_data.scopes:
     #         raise HTTPException(
@@ -106,8 +108,8 @@ async def get_current_user_from_token(access_token: str, db: Session = Depends(g
     #             detail="Not enough permissions",
     #             headers={"WWW-Authenticate": authenticate_value},
     #        )
-    else:
-      return user
+    # else:
+    #   return user
 
 
 async def get_current_active_user(

@@ -1,6 +1,7 @@
 from ..models.image import Image
 from ..models.item import Item
 from ..models.user import User
+from ..models.limit import Limit
 from sqlalchemy.orm import Session, contains_eager,joinedload
 import sqlalchemy.sql as _sqlalchemy_sql
 import sqlalchemy.sql.functions as _func
@@ -58,8 +59,8 @@ def validate_image(file_size):
      return 0
 
 
-def upload_image_by_item_id(id: int, db: Session,  
-                            current_user,
+def upload_image_by_seller_id(id: int, db: Session,  
+                            current_user: str,
                             file: UploadFile = File(...),
                             file_size: bytes = File(...)):
     try:
@@ -103,12 +104,12 @@ def upload_image_by_item_id(id: int, db: Session,
     except Exception as e:
         print(e)
 
-def list_images_with_items(email: str, db: Session):
+def list_images_with_items(db: Session):
     # query = db.query(Image).filter(Image.id).options(contains_eager(Image.id)).all()
     # query = db.query(User).options(joinedload('*')).all()
     # query = db.query(Item).filter((Item.seller_id == User.id) |
             # (Item.seller_id == None)).all()
-    query = db.query(User).options(joinedload('*')).all()[:10]
+    query = db.query(Image).options(joinedload("items").joinedload("users").joinedload("limit").joinedload("area")).all()[:10]
     return query
 
 def list_images_with_item(id:int, db: Session):

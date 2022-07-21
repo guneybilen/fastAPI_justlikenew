@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, status, Request, Form
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, status, Request, Form, Body
+
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 from db.repository.item import update_item_by_id, delete_item_by_id, create_new_item
@@ -7,7 +8,7 @@ from db.repository.image import list_images_with_items, list_images_with_item
 from core.security import get_current_user_from_token
 from schemas.item import ItemBase, ItemCreate, ShowItem
 from typing import List
-from typing import Optional
+from typing import Optional, Dict, Any
 from db.models.user import User
 from schemas.user import ShowAllImportantDataAboutUser
 
@@ -15,6 +16,8 @@ from db.session import get_db
 from sqlalchemy.orm import Session
 import os as _os
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import PlainTextResponse
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -23,45 +26,57 @@ path = "/home/bilen/Desktop/projects/fastapi/justlikenew"
 
 app = FastAPI()
 
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    return PlainTextResponse(str(exc), status_code=400)
+
 # @router.post("/create-item/", response_model=ShowItem)
 @router.post("/create-item/")
-async def create_item(req: Request, item: ItemBase = Depends(),
-                  # brand: str = Form(), 
-                  # location: str | None = None, 
-                  # description: str | None = None,
-                  # price: float | None = None, 
-                  # model: str | None = None,
-                  # item_image1: UploadFile | None = None,
-                  # item_image2: UploadFile | None = None,
-                  # item_image3: UploadFile | None = None,
+async def create_item(req: Request,
+                  item_image1a: bytes | None = File(default=None),
+                  item_image1b: UploadFile | None = File(default=None),
+                  item_image2a: bytes | None = File(default=None),
+                  item_image2b: UploadFile | None = File(default=None),
+                  item_image3a: bytes | None = File(default=None),
+                  item_image3b: UploadFile | None = File(default=None),
+                  brand: str = Form(),
+                  location: Optional[str] = Form(None),  
+                  description: Optional[str] = Form(None),
+                  price: Optional[float] = Form(None), 
+                  model: Optional[str] = Form(None),
+                 
                   db: Session = Depends(get_db)):
 
-                # result = {**item.dict()}
+                # result = {**item}
                 # print('brand', brand)
-                # return None
+                # return {"item_image1": item_image1.}
 
-                current_user = await get_current_user_from_token(access_token= req.headers['access_token'], db=db)
+                current_user_or_access_token_error = await get_current_user_from_token(access_token= req.headers['access_token'], db=db)
 
-                # print(current_user.id)
+                if(current_user_or_access_token_error=="access_token_error"):
+                  return {'access_token': 'access_token_error'}
 
-                # return None
 
-                # item = {
-                #   brand: brand,
-                #   price: price,
-                #   location: location,
-                #   model: model,
-                #   description: description,
-                #   item_image1: item_image1,
-                #   item_image2: item_image2,
-                #   item_image3: item_image3,
-                # }
+                item_object = {
+                  "brand": brand,
+                  "price": price,
+                  "location": location,
+                  "model": model,
+                  "description": description,
+                  "item_image1a": item_image1a,
+                  "item_image1b": item_image1b,
+                  "item_image2a": item_image2a,
+                  "item_image2b": item_image2b,
+                  "item_image3a": item_image3a,
+                  "item_image3b": item_image3b,
+                }
 
-                # item = create_new_item(item=item, db=db, 
-                #                       current_user_id=current_user.id) 
-                                     
-                # return item
 
+                boolean_result, item_id = create_new_item(item_object=item_object, db=db, 
+                                      current_user=current_user_or_access_token_error) 
+
+                return { "result": boolean_result, "item_id": item_id}
 
 
 # if we keep just "{id}". it would start catching all routes
@@ -93,13 +108,14 @@ def read_item(id: int, db: Session = Depends(get_db)):
 # https://stackoverflow.com/questions/70634056/problem-with-python-fastapi-pydantic-and-sqlalchemy
 @router.get("/all", response_model=List[ShowAllImportantDataAboutUser] | List)
 def read_items(db: Session = Depends(get_db)):
-  try:         
-    if app.state is not None:
-      print('bilen', app.state.current_user)
-      images_items = list_images_with_items(db=db)
-      return images_items
-  except AttributeError as e:
-    return []
+  # try:         
+    # if app.state is not None:
+  # print('bilen', app.state.current_user)
+  images_items = list_images_with_items(db=db)
+  print(images_items[0])
+  return images_items
+  #except AttributeError as e:
+  #  return []
 
 
 

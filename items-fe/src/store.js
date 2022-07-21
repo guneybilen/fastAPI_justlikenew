@@ -14,6 +14,7 @@ export default createStore({
 
   users: [],
   setUsers: action((state, payload) => {
+    console.log(payload);
     state.users = payload;
   }),
 
@@ -95,57 +96,52 @@ export default createStore({
   }),
 
   savePost: thunk(async (actions, data, helpers) => {
-    const { items } = helpers.getState();
+    // const { items } = helpers.getState();
     const form_data = data.item;
     const cb = data.cb;
-    console.log(form_data.get('brand'));
+
     axios({
       method: 'post',
       url: 'http://localhost:8000/items/create-item/',
-      // data: {
-      //   item: {
-      //     brand: form_data.get('brand'),
-      //     description: form_data.get('description'),
-      //     price: form_data.get('price'),
-      //     location: form_data.get('location'),
-      //     model: form_data.get('model'),
-      //     item_image1: form_data.get('item_image1'),
-      //     item_image2: form_data.get('item_image2'),
-      //     item_image3: form_data.get('item_image3'),
-      //   },
-      // },
       data: form_data,
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'x-www-form-urlencoded',
         // accept: 'application/json',
         access_token: `${localStorage.getItem('access_token')}`,
       },
     })
       .then((response) => {
-        if (response.data['error'])
-          return cb(response.data['error'], null, null);
-        if (
-          !response.data['error'] &&
-          (response.data.item_image1?.length > 0 ||
-            response.data.item_image2?.length > 0 ||
-            response.data.item_image3?.length > 0)
-        ) {
-          return cb(null, response.data, null);
-        } else {
-          actions.setItems([...items, response.data]);
-          actions.setSlug('');
-          actions.setBrand('');
-          actions.setPrice('');
-          actions.setModel('');
-          actions.setEntry('');
-          return cb(null, null);
+        // console.log(response.data);
+        if (response.data['access_token'] === 'access_token_error')
+          window.location = '/';
+        if (response.data.result === true) {
+          cb(response.data.item_id);
         }
+
+        //   if (response.data['error'])
+        //     return cb(response.data['error'], null, null);
+        //   if (
+        //     !response.data['error'] &&
+        //     (response.data.item_image1?.length > 0 ||
+        //       response.data.item_image2?.length > 0 ||
+        //       response.data.item_image3?.length > 0)
+        //   ) {
+        //     return cb(null, response.data, null);
+        //   } else {
+        //     actions.setItems([...items, response.data]);
+        //     actions.setSlug('');
+        //     actions.setBrand('');
+        //     actions.setPrice('');
+        //     actions.setModel('');
+        //     actions.setEntry('');
+        //     return cb(null, null);
+        //   }
       })
-      .then((data) => {
-        console.log('data', data);
-      })
+      // .then((data) => {
+      //   console.log('data', data);
+      // })
       .catch((error) => {
-        cb(null, error.response.data, error.response.status);
+        console.log(error);
       });
   }),
 

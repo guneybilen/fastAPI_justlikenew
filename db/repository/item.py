@@ -1,7 +1,7 @@
 from ..models.item import Item
 from ..models.user import User
 from ..models.image import Image
-from schemas.item import ItemCreate 
+from schemas.item import ItemBase, ItemCreate 
 from schemas.image import ImageCreate   
 from sqlalchemy.orm import Session 
 from sqlalchemy.sql import or_
@@ -11,7 +11,8 @@ from fastapi import HTTPException, status, Depends, UploadFile, File
 from core.security import get_current_user_from_token
 import os as _os
 from sqlalchemy.orm import Session
-from db.session import get_db
+from db.repository.image import upload_image_by_seller_id
+
 
 def validate_image(image_size: int):
     # print(image_size)
@@ -21,40 +22,41 @@ def validate_image(image_size: int):
         raise HTTPException(stattus_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
                             detail="max image size is has to be less than %s MB" % limit_MB)
 
-def create_new_item(item: ItemCreate, 
+def create_new_item(item_object: ItemBase, 
                     db: Session, 
-                   current_user_id: int): 
+                    current_user: User): 
 
-    user = db.query(User).filter(User.id==current_user_id).first()
-    print('brand', item)
+    user = db.query(User).filter(User.id==current_user.id).first()
+    # print('brand', item)
 
-    item_object = Item( brand = item.brand,
-                        model = item.model,
-                        location = item.location, 
-                        description = item.description,
-                        price = item.price, 
-                        seller_id = current_user_id
-                     )
-    item = db.query(Item).filter(Item.seller_id==current_user_id).first()
+    item_object_to_be_created = Item( brand = item_object["brand"],
+                        model = item_object["model"],
+                        location = item_object["location"], 
+                        description = item_object["description"],
+                        price = item_object["price"], 
+                        seller_id = current_user.id)
 
-    image_object = Image(item_image1 = item.item_image1, 
-                  item_image2 = item.item_image2, 
-                  item_image3 = item.item_image3,
-                  item_id = item.id)
+    db.add(item_object_to_be_created)
+    db.flush()
 
-    session = Session(get_db)
+    # print(item_object_to_be_created.id)
+    # item_found = db.query(Item).filter(Item.seller_id==current_user_id).first()
+    # item_found = db.query(Item).get(item_object_to_be_created.seller_id)
 
-    session.add(item_object())
-    session.add(image_object())
+    # print(item_found.id)
+    # return None
 
-    session.commit() 
+    for i in range(1,4):
+      if(item_object[f"item_image{i}b"]) is not None:
+        upload_image_by_seller_id(id= item_object_to_be_created.id, 
+                              db=db, current_user=current_user.username, 
+                              file = item_object[f"item_image{i}b"], 
+                              file_size = item_object[f"item_image{i}a"])
 
-    # db.add(item_object)
-    # db.commit() 
-    db.refresh(item_object) 
-    db.refresh(image_object) 
 
-    return [item_object, image_object]
+
+    db.commit() 
+    return [True, item_object_to_be_created.id]
 
 def retrieve_item(id: int, db: Session):
   item = db.query(Item).filter(Item.id==id).first()  

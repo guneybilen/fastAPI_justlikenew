@@ -17,12 +17,14 @@ const ItemPage = () => {
   const OBJECT_ACCESS_INDEX = 0;
   const { id } = useParams();
   const history = useNavigate();
-  const loggedInNickname = useStoreState((state) => state.loggedInNickname);
-  const loggedInID = useStoreState((state) => state.loggedInID);
+  // const loggedInNickname = useStoreState((state) => state.loggedInNickname);
+  // const loggedInID = useStoreState((state) => state.loggedInID);
   const deleteItem = useStoreActions((actions) => actions.deleteItem);
   const getUserById = useStoreState((state) => state.getUserById);
 
   const user = getUserById(id)[OBJECT_ACCESS_INDEX];
+
+  console.log('user ', user);
 
   if (user) {
     localStorage.setItem('seller', user.username);
@@ -43,7 +45,7 @@ const ItemPage = () => {
   useEffect(() => {
     if (user && user.username === localStorage.getItem('username'))
       setItemOwner(true);
-  }, [user, loggedInNickname, loggedInID]);
+  }, [user]);
 
   return (
     <main className="PostPage">

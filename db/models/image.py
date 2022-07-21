@@ -10,7 +10,6 @@ class Image(Base):
   item_id = Column(Integer, ForeignKey("item.id"))
   created_date=Column(DateTime(),default=datetime.utcnow)
   updated_date=Column(DateTime(),default=datetime.utcnow, onupdate=datetime.utcnow)
-  item_id = Column(Integer, ForeignKey("item.id"))
   item_image1 = Column(String, nullable=True)
   item_image2 = Column(String, nullable=True)
   item_image3 = Column(String, nullable=True)

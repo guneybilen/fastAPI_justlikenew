@@ -72,7 +72,7 @@ class ShowAllImportantDataAboutUser(BaseModel):
      created_date: datetime
      is_active: bool
      items: Optional[list[ShowItem]]
-     scopes: list[Scope]
+     scopes: Optional[list[Scope]]
      
      class Config:
        orm_mode = True
