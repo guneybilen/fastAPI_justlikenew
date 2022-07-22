@@ -18,6 +18,7 @@ import os as _os
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import PlainTextResponse
+import itertools
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -80,8 +81,8 @@ async def create_item(req: Request,
 
 
 # if we keep just "{id}". it would start catching all routes
-# @router.get("/items/{id}", response_model=ShowItem)
-@router.get("/items/{id}", response_model=List[ShowAllImportantDataAboutUser])
+@router.get("/{id}", response_model=ShowItem)
+# @router.get("/{id}", response_model=List[ShowAllImportantDataAboutUser])1
 def read_item(id: int, db: Session = Depends(get_db)):
   # item = retrieve_item(id=id, db=db)
 
@@ -98,21 +99,21 @@ def read_item(id: int, db: Session = Depends(get_db)):
   # if _os.path.exists(file_path1 or file_path2 or file_path3):
   #   return {"item": item, "images": FileResponse([file_path1, file_path2, file_path3])}
   # return item
-  images_item = list_images_with_item(id=id, db=db)
-  return images_item
+  item_and_image_names = list_images_with_item(id=id, db=db)
+  return item_and_image_names
 
 
 
 # List[] type in response model is the most important part in order to receive the right answer
 # otherwise all data you receive will be resulted in nulls.
 # https://stackoverflow.com/questions/70634056/problem-with-python-fastapi-pydantic-and-sqlalchemy
-@router.get("/all", response_model=List[ShowAllImportantDataAboutUser] | List)
+@router.get("/all", response_model=list)
 def read_items(db: Session = Depends(get_db)):
   # try:         
     # if app.state is not None:
   # print('bilen', app.state.current_user)
   images_items = list_images_with_items(db=db)
-  print(images_items[0])
+  # print(images_items[0])
   return images_items
   #except AttributeError as e:
   #  return []

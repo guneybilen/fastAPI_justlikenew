@@ -1,7 +1,8 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useStoreState, useStoreActions } from 'easy-peasy';
 import { useState, useEffect } from 'react';
-import { IMAGES_URL } from '../constants';
+import { IMAGES_URL, ITEM_ID } from '../constants';
+import axios from 'axios';
 
 import {
   getItemBrandForSingleUser,
@@ -42,10 +43,17 @@ const ItemPage = () => {
     }
   };
 
+  // useEffect(() => {
+  //   if (user && user.username === localStorage.getItem('username'))
+  //     setItemOwner(true);
+  // }, [user]);
+
   useEffect(() => {
-    if (user && user.username === localStorage.getItem('username'))
-      setItemOwner(true);
-  }, [user]);
+    axios
+      .get(ITEM_ID + '/' + id)
+      .then((response) => console.log(response))
+      .catch((error) => console.log(error));
+  }, [id]);
 
   return (
     <main className="PostPage">

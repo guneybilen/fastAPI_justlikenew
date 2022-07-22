@@ -23,7 +23,7 @@ def upgrade() -> None:
         sa.Column('id', sa.Integer, primary_key=True, index=True),
         sa.Column('created_date', sa.DateTime, nullable=False, default=datetime.utcnow),
         sa.Column('updated_date', sa.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow ),
-        sa.Column('limit_id', sa.Integer, sa.ForeignKey("limit.id"), nullable=True),
+        sa.Column('user_id', sa.Integer, sa.ForeignKey("user.id"), nullable=True),
         sa.Column("scopes", sa.ARRAY(sa.String), default=["READ", "WRITE", "BOTH"], nullable= False),
         sa.Column("permission_to_model", sa.ARRAY(sa.String), default=["IMAGES", "USERS", "ITEMS"], nullable= False),
         sa.Column("permission_to_user", sa.String(50), default="OWNER", nullable= False),

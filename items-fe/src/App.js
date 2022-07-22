@@ -25,12 +25,12 @@ import { ITEMS_ALL } from './constants';
 
 function App() {
   const setUsers = useStoreActions((actions) => actions.setUsers);
-  const { data } = useAxiosFetch(ITEMS_ALL);
+  // const { data } = useAxiosFetch(ITEMS_ALL);
 
-  useEffect(() => {
-    setUsers(data);
-    console.log('data ' + data);
-  }, [data, setUsers]);
+  // useEffect(() => {
+  //   setUsers(data);
+  //   console.log('data ' + data);
+  // }, [data, setUsers]);
 
   return (
     <div className="App">

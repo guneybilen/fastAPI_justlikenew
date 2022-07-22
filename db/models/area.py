@@ -27,7 +27,7 @@ class PermissionToUser(StrEnum):
 
 class Area(Base):
     id = Column(Integer, primary_key=True, index=True)
-    limit_id = Column(Integer, ForeignKey("limit.id"))
+    user_id = Column(Integer, ForeignKey("user.id"))
     created_date=Column(DateTime(),default=datetime.utcnow)
     updated_date = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     scopes = Column(ARRAY(String), default=["READ", "WRITE", "BOTH"], nullable= False)                                                         

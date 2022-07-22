@@ -32,3 +32,4 @@ class User(Base):
       security_answer = Column(String(255), nullable=False)
       item = relationship('Item', backref="users")
       limit = relationship('Limit', backref="users")
+      area = relationship('Area', backref="users")

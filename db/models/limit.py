@@ -12,7 +12,6 @@ class Limit(Base):
     updated_date=Column(DateTime(),default=datetime.utcnow, onupdate=datetime.utcnow)
     access_token = Column(String, nullable=False)
     token_type = Column(String, nullable=False, default="bearer")
-    area = relationship("Area", backref="limits")
 
 
 

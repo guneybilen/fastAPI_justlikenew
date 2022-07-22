@@ -15,14 +15,40 @@ from typing import List
 from schemas.mixedType import MixedType
 from sqlalchemy.orm import Session
 
+from db.models.limit import Limit
+from db.models.area import Area
+
 router = APIRouter()
 
 app = FastAPI()
 
+def create_limit_table_entry(access_token_entry: str, token_type_entry: str, user_id: int, db: Session):
+  limit_entry = Limit(access_token = access_token_entry, token_type = token_type_entry, user_id = user_id)
+
+  db.add(limit_entry)
+  db.commit()
+  db.refresh(limit_entry)
+  return limit_entry.id
+
+def create_area_table_entry(user_id: int, db: Session):
+  try: 
+    db.ququery(Area).filter(Area.user_id == user_id).first()
+    area_entry = Area(user_id = user_id, scopes=['BOTH'], 
+                     permission_to_model = ["IMAGES", "USERS", "ITEMS"],
+                     permission_to_user = ["OWNER"])
+
+    db.add(area_entry)
+    db.commit()
+    db.refresh(area_entry)
+  except Exception as e:
+    return None
+
+
 def authenticate_user(username: str, password: str, db: Session = Depends(get_db)):
+
   user = get_user(username=username, db=db)
   app.state.current_user = user
-  print(user.username)
+  # print(user.username)
   if not user: 
     return False
   if not Hasher.verify_password(password, user.hashed_password):
@@ -40,7 +66,7 @@ async def check_if_token_expired(req: Request, db: Session = Depends(get_db)):
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
                            db: Session = Depends(get_db)):
 
-                           print(form_data)
+                          #  print(form_data)
 
                            user = authenticate_user(form_data.username, form_data.password, db)
 
@@ -55,13 +81,16 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
                             data={"sub": user.email}, expires_delta=access_token_expires
                            )
 
+                           limit_entry_id = create_limit_table_entry(access_token_entry = access_token, token_type_entry = "bearer", user_id = user.id, db = db)
+                           create_area_table_entry(user_id = user.id, db = db)
+
                            # For My Information: cross-domain cookie can not be set up and and also
                            # canot be read due to browser security architecture.
                            #  response.set_cookie(
                            #   key="access_token", value=f"Bearer {access_token}", httponly=True
                            #  )
 
-                           return {"scopes": MixedType.scopes, "access_token": access_token, "token_type": "bearer", "loggedin_username": user.username}
+                           return {"access_token": access_token, "token_type": "bearer", "loggedin_username": user.username}
 
 
 

@@ -170,7 +170,7 @@ async def post_user_create(data: UserCreate, db: Session = Depends(get_db)):
                   return {"result": returned_user_or_error.orig}
               return {"email": returned_user_or_error.email,
                       "username": returned_user_or_error.username, 
-                      "result": "Signed up completely. Please, Click on Home link."}
+                      "result": "Signing up completed. Please, Click on Home link."}
 
 @router.get("/users/me/", response_model=ShowUser)
 async def read_users_me(current_user: ShowUser = Depends(get_current_active_user)):

@@ -1,10 +1,11 @@
 from pydantic import BaseModel, EmailStr, constr
 from enum import Enum
-from typing import Optional
+from typing import Dict, Optional
 from datetime import datetime
 from schemas.item import ShowItem 
-from typing import Union
-from schemas.area import Scope
+from typing import Union, Dict, Any
+from schemas.area import Area
+from schemas.limit import Limit
 
 class SecurityEnum(str, Enum):
    BORN_CITY: str = "BORN_CITY" 
@@ -64,15 +65,16 @@ class UserResponse(BaseModel):
 
 
 class ShowAllImportantDataAboutUser(BaseModel):
-     id: int
-     email: EmailStr
-     username: str
-     first_name: str
-     last_name: str
-     created_date: datetime
-     is_active: bool
-     items: Optional[list[ShowItem]]
-     scopes: Optional[list[Scope]]
+     id: Optional[int]
+     email: Optional[EmailStr]
+     username: Optional[str]
+     first_name: Optional[str]
+     last_name: Optional[str]
+     created_date: Optional[datetime]
+     is_active: Optional[bool]
+     items: Optional[ShowItem]
+     areas: Optional[Area]
+     limit: Optional[Limit]
      
      class Config:
        orm_mode = True

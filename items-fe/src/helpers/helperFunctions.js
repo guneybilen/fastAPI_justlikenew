@@ -23,6 +23,7 @@ export const getItemCreatedDate = (users) => {
 export const getItemBrand = (users) => {
   return users.map((singleUser) => {
     return singleUser['items'].map((singleItem) => {
+      console.log(singleItem);
       return singleItem.brand.length < 16
         ? singleItem.brand
         : singleItem.brand?.slice(0, 15);

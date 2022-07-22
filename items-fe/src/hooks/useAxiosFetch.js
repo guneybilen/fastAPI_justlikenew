@@ -24,15 +24,16 @@ const useAxiosFetch = (dataUrl) => {
         });
 
         if (isMounted) {
+          console.log(response.data);
           setData(response.data);
           setFetchError(null);
         }
       } catch (error) {
-        // console.log(error);
+        console.log('error ' + error);
         if (isMounted) {
           setFetchError(error.message);
           setData([]);
-          localStorage.removeItem('nickname');
+          localStorage.clear();
           history('login');
         }
       } finally {

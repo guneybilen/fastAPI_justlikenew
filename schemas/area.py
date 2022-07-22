@@ -22,7 +22,7 @@ class PermissionToUser(StrEnum):
 class Area(BaseModel):
   created_date: datetime
   updated_date: datetime
-  user = str
+  limit_id = int
   scopes = [Scope]                                                        
   permission_to_model = [PermissionToModel]
   permission_to_user = [PermissionToUser]
@@ -30,3 +30,6 @@ class Area(BaseModel):
   @staticmethod
   def get_scope():
     return Scope
+  class Config():
+    orm_mode = True
+    use_enum_values = True

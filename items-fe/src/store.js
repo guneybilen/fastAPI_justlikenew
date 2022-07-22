@@ -88,6 +88,7 @@ export default createStore({
   getUserById: computed((state, payload) => {
     return (payload) => {
       return state.users.map((u) => {
+        console.log('state ' + state);
         if (parseInt(u.id) === parseInt(payload)) {
           return u;
         } else return false;

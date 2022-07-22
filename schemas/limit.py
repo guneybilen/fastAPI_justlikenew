@@ -1,9 +1,10 @@
 
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
-class Area(BaseModel):
-    created_date: datetime
-    updated_date: datetime
-    access_token: str
+class Limit(BaseModel):
+    created_date: Optional[datetime]
+    updated_date: Optional[datetime]
+    access_token: Optional[str]
     

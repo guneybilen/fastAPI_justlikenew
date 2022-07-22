@@ -11,8 +11,8 @@ class EmailSchema(BaseModel):
     email: List[EmailStr]
 
 conf = ConnectionConfig(
-    MAIL_USERNAME = "507f842caa03ea",
-    MAIL_PASSWORD = "e7200386093f5a",
+    MAIL_USERNAME = "d121632eaeb0f6",
+    MAIL_PASSWORD = "c4fc29ed239f82",
     MAIL_FROM = "admin@admin.com",
     MAIL_PORT = 587,
     MAIL_SERVER = "smtp.mailtrap.io",

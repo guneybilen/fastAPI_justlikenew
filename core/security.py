@@ -9,6 +9,7 @@ from core.config import Settings as settings
 from db.session import get_db
 from db.models.user import User
 from db.models.area import Area
+from db.models.limit import Limit
 from jose import jwt, JWTError
 from fastapi import Depends, HTTPException, Security, status
 from fastapi.security import (
@@ -44,17 +45,19 @@ async def get_current_user_from_token_during_signup(access_token: str, db: Sessi
     )
     try:
         payload = jwt.decode(access_token, settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
+        user_email: str = payload.get("sub")
+        print("username/email extracted is", user_email)
+        # user = db.query(User).filter(User.email == user_email).first()
+        print(user_email)
+        if user_email is None:
+          db.query(Limit).filter(Limit.access_token == access_token).delete()
+          raise credentials_exception
+        return user_email
     except ExpiredSignatureError:
         return None
     except JWTError:
         return None
-    user_email: str = payload.get("sub")
-    print("username/email extracted is", user_email)
-    user = db.query(User).filter(User.email == user_email).first()
-    print(user.username)
-    if user.username is None:
-        raise credentials_exception
-    return user.username
+
     
     
 async def check_token_expiration(access_token: str, db: Session):

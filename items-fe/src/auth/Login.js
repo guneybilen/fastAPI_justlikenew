@@ -13,7 +13,6 @@ export default function Login() {
   const [error, setError] = useState(false);
   const [alert, setAlert] = useState('');
   const [link, setLink] = useState(false);
-
   const [ckbox, setCkbox] = useState(false);
   const [show, setShow] = useState(false);
   const { state } = useLocation();
@@ -23,7 +22,7 @@ export default function Login() {
     document.getElementById('sbn-btn').disabled = true;
     document.getElementById('sbn-pass').disabled = true;
     document.getElementById('username').style.pointerEvents = 'none';
-  }, []);
+  }, [state]);
 
   const requestActivation = (e) => {
     e.preventDefault();
@@ -43,7 +42,7 @@ export default function Login() {
         return response.data;
       })
       .then((data) => {
-        // console.log(data);
+        console.log('data ' + data);
         if (data.state) {
           setError(true);
           setAlert(data.state);
@@ -66,7 +65,7 @@ export default function Login() {
 
   const success = () => {
     console.log('Authenticated!');
-    console.log(from);
+    // console.log(from);
     nav(from);
   };
 

@@ -17,12 +17,10 @@ const login_api = async (form_data, success, fail) => {
       } else if (response.status === 200) {
         localStorage.setItem('access_token', response.data.access_token);
         localStorage.setItem('token_type', response.data.token_type);
-        // localStorage.setItem('refresh', response.data.refresh_token);
         localStorage.setItem(
           'loggedin_username',
           response.data.loggedin_username
         );
-        // localStorage.setItem('loggedInId', response['user']['id']);
         success();
       }
     })
