@@ -2,7 +2,6 @@ import { useStoreActions } from 'easy-peasy';
 import { useNavigate } from 'react-router-dom';
 import { useState, useRef } from 'react';
 import { DefaultEditor } from 'react-simple-wysiwyg';
-// const FormData = require('form-data');
 
 const NewPost = () => {
   const navigate = useNavigate();
