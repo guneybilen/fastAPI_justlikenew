@@ -81,7 +81,7 @@ async def create_item(req: Request,
 
 
 # if we keep just "{id}". it would start catching all routes
-@router.get("/{id}", response_model=ShowItem)
+@router.get("/{id}", response_model=ShowAllImportantDataAboutUser)
 # @router.get("/{id}", response_model=List[ShowAllImportantDataAboutUser])1
 def read_item(id: int, db: Session = Depends(get_db)):
   # item = retrieve_item(id=id, db=db)

@@ -7,7 +7,7 @@ from datetime import timedelta
 from core.config import settings
 
 from core.hashing import Hasher
-from core.security import create_access_token, check_token_expiration
+from core.security import create_access_token, check_token_expiration, create_limit_table_entry
 from db.repository.login import get_user
 from db.session import get_db
 from typing import List
@@ -22,26 +22,8 @@ router = APIRouter()
 
 app = FastAPI()
 
-def create_limit_table_entry(access_token_entry: str, token_type_entry: str, user_id: int, db: Session):
-  limit_entry = Limit(access_token = access_token_entry, token_type = token_type_entry, user_id = user_id)
 
-  db.add(limit_entry)
-  db.commit()
-  db.refresh(limit_entry)
-  return limit_entry.id
 
-def create_area_table_entry(user_id: int, db: Session):
-  try: 
-    db.ququery(Area).filter(Area.user_id == user_id).first()
-    area_entry = Area(user_id = user_id, scopes=['BOTH'], 
-                     permission_to_model = ["IMAGES", "USERS", "ITEMS"],
-                     permission_to_user = ["OWNER"])
-
-    db.add(area_entry)
-    db.commit()
-    db.refresh(area_entry)
-  except Exception as e:
-    return None
 
 
 def authenticate_user(username: str, password: str, db: Session = Depends(get_db)):
@@ -81,8 +63,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
                             data={"sub": user.email}, expires_delta=access_token_expires
                            )
 
-                           limit_entry_id = create_limit_table_entry(access_token_entry = access_token, token_type_entry = "bearer", user_id = user.id, db = db)
-                           create_area_table_entry(user_id = user.id, db = db)
+                           create_limit_table_entry(access_token_entry = access_token, token_type_entry = "bearer", user_id = user.id, db = db)
 
                            # For My Information: cross-domain cookie can not be set up and and also
                            # canot be read due to browser security architecture.

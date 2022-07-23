@@ -5,6 +5,7 @@ import App from './App';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { StoreProvider } from 'easy-peasy';
 import store from './store';
+
 // import reportWebVitals from './reportWebVitals';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -13,7 +14,7 @@ ReactDOM.render(
     <StoreProvider store={store}>
       <Router>
         <Routes>
-          <Route path="*" element={<App />} />{' '}
+          <Route path="*" element={<App />} />
         </Routes>
       </Router>
     </StoreProvider>

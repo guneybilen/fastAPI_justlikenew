@@ -1,4 +1,5 @@
 export const ITEMS_URL = 'http://localhost:8000/items/';
+export const LOGOUT_URL = 'http://localhost:8000/users/logout';
 export const LOGIN_URL = 'http://localhost:8000/login/token';
 export const IMAGES_URL = 'http://localhost:8000/static/images/';
 export const SECURITY_ENUM_URL =

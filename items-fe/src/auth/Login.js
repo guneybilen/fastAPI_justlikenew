@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import login_api from '../api/login_api';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 
 export default function Login() {
@@ -12,7 +12,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
   const [alert, setAlert] = useState('');
-  const [link, setLink] = useState(false);
+  // const [link, setLink] = useState(false);
   const [ckbox, setCkbox] = useState(false);
   const [show, setShow] = useState(false);
   const { state } = useLocation();
@@ -24,38 +24,38 @@ export default function Login() {
     document.getElementById('username').style.pointerEvents = 'none';
   }, [state]);
 
-  const requestActivation = (e) => {
-    e.preventDefault();
-    let url = '/repeatactivate/';
+  // const requestActivation = (e) => {
+  //   e.preventDefault();
+  //   let url = '/repeatactivate/';
 
-    axios
-      .post(
-        url,
-        { username: username },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-      .then((response) => {
-        return response.data;
-      })
-      .then((data) => {
-        console.log('data ' + data);
-        if (data.state) {
-          setError(true);
-          setAlert(data.state);
-          scrollTo(myRef);
-        }
-      })
-      .catch((error) => {
-        console.log(error.response);
-        setError(true);
-        setAlert(error.response.data.message);
-        scrollTo(myRef);
-      });
-  };
+  //   axios
+  //     .post(
+  //       url,
+  //       { username: username },
+  //       {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //       }
+  //     )
+  //     .then((response) => {
+  //       return response.data;
+  //     })
+  //     .then((data) => {
+  //       console.log('data ' + data);
+  //       if (data.state) {
+  //         setError(true);
+  //         setAlert(data.state);
+  //         scrollTo(myRef);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log(error.response);
+  //       setError(true);
+  //       setAlert(error.response.data.message);
+  //       scrollTo(myRef);
+  //     });
+  // };
 
   const scrollTo = (ref) => {
     if (ref && ref.current /* + other conditions */) {
@@ -74,13 +74,13 @@ export default function Login() {
     localStorage.clear();
     scrollTo(myRef);
     if (status === 401) setAlert('wrong email and/or password');
-    if (status === 403) {
-      setLink(true);
+    // if (status === 403) {
+    //   setLink(true);
 
-      setAlert(
-        'You need to activate your account in order to authorize. You can request another activtion email from the link below'
-      );
-    }
+    //   setAlert(
+    //     'You need to activate your account in order to authorize. You can request another activtion email from the link below'
+    //   );
+    // }
     if (status === 500) setAlert('a problem in the server occurred');
   };
 
@@ -180,7 +180,7 @@ export default function Login() {
         </button>
         <br />
         <br />
-        {link ? (
+        {/* {link ? (
           <button
             className="btn btn-primary btn-lg w-100"
             onClick={(e) => requestActivation(e)}
@@ -189,7 +189,7 @@ export default function Login() {
           </button>
         ) : (
           <></>
-        )}
+        )} */}
         <div className="ckbox">
           <input
             type="checkbox"

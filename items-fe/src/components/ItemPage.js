@@ -30,7 +30,7 @@ const ItemPage = () => {
 
   const user = getUserById(id)[OBJECT_ACCESS_INDEX];
 
-  console.log('user ', user);
+  // console.log('user ', user);
   const savePost = useStoreActions((actions) => actions.savePost);
 
   const handleSubmit = (e) => {
@@ -69,7 +69,7 @@ const ItemPage = () => {
     axios
       .get(ITEM_ID + '/' + id)
       .then((response) => {
-        console.log(response);
+        console.log(response.data);
         setBrand(response.data.brand);
         setModel(response.data.model);
         setPrice(response.data.price);
@@ -78,7 +78,7 @@ const ItemPage = () => {
         setImage1(response.data.image[0]['item_image1']);
         setImage2(response.data.image[0]['item_image2']);
         setImage3(response.data.image[0]['item_image3']);
-        console.log('image1 ', response.data.image[0]['item_image1']);
+        // console.log('image1 ', response.data.image[0]['item_image1']);
       })
       .catch((error) => console.log(error));
   }, [id, image1]);
@@ -173,7 +173,7 @@ const ItemPage = () => {
             {image1 && (
               <img
                 className="itemImage"
-                src="static/images/guney51/1.jpeg"
+                src="static/images/bilen1/1.jpeg"
                 id="newImage1"
                 alt="newImage1"
                 width="150px"

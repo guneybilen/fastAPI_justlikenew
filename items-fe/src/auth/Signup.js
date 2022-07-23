@@ -53,6 +53,7 @@ const Signup = () => {
         axios.get(SECURITY_ENUM_URL),
         axios.get(CREATE_PROCEDURE),
       ]);
+      console.log('res2 ' + res2);
       setNames(Object.keys(res1.data));
       setValues(Object.values(res1.data));
       setEmail(res2.data.email);

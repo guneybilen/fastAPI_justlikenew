@@ -5,11 +5,12 @@ from jose import jwt
 from jose.exceptions import ExpiredSignatureError, JWTError
 from db.session import get_db
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
 from core.config import Settings as settings
 from db.session import get_db
 from db.models.user import User
-from db.models.area import Area
 from db.models.limit import Limit
+from db.models.area import Area
 from jose import jwt, JWTError
 from fastapi import Depends, HTTPException, Security, status
 from fastapi.security import (
@@ -36,6 +37,29 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
   return encoded_jwt
 
 
+async def get_current_user_for_token_expiration(acces_token_parsed:str, db: Session):
+    credentials_exception = HTTPException(
+          status_code=status.HTTP_401_UNAUTHORIZED,
+          detail="Could not validate credentials",
+          headers={"WWW-Authenticate": "access token has expired"},
+      )
+    try:
+        payload = jwt.decode(acces_token_parsed, settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
+        user_email: str = payload.get("sub")
+        print("username/email extracted is", user_email)
+        print(user_email)
+        token = db.query(Limit).filter(Limit._parsed == acces_token_parsed).one_or_none()
+        if token is None:
+          raise SQLAlchemyError
+        return token
+    except SQLAlchemyError:
+        return {"status": status.HTTP_205_RESET_CONTENT}
+    except ExpiredSignatureError:
+        return {"status": status.HTTP_205_RESET_CONTENT }
+    except JWTError:
+        return None
+
+
 async def get_current_user_from_token_during_signup(access_token: str, db: Session):
     # print(access_token)
     credentials_exception = HTTPException(
@@ -47,14 +71,13 @@ async def get_current_user_from_token_during_signup(access_token: str, db: Sessi
         payload = jwt.decode(access_token, settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
         user_email: str = payload.get("sub")
         print("username/email extracted is", user_email)
-        # user = db.query(User).filter(User.email == user_email).first()
         print(user_email)
         if user_email is None:
           db.query(Limit).filter(Limit.access_token == access_token).delete()
           raise credentials_exception
         return user_email
     except ExpiredSignatureError:
-        return None
+        return {"status": status.HTTP_205_RESET_CONTENT }
     except JWTError:
         return None
 
@@ -62,7 +85,7 @@ async def get_current_user_from_token_during_signup(access_token: str, db: Sessi
     
 async def check_token_expiration(access_token: str, db: Session):
     acces_token_parsed = access_token.split(" ")[1]
-    result = await get_current_user_from_token_during_signup(acces_token_parsed, db)
+    result = await get_current_user_for_token_expiration(acces_token_parsed, db)
     print('result ', result)
     return result
 
@@ -123,3 +146,37 @@ async def get_current_active_user(
     return current_user
 
 
+async def logout_user(access_token: str, db: Session):
+    try:
+        db.query(Limit).filter(Limit.access_token==access_token).delete()
+        return True
+    except Exception as e:
+        print("Error occurred during logout ", e)
+        return False
+
+
+async def create_area_table_entry(user_id: int, db: Session):
+  try: 
+    db.query(Area).filter(Area.user_id == user_id).first()
+    area_entry = Area(user_id = user_id, scopes=['BOTH'], 
+                     permission_to_model = ["IMAGES", "USERS", "ITEMS"],
+                     permission_to_user = ["OWNER"])
+
+    db.add(area_entry)
+    db.commit()
+    db.refresh(area_entry)
+  except Exception as e:
+    return None
+
+
+def create_limit_table_entry(access_token_entry: str, token_type_entry: str, user_id: int, db: Session):
+  limit = db.query(Limit).filter(Limit.user_id == user_id).one_or_none()
+  if limit is not None:
+    return None
+
+  limit_entry = Limit(access_token = access_token_entry, token_type = token_type_entry, user_id = user_id)
+
+  db.add(limit_entry)
+  db.commit()
+  db.refresh(limit_entry)
+  return limit_entry.id

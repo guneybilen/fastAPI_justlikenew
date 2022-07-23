@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useStoreState, useStoreActions } from 'easy-peasy';
-// import logout_api from '../api/logout_api';
+import logout_api from '../api/logout_api';
 
 const Nav = () => {
   const history = useNavigate();
@@ -18,7 +18,7 @@ const Nav = () => {
   const handleLogout = (e) => {
     e.preventDefault();
     setShow(true);
-    // logout_api()
+    logout_api();
     localStorage.clear();
     //   .then(() => {
     //     setShow(false);

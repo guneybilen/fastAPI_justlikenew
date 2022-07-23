@@ -6,6 +6,7 @@ from schemas.item import ShowItem
 from typing import Union, Dict, Any
 from schemas.area import Area
 from schemas.limit import Limit
+from schemas.image import ShowImage
 
 class SecurityEnum(str, Enum):
    BORN_CITY: str = "BORN_CITY" 
@@ -72,13 +73,13 @@ class ShowAllImportantDataAboutUser(BaseModel):
      last_name: Optional[str]
      created_date: Optional[datetime]
      is_active: Optional[bool]
-     items: Optional[ShowItem]
-     areas: Optional[Area]
-     limit: Optional[Limit]
-     
+     item: Optional[list[ShowItem]]
+     area: Optional[list[Area]]
+     limit: Optional[list[Limit]]
      class Config:
        orm_mode = True
        use_enum_values = True
+       arbitrary_types_allowed = True
 
 
 # class ShowSecurityEnum(BaseModel):

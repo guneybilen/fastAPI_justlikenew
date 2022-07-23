@@ -32,7 +32,7 @@ def  check_image_count(record: Image, name: str, db: Session, round_robin = bool
       list_of_files = _os.listdir('.')
       if (len(list_of_files) > 3):
         oldest_file = min(list_of_files, key=_os.path.getctime)
-        print(f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! {oldest_file}")
+        # print(f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! {oldest_file}")
         for column in inspect(Image).c:
           column_name = column.name
           for value, in db.query(getattr(Image, column_name)):
@@ -62,7 +62,7 @@ def validate_image(file_size):
      return 0
 
 
-def upload_image_by_seller_id(id: int, db: Session,  
+def upload_image_by_item_id(id: int, db: Session,  
                             current_user: str,
                             file: UploadFile = File(...),
                             file_size: bytes = File(...)):
@@ -108,65 +108,12 @@ def upload_image_by_seller_id(id: int, db: Session,
         print(e)
 
 def list_images_with_items(db: Session):
-    # query = db.query(Image).filter(Image.id).options(contains_eager(Image.id)).all()
     query = db.query(User).options(joinedload('*')).all()
-    # query = db.query(Item).filter((Item.seller_id == User.id) |
-            # (Item.seller_id == None)).all()
-    # query = db.query(Image).options(joinedload("items").joinedload("users").joinedload("*")).all()[:10]
-    # query_user = db.query(User).all()
-    # query_item = db.query(Item).all()
-    # query_image = db.query(Image).all()
-    # query_limit = db.query(Limit).all()
-    # query_area = db.query(Area).all()
-
-    # merged = dict()
-
-    # # print(query_user, query_item, query_image)
-    # for image_item in query_image:
-    #   for item_item in query_item:
-    #     for user_item in query_user:
-    #       for limit_item in query_limit:
-    #         for area_item in query_area:
-    #           if(item_item.seller_id == user_item.id):
-    #             if (item_item.id == image_item.item_id):
-    #               if(limit_item.user_id == user_item.id):
-    #                 if(user_item.id == area_item.user_id):
-
-    #                  print(user_item)
-
-
-
-    #               merged.update({"user_id": user_item.id})
-    #               merged.update({"user_email": user_item.email})
-    #               merged.update({"user_username":user_item.username})
-    #               merged.update({"user_is_active": user_item.is_active})
-    #               merged.update({"user_created_date":user_item.created_date})
-    #               merged.update({"user_updated_date":user_item.updated_date})
-    #               merged.update({"item_image1":image_item.item_image1})
-    #               merged.update({"item_image2":image_item.item_image2})
-    #               merged.update({"item_image3":image_item.item_image3})
-    #               merged.update({"item_model":item_item.model})
-    #               merged.update({"item_price":item_item.price})
-    #               merged.update({"item_brand":item_item.brand})
-    #               merged.update({"item_description":item_item.description})
-    #               merged.update({"item_location":item_item.location})
-    #               merged.update({"item_created_date":item_item.created_date})
-    #               merged.update({"item_updated_date":item_item.updated_date})
-    #               merged.update({"limit_access_token": limit_item.access_token})
-    #               merged.update({"limit_item_user_id": limit_item.user_id})
-    #               merged.update({"area_updated_date": area_item.updated_date})
-    #               merged.update({"area_created_date": area_item.created_date})
-    #               merged.update({"area_item_scopes": area_item.scopes})
-    #               merged.update({"area_user_id": area_item.user_id})
-    #               merged.update({"area_permission_to_model": area_item.permission_to_model})
-    #               merged.update({"area_permission_to_user": area_item.permission_to_user})
-
-
-    #               print(merged)
-    #           # return merged
     return query
 
 
 def list_images_with_item(id:int, db: Session):
-    query = db.query(Item).options(joinedload(Item.image, innerjoin=True), contains_eager('image.items')).one()
+    # query = db.query(Item).options(joinedload(Item.image, innerjoin=True), contains_eager('image.items')).one()
+    # query = db.query(User).options(joinedload(User.item, innerjoin=True), contains_eager('item.users')).one()
+    query = db.query(User).options(joinedload(User.item, innerjoin=True)).one()
     return query

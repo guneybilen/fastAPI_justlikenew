@@ -11,7 +11,7 @@ from db.session import get_db
 from db.repository.user import create_new_user
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 # from fastapi.responses import HTMLResponse
 from email_validator import validate_email, EmailNotValidError
 from schemas.user import ShowUser, UserResponse
@@ -20,6 +20,7 @@ from sqlalchemy.exc import IntegrityError
 from dotenv import load_dotenv
 from pathlib import Path
 import os as _os
+from core.security import logout_user
 
 
 env_path = Path(".") / ".env"
@@ -163,7 +164,7 @@ async def post_user_create(data: UserCreate, db: Session = Depends(get_db)):
                 "security_name": data.security_name,
               }
 
-                # casted_for_list = list(data.security_name)
+              # casted_for_list = list(data.security_name)
 
               returned_user_or_error = await create_new_user(user, current_user = user, db=db,)
               if (isinstance(returned_user_or_error, IntegrityError)):
@@ -198,4 +199,9 @@ async def security_questions():
             "FIRST_CAR": SecurityEnum.FIRST_CAR,
             "FAVORITE_FOOD": SecurityEnum.FAVORITE_FOOD,
             }
+
+
+@router.get("/logout")
+async def logout(req: Request, db: Session = Depends(get_db)):
+  logout_user(access_token=req.headers['access_token'], db=db)
 

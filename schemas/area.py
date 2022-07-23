@@ -33,3 +33,4 @@ class Area(BaseModel):
   class Config():
     orm_mode = True
     use_enum_values = True
+    arbitrary_types_allowed = True

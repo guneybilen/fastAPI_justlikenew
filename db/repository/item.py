@@ -11,7 +11,7 @@ from fastapi import HTTPException, status, Depends, UploadFile, File
 from core.security import get_current_user_from_token
 import os as _os
 from sqlalchemy.orm import Session
-from db.repository.image import upload_image_by_seller_id
+from db.repository.image import upload_image_by_item_id
 
 
 def validate_image(image_size: int):
@@ -39,16 +39,9 @@ def create_new_item(item_object: ItemBase,
     db.add(item_object_to_be_created)
     db.flush()
 
-    # print(item_object_to_be_created.id)
-    # item_found = db.query(Item).filter(Item.seller_id==current_user_id).first()
-    # item_found = db.query(Item).get(item_object_to_be_created.seller_id)
-
-    # print(item_found.id)
-    # return None
-
     for i in range(1,4):
       if(item_object[f"item_image{i}b"]) is not None:
-        upload_image_by_seller_id(id= item_object_to_be_created.id, 
+        upload_image_by_item_id(id= item_object_to_be_created.id, 
                               db=db, current_user=current_user.username, 
                               file = item_object[f"item_image{i}b"], 
                               file_size = item_object[f"item_image{i}a"])

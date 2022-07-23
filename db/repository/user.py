@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from schemas.user import SecurityEnum
 from sqlalchemy.exc import IntegrityError
+from core.security import create_area_table_entry
 
 
 async def create_new_user(user: UserCreate, current_user: str, db: Session):  
@@ -34,9 +35,10 @@ async def create_new_user(user: UserCreate, current_user: str, db: Session):
         security_answer=Hasher.get_hash(user['security_answer'])
   )
   
-  # if list(current_user)[0] == user['email']:  
   try: 
     db.add(user_being_saved)
+    db.flush()
+    create_area_table_entry(user_id = user_being_saved.id, db = db)
     db.commit() 
     db.refresh(user_being_saved)
   except IntegrityError as error:

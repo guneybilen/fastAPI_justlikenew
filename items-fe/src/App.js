@@ -6,6 +6,7 @@ import Home from './components/Home';
 import UpdateItem from './components/UpdateItem';
 import NewItem from './components/NewItem';
 import Login from './auth/Login';
+import check_logged_in_status from './api/check_logged_in_status';
 import Signup from './auth/Signup';
 import Error from './auth/Error';
 import PreSignup from './auth/PreSignup';
@@ -31,6 +32,10 @@ function App() {
   //   setUsers(data);
   //   console.log('data ' + data);
   // }, [data, setUsers]);
+
+  useEffect(() => {
+    check_logged_in_status();
+  }, []);
 
   return (
     <div className="App">
