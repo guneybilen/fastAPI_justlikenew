@@ -12,7 +12,7 @@ from db.models import *
 class Permission(StrEnum):
   READ = auto() 
   WRITE =  auto()
-  BOTH =  auto()
+  READ_WRITE =  auto()
 
 class PermissionToModel(StrEnum):
   IMAGES = auto() 

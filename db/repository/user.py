@@ -8,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from core.security import create_area_table_entry
 
 
-async def create_new_user(user: UserCreate, current_user: str, db: Session):  
+async def create_new_user(user: UserCreate, db: Session):  
   
   if user['security_name'] == SecurityEnum.BORN_CITY:
       security_name = SecurityEnum.BORN_CITY
@@ -34,11 +34,11 @@ async def create_new_user(user: UserCreate, current_user: str, db: Session):
         security_name= security_name,
         security_answer=Hasher.get_hash(user['security_answer'])
   )
-  
+  print(user_being_saved.email)
   try: 
     db.add(user_being_saved)
     db.flush()
-    create_area_table_entry(user_id = user_being_saved.id, db = db)
+    await create_area_table_entry(user_id = user_being_saved.id, db = db)
     db.commit() 
     db.refresh(user_being_saved)
   except IntegrityError as error:

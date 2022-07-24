@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, status, Security
 from core.communication import communicate_for_forgotten_password
 from core.communication import pre_create_new_user_communication
-from core.security import get_current_user_from_token, get_current_active_user, get_current_user_from_token_during_signup
+from core.security import get_current_user_from_token, get_current_active_user, get_current_user_from_token_during_signup, create_acess_token_and_create_limit_table_entry
 from db.session import get_db
 from db.repository.user import create_new_user
 from fastapi.responses import RedirectResponse
@@ -43,12 +43,14 @@ async def pre_create_user(user: UserPreCreate, db: Session = Depends(get_db)):
 @router.get("/signup/{access_token}", response_class=RedirectResponse)
 async def check_user(access_token: str, db: Session = Depends(get_db)):
   current_user = await get_current_user_from_token_during_signup(access_token, db)
-  app.state.current_user = current_user
-  print(app.state.current_user)
-  if app.state.current_user is None:
-    return RedirectResponse(f"{_os.getenv('FRONT_END_URL')}/Error")
-  else:
+  try:
+    if (current_user == "expired_access_token_during_signup"):
+      raise AttributeError
+    app.state.current_user = current_user
     return RedirectResponse(f"{_os.getenv('FRONT_END_URL')}/signup", status_code=status.HTTP_302_FOUND)
+  except AttributeError as e:
+    return RedirectResponse(f"{_os.getenv('FRONT_END_URL')}/Error")
+
 
 
 @router.get("/create_procedure")
@@ -166,12 +168,20 @@ async def post_user_create(data: UserCreate, db: Session = Depends(get_db)):
 
               # casted_for_list = list(data.security_name)
 
-              returned_user_or_error = await create_new_user(user, current_user = user, db=db,)
+              returned_user_or_error = await create_new_user(user=user, db=db)
+              print(dir(returned_user_or_error))
+
+
+              access_token = create_acess_token_and_create_limit_table_entry(user= returned_user_or_error.email,
+                                                                          db=db, id= returned_user_or_error.id)
+
               if (isinstance(returned_user_or_error, IntegrityError)):
                   return {"result": returned_user_or_error.orig}
-              return {"email": returned_user_or_error.email,
+              return {
                       "username": returned_user_or_error.username, 
-                      "result": "Signing up completed. Please, Click on Home link."}
+                      "access_token": access_token,
+                      "result": "Signing up completed. Please, click on Home link."}
+
 
 @router.get("/users/me/", response_model=ShowUser)
 async def read_users_me(current_user: ShowUser = Depends(get_current_active_user)):
@@ -203,5 +213,5 @@ async def security_questions():
 
 @router.get("/logout")
 async def logout(req: Request, db: Session = Depends(get_db)):
-  logout_user(access_token=req.headers['access_token'], db=db)
+  await logout_user(access_token=req.headers['access_token'], db=db)
 

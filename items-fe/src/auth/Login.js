@@ -71,9 +71,10 @@ export default function Login() {
 
   const fail = (status) => {
     console.log('Authentication Failed!');
+    // console.log(status);
     localStorage.clear();
     scrollTo(myRef);
-    if (status === 401) setAlert('wrong email and/or password');
+    if (status.status === 401) setAlert(status.data.detail);
     // if (status === 403) {
     //   setLink(true);
 

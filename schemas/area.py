@@ -6,7 +6,7 @@ from datetime import datetime
 class Scope(StrEnum):
   READ = "READ" 
   WRITE =  "WRITE"
-  BOTH =  "BOTH"
+  READ_WRITE =  "READ_WRITE"
 
 class PermissionToModel(StrEnum):
   IMAGES = "IMAGES"

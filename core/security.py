@@ -13,6 +13,7 @@ from db.models.limit import Limit
 from db.models.area import Area
 from jose import jwt, JWTError
 from fastapi import Depends, HTTPException, Security, status
+from schemas.user import UserCreate 
 from fastapi.security import (
     SecurityScopes,
 )
@@ -37,25 +38,25 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
   return encoded_jwt
 
 
-async def get_current_user_for_token_expiration(acces_token_parsed:str, db: Session):
+async def get_current_user_for_token_expiration(access_token_parsed:str, db: Session):
     credentials_exception = HTTPException(
           status_code=status.HTTP_401_UNAUTHORIZED,
           detail="Could not validate credentials",
           headers={"WWW-Authenticate": "access token has expired"},
       )
     try:
-        payload = jwt.decode(acces_token_parsed, settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
+        payload = jwt.decode(access_token_parsed, settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
         user_email: str = payload.get("sub")
-        print("username/email extracted is", user_email)
-        print(user_email)
-        token = db.query(Limit).filter(Limit._parsed == acces_token_parsed).one_or_none()
+        # print("username/email extracted is", user_email)
+        # print(user_email)
+        token = db.query(Limit).filter(Limit.access_token == access_token_parsed).one_or_none()
         if token is None:
           raise SQLAlchemyError
         return token
     except SQLAlchemyError:
         return {"status": status.HTTP_205_RESET_CONTENT}
     except ExpiredSignatureError:
-        return {"status": status.HTTP_205_RESET_CONTENT }
+        raise credentials_exception
     except JWTError:
         return None
 
@@ -77,16 +78,17 @@ async def get_current_user_from_token_during_signup(access_token: str, db: Sessi
           raise credentials_exception
         return user_email
     except ExpiredSignatureError:
-        return {"status": status.HTTP_205_RESET_CONTENT }
+        return "expired_access_token_during_signup"
     except JWTError:
         return None
 
     
     
 async def check_token_expiration(access_token: str, db: Session):
-    acces_token_parsed = access_token.split(" ")[1]
-    result = await get_current_user_for_token_expiration(acces_token_parsed, db)
-    print('result ', result)
+    access_token_parsed = access_token.split(" ")[1]
+    # print(access_token)
+    result = await get_current_user_for_token_expiration(access_token_parsed, db)
+    # print('result ', result)
     return result
 
 # TODO: take care of scoping
@@ -157,19 +159,19 @@ async def logout_user(access_token: str, db: Session):
 
 async def create_area_table_entry(user_id: int, db: Session):
   try: 
-    db.query(Area).filter(Area.user_id == user_id).first()
-    area_entry = Area(user_id = user_id, scopes=['BOTH'], 
+    area_entry = Area(user_id = user_id, scopes=["READ_WRITE"], 
                      permission_to_model = ["IMAGES", "USERS", "ITEMS"],
                      permission_to_user = ["OWNER"])
 
     db.add(area_entry)
-    db.commit()
-    db.refresh(area_entry)
+    return None
   except Exception as e:
     return None
 
 
 def create_limit_table_entry(access_token_entry: str, token_type_entry: str, user_id: int, db: Session):
+  # print("user_id", user_id)
+  # print("access_token_entry", access_token_entry)
   limit = db.query(Limit).filter(Limit.user_id == user_id).one_or_none()
   if limit is not None:
     return None
@@ -180,3 +182,14 @@ def create_limit_table_entry(access_token_entry: str, token_type_entry: str, use
   db.commit()
   db.refresh(limit_entry)
   return limit_entry.id
+
+
+def create_acess_token_and_create_limit_table_entry(user: str, db: Session, id: int):
+  access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+  access_token = create_access_token(
+  data={"sub": user}, expires_delta=access_token_expires
+  )
+
+  create_limit_table_entry(access_token_entry = access_token, token_type_entry = "bearer", user_id = user.id, db = db)
+  
+  return access_token

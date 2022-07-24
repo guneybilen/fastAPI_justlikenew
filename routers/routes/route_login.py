@@ -7,7 +7,7 @@ from datetime import timedelta
 from core.config import settings
 
 from core.hashing import Hasher
-from core.security import create_access_token, check_token_expiration, create_limit_table_entry
+from core.security import create_access_token, check_token_expiration, create_limit_table_entry, create_acess_token_and_create_limit_table_entry
 from db.repository.login import get_user
 from db.session import get_db
 from typing import List
@@ -50,28 +50,23 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
 
                           #  print(form_data)
 
-                           user = authenticate_user(form_data.username, form_data.password, db)
+                          user = authenticate_user(form_data.username, form_data.password, db)
 
-                           if not user:
-                            raise HTTPException(
-                              status_code=status.HTTP_401_UNAUTHORIZED, 
-                              detail="Incorrect username or password"
-                            )
+                          if not user:
+                           raise HTTPException(
+                            status_code=status.HTTP_401_UNAUTHORIZED, 
+                            detail="Incorrect username or password"
+                          )
+
+                          access_token = create_acess_token_and_create_limit_table_entry(user= user, db=db)
                           
-                           access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-                           access_token = create_access_token(
-                            data={"sub": user.email}, expires_delta=access_token_expires
-                           )
-
-                           create_limit_table_entry(access_token_entry = access_token, token_type_entry = "bearer", user_id = user.id, db = db)
-
                            # For My Information: cross-domain cookie can not be set up and and also
                            # canot be read due to browser security architecture.
                            #  response.set_cookie(
                            #   key="access_token", value=f"Bearer {access_token}", httponly=True
                            #  )
 
-                           return {"access_token": access_token, "token_type": "bearer", "loggedin_username": user.username}
+                          return {"access_token": access_token, "token_type": "bearer", "loggedin_username": user.username}
 
 
 

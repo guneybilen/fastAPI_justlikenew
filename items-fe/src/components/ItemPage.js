@@ -67,7 +67,11 @@ const ItemPage = () => {
 
   useEffect(() => {
     axios
-      .get(ITEM_ID + '/' + id)
+      .get(ITEM_ID + '/' + id, {
+        headers: {
+          access_token: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      })
       .then((response) => {
         console.log(response.data);
         setBrand(response.data.brand);
