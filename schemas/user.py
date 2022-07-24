@@ -55,10 +55,9 @@ class ShowUser(BaseModel):
 
 
 class UserResponse(BaseModel):
-    email: Optional[EmailStr]
     username: Optional[str]
     result: Optional[str]
-    detail : Optional[str]
+    access_token : Optional[str]
 
     class Config:
       orm_mode = True

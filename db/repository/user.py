@@ -34,7 +34,6 @@ async def create_new_user(user: UserCreate, db: Session):
         security_name= security_name,
         security_answer=Hasher.get_hash(user['security_answer'])
   )
-  print(user_being_saved.email)
   try: 
     db.add(user_being_saved)
     db.flush()
@@ -42,7 +41,9 @@ async def create_new_user(user: UserCreate, db: Session):
     db.commit() 
     db.refresh(user_being_saved)
   except IntegrityError as error:
-    return IntegrityError(params=[], statement=[], orig="either the email or username already exists and is being used. please, correct the problem(s).")
+    return IntegrityError(params=[], 
+                          statement=[],
+                          orig="either the email or username already exists and is being used. please, correct the problem(s).")
   return user_being_saved
   # raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="user sign up and required user email confirmation does not match")
 

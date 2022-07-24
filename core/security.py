@@ -187,9 +187,9 @@ def create_limit_table_entry(access_token_entry: str, token_type_entry: str, use
 def create_acess_token_and_create_limit_table_entry(user: str, db: Session, id: int):
   access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
   access_token = create_access_token(
-  data={"sub": user}, expires_delta=access_token_expires
+    data={"sub": user}, expires_delta=access_token_expires
   )
 
-  create_limit_table_entry(access_token_entry = access_token, token_type_entry = "bearer", user_id = user.id, db = db)
+  create_limit_table_entry(access_token_entry = access_token, token_type_entry = "bearer", user_id = id, db = db)
   
   return access_token

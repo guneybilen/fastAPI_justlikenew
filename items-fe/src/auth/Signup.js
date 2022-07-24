@@ -107,6 +107,12 @@ const Signup = () => {
         if (typeof response.data.result === 'string') {
           setShow(false);
 
+          localStorage.setItem('access_token', response.data.access_token);
+          localStorage.setItem(
+            'loggedin_username',
+            response.data.loggedin_username
+          );
+
           document.getElementById('human').checked = false;
 
           setError(true);
@@ -122,7 +128,7 @@ const Signup = () => {
       .then((data) => {
         console.log(data);
 
-        if (data?.email) {
+        if (data?.access_token) {
           setShow(false);
           setError(true);
           scrollTo(scrollRef);

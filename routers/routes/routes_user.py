@@ -168,20 +168,21 @@ async def post_user_create(data: UserCreate, db: Session = Depends(get_db)):
 
               # casted_for_list = list(data.security_name)
 
-              returned_user_or_error = await create_new_user(user=user, db=db)
-              print(dir(returned_user_or_error))
-
-
-              access_token = create_acess_token_and_create_limit_table_entry(user= returned_user_or_error.email,
-                                                                          db=db, id= returned_user_or_error.id)
-
-              if (isinstance(returned_user_or_error, IntegrityError)):
-                  return {"result": returned_user_or_error.orig}
-              return {
-                      "username": returned_user_or_error.username, 
+              try:
+                returned_user_or_error = await create_new_user(user=user, db=db)
+                print(returned_user_or_error.email)
+                print(returned_user_or_error.id)
+                access_token = create_acess_token_and_create_limit_table_entry(user= returned_user_or_error.email, db=db, id= returned_user_or_error.id)
+                return {"username": returned_user_or_error.username, 
                       "access_token": access_token,
-                      "result": "Signing up completed. Please, click on Home link."}
+                      "result": "Signing up completed. Please, click on a link."}
+              except AttributeError as e:
+                print(e)
+                return {"result": "email or username is present errror on server"}                                                           
 
+              # if (isinstance(returned_user_or_error, IntegrityError)):
+              #     return {"result": returned_user_or_error.orig}
+             
 
 @router.get("/users/me/", response_model=ShowUser)
 async def read_users_me(current_user: ShowUser = Depends(get_current_active_user)):
