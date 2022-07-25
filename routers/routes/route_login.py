@@ -17,13 +17,12 @@ from sqlalchemy.orm import Session
 
 from db.models.limit import Limit
 from db.models.area import Area
+from fastapi.responses import RedirectResponse
+import os as _os
 
 router = APIRouter()
 
 app = FastAPI()
-
-
-
 
 
 def authenticate_user(username: str, password: str, db: Session = Depends(get_db)):

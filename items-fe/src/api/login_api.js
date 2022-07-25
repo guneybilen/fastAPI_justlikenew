@@ -10,6 +10,7 @@ const login_api = async (form_data, success, fail) => {
     'Content-Type': 'application/x-www-form-urlencoded',
   })
     .then(function (response) {
+      console.assert(response);
       if (response.status === 401 || response.status === 403) {
         console.log('bilen');
         fail(response);
@@ -26,7 +27,7 @@ const login_api = async (form_data, success, fail) => {
       }
     })
     .catch(function (error) {
-      console.log('login in failed ');
+      console.log('login is failed ');
       fail(error.response);
     });
 };

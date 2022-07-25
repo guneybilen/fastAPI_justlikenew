@@ -8,7 +8,8 @@ from fastapi.staticfiles import StaticFiles
 # from webapps.base import api_router as web_app_router
 from fastapi.middleware.cors import CORSMiddleware
 
-origins = ["http://localhost:3000"]
+# origins = ["http://localhost:3000"]
+origins = ["*"]
 
 
 def include_router(app):

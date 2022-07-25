@@ -57,7 +57,7 @@ async def get_current_user_for_token_expiration(access_token_parsed:str, db: Ses
         return token_in_limit_table.access_token
     except SQLAlchemyError as e:
         print("SQLAlchemyError ", e)
-        return {"status": status.HTTP_205_RESET_CONTENT}
+        return status.HTTP_205_RESET_CONTENT
     except ExpiredSignatureError:
         raise credentials_exception
     except JWTError as e:

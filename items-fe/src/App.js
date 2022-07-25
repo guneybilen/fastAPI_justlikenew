@@ -9,6 +9,7 @@ import Login from './auth/Login';
 import check_logged_in_status from './api/check_logged_in_status';
 import Signup from './auth/Signup';
 import Error from './auth/Error';
+import CatchAllRoute from './auth/CatchAllRoute';
 import PreSignup from './auth/PreSignup';
 import NewPassword from './auth/NewPassword';
 import ForgotPassword from './auth/ForgotPassword';
@@ -76,6 +77,7 @@ function App() {
             </RequireAuth>
           }
         ></Route>
+        <Route path="/*" element={<CatchAllRoute />} />
       </Routes>
 
       <Footer />

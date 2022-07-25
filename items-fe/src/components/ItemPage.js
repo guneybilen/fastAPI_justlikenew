@@ -88,7 +88,7 @@ const ItemPage = () => {
         setImage3(response.data['item'][0]['image'][0]['item_image3']);
       })
       .catch((error) => console.log(error));
-  }, [id, image1]);
+  }, [id]);
 
   const scrollTo = (ref) => {
     if (ref && ref.current /* + other conditions */) {
