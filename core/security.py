@@ -45,19 +45,23 @@ async def get_current_user_for_token_expiration(access_token_parsed:str, db: Ses
           headers={"WWW-Authenticate": "access token has expired"},
       )
     try:
+        print("access_token_parsed ", access_token_parsed)
         payload = jwt.decode(access_token_parsed, settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
         user_email: str = payload.get("sub")
-        # print("username/email extracted is", user_email)
-        # print(user_email)
-        token = db.query(Limit).filter(Limit.access_token == access_token_parsed).one_or_none()
-        if token is None:
+        print("username/email extracted is", user_email)
+        print(user_email)
+        user = db.query(User).filter(User.email == user_email).one_or_none()
+        token_in_limit_table = db.query(Limit).filter(Limit.user_id == user.id).one_or_none()
+        if token_in_limit_table is None:
           raise SQLAlchemyError
-        return token
-    except SQLAlchemyError:
+        return token_in_limit_table
+    except SQLAlchemyError as e:
+        print("SQLAlchemyError ", e)
         return {"status": status.HTTP_205_RESET_CONTENT}
     except ExpiredSignatureError:
         raise credentials_exception
-    except JWTError:
+    except JWTError as e:
+        print("JWTError ", e)
         return None
 
 

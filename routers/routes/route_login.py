@@ -40,7 +40,8 @@ def authenticate_user(username: str, password: str, db: Session = Depends(get_db
 
 @router.get("/check_if_token_expired")
 async def check_if_token_expired(req: Request, db: Session = Depends(get_db)):
-  user_or_error = await check_token_expiration(req.headers['access_token'], db)
+  user_or_error = await check_token_expiration(access_token=req.headers['access_token'], db=db)
+  print("user_or_error ", user_or_error)
   return user_or_error
 
 
@@ -57,8 +58,9 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
                             status_code=status.HTTP_401_UNAUTHORIZED, 
                             detail="Incorrect username or password"
                           )
+                          print('user.id ', user.id)
 
-                          access_token = create_acess_token_and_create_limit_table_entry(user= user, db=db)
+                          access_token = create_acess_token_and_create_limit_table_entry(user= user.email, db=db, id=user.id)
                           
                            # For My Information: cross-domain cookie can not be set up and and also
                            # canot be read due to browser security architecture.
