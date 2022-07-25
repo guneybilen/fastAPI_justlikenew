@@ -52,9 +52,9 @@ async def get_current_user_for_token_expiration(access_token_parsed:str, db: Ses
         print(user_email)
         user = db.query(User).filter(User.email == user_email).one_or_none()
         token_in_limit_table = db.query(Limit).filter(Limit.user_id == user.id).one_or_none()
-        if token_in_limit_table is None:
+        if token_in_limit_table.access_token is None:
           raise SQLAlchemyError
-        return token_in_limit_table
+        return token_in_limit_table.access_token
     except SQLAlchemyError as e:
         print("SQLAlchemyError ", e)
         return {"status": status.HTTP_205_RESET_CONTENT}
@@ -62,7 +62,7 @@ async def get_current_user_for_token_expiration(access_token_parsed:str, db: Ses
         raise credentials_exception
     except JWTError as e:
         print("JWTError ", e)
-        return None
+        return status.HTTP_205_RESET_CONTENT
 
 
 async def get_current_user_from_token_during_signup(access_token: str, db: Session):

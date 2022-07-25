@@ -7,7 +7,7 @@ const check_logged_in_status = async () => {
     console.log('returning b/c route is coming from signup location');
     return null;
   } else {
-    console.log('location' + location);
+    console.log('location: ' + location);
     let response = await axios.get(CHECK_IF_TOKEN_EXPIRED, {
       headers: {
         'Content-Type': 'application/json',

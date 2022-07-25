@@ -40,9 +40,9 @@ def authenticate_user(username: str, password: str, db: Session = Depends(get_db
 
 @router.get("/check_if_token_expired")
 async def check_if_token_expired(req: Request, db: Session = Depends(get_db)):
-  user_or_error = await check_token_expiration(access_token=req.headers['access_token'], db=db)
-  print("user_or_error ", user_or_error)
-  return user_or_error
+  access_token_double_checked_from_db = await check_token_expiration(access_token=req.headers['access_token'], db=db)
+  print("access_token_double_checked_from_db ", access_token_double_checked_from_db)
+  return {"status": access_token_double_checked_from_db}
 
 
 @router.post("/token", response_model=MixedType)

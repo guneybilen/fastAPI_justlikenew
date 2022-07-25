@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from fastapi_utils.enums import StrEnum
 from pydantic import BaseModel
 from datetime import datetime
@@ -22,14 +23,11 @@ class PermissionToUser(StrEnum):
 class Area(BaseModel):
   created_date: datetime
   updated_date: datetime
-  limit_id = int
-  scopes = [Scope]                                                        
-  permission_to_model = [PermissionToModel]
-  permission_to_user = [PermissionToUser]
+  limit_id:  Optional[int]
+  scopes: Optional[Scope]                                                        
+  permission_to_model: Optional[PermissionToModel]
+  permission_to_user: Optional[PermissionToUser]
 
-  @staticmethod
-  def get_scope():
-    return Scope
   class Config():
     orm_mode = True
     use_enum_values = True

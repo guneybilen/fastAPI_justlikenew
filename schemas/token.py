@@ -1,9 +1,9 @@
 from pydantic import BaseModel
-from typing import List, Union
+from typing import List
 from datetime import datetime
- 
+from typing import Optional
 class Token(BaseModel):
-  username: Union[str, None] = None
+  username: Optional[str]
   scopes: List[str] = []
   date_created: datetime
   date_updated: datetime

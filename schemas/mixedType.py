@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from typing import List, Union
+from typing import List
 from schemas.area import Area
 
 
@@ -8,7 +8,7 @@ class MixedType(BaseModel):
   access_token: str
   token_type: str
   loggedin_username: str
-  scopes = list[Area.get_scope]
+  scope: Optional[list[Area]]
 
   class Config:
     orm_mode = True

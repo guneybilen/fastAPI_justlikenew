@@ -11,7 +11,11 @@ function RequireAuth({ children }) {
 
   useEffect(() => {
     setDatastate(data);
-    if (datastate === null || datastate === undefined) {
+    if (
+      datastate.status === 205 ||
+      datastate === null ||
+      datastate === undefined
+    ) {
       navigate('/login', { state: { from: location.pathname } });
     }
   }, [data, datastate, location.pathname, navigate]);

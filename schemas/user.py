@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Dict, Optional
 from datetime import datetime
 from schemas.item import ShowItem 
-from typing import Union, Dict, Any
+from typing import Dict, Any
 from schemas.area import Area
 from schemas.limit import Limit
 from schemas.image import ShowImage
@@ -45,10 +45,10 @@ class UserCreate(BaseModel):
 
 
 class ShowUser(BaseModel):
-  username: Union[str, None] = None
-  email: Union[EmailStr, None] = None
+  username: Optional[str]
+  email: Optional[EmailStr]
   is_active: bool
-  result: Union[str, None] = None
+  result: Optional[str]
 
   class Config:
     orm_mode = True
@@ -73,8 +73,8 @@ class ShowAllImportantDataAboutUser(BaseModel):
      created_date: Optional[datetime]
      is_active: Optional[bool]
      item: Optional[list[ShowItem]]
-     area: Optional[list[Area]]
-     limit: Optional[list[Limit]]
+    #  area: Optional[list[Area]]
+    #  limit: Optional[list[Limit]]
      class Config:
        orm_mode = True
        use_enum_values = True

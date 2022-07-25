@@ -14,6 +14,8 @@ const ItemPage = () => {
   const deleteItem = useStoreActions((actions) => actions.deleteItem);
   const getUserById = useStoreState((state) => state.getUserById);
 
+  const [username, setUsername] = useState('');
+  const [itemId, setItemId] = useState('');
   const [brand, setBrand] = useState('');
   const [model, setModel] = useState('');
   const [location, setLocation] = useState('');
@@ -74,15 +76,16 @@ const ItemPage = () => {
       })
       .then((response) => {
         console.log(response.data);
-        setBrand(response.data.brand);
-        setModel(response.data.model);
-        setPrice(response.data.price);
-        setLocation(response.data.location);
-        setHtml(response.data.description);
-        setImage1(response.data.image[0]['item_image1']);
-        setImage2(response.data.image[0]['item_image2']);
-        setImage3(response.data.image[0]['item_image3']);
-        // console.log('image1 ', response.data.image[0]['item_image1']);
+        setUsername(response.data.username);
+        setItemId(response.data['item'][0]['id']);
+        setBrand(response.data['item'][0]['brand']);
+        setLocation(response.data['item'][0]['location']);
+        setHtml(response.data['item'][0]['description']);
+        setPrice(response.data['item'][0]['price']);
+        setModel(response.data['item'][0]['model']);
+        setImage1(response.data['item'][0]['image'][0]['item_image1']);
+        setImage2(response.data['item'][0]['image'][0]['item_image2']);
+        setImage3(response.data['item'][0]['image'][0]['item_image3']);
       })
       .catch((error) => console.log(error));
   }, [id, image1]);
@@ -169,15 +172,13 @@ const ItemPage = () => {
           /> */}
           <div>
             <br />
-            {/* 
-                  // URL.createObjectURL(imageUpload1) ||
-                  static/images/guney51/1.jpeg
-            
-            */}
             {image1 && (
               <img
                 className="itemImage"
-                src="static/images/bilen1/1.jpeg"
+                src={
+                  `static/images/${username}${itemId}/${image1}` ||
+                  URL.createObjectURL(imageUpload1)
+                }
                 id="newImage1"
                 alt="newImage1"
                 width="150px"
@@ -217,11 +218,14 @@ const ItemPage = () => {
           </div>
           <br />
           <div>
-            {imageUpload2 && (
+            {image2 && (
               <img
                 className="itemImage"
                 id="newImage2"
-                src={URL.createObjectURL(imageUpload2)}
+                src={
+                  `static/images/${username}${itemId}/${image2}` ||
+                  URL.createObjectURL(imageUpload2)
+                }
                 alt="newImage2"
                 width="150px"
                 height="75px"
@@ -258,11 +262,14 @@ const ItemPage = () => {
           </div>
           <br />
           <div>
-            {imageUpload3 && (
+            {image3 && (
               <img
                 className="itemImage"
                 id="newImage3"
-                src={URL.createObjectURL(imageUpload3)}
+                src={
+                  `static/images/${username}${itemId}/${image3}` ||
+                  URL.createObjectURL(imageUpload3)
+                }
                 alt="newImage3"
                 width="150px"
                 height="75px"
