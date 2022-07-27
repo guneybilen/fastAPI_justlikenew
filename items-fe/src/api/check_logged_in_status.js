@@ -13,13 +13,12 @@ const check_logged_in_status = async () => {
         access_token: `Bearer ${localStorage.getItem('access_token')}`,
       },
     });
-    console.log('response.status ' + response['status']);
-    if (response.status === 205) {
-    }
-    if (response.data?.status === 205 || response.data?.status === 307) {
+    console.log('response: ' + response);
+    if (response.status === 205 || response.status === 307) {
       console.log('No content - Logged out status');
       localStorage.clear();
     }
+    return response.data;
   }
 };
 

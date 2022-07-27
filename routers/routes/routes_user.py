@@ -1,4 +1,4 @@
-from schemas.user import ShowUser, SecurityEnum, UserCreate, UserPreCreate, UserPreCreateShow
+from schemas.user import ShowUser, SecurityEnum, UserCreate, UserPreCreate
 from schemas.user import SecurityEnum
 from fastapi import APIRouter, Depends
 from db.session import get_db
@@ -49,7 +49,7 @@ async def check_user(access_token: str, db: Session = Depends(get_db)):
     app.state.current_user = current_user
     return RedirectResponse(f"{_os.getenv('FRONT_END_URL')}/signup", status_code=status.HTTP_302_FOUND)
   except AttributeError as e:
-    return RedirectResponse(f"{_os.getenv('FRONT_END_URL')}/Error")
+    return RedirectResponse(f"{_os.getenv('FRONT_END_URL')}/Error", status_code=status.HTTP_302_FOUND)
 
 
 

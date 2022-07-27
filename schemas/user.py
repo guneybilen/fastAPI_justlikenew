@@ -65,20 +65,21 @@ class UserResponse(BaseModel):
 
 
 class ShowAllImportantDataAboutUser(BaseModel):
-     id: Optional[int]
-     email: Optional[EmailStr]
-     username: Optional[str]
-     first_name: Optional[str]
-     last_name: Optional[str]
-     created_date: Optional[datetime]
-     is_active: Optional[bool]
-     item: Optional[list[ShowItem]]
+    id: Optional[str]
+    email: Optional[EmailStr]
+    username: Optional[str]
+    first_name: Optional[str]
+    last_name: Optional[str]
+    created_date: Optional[datetime]
+    is_active: Optional[bool]
+    item: Optional[list[ShowItem]]
+    owner: Optional[str]
     #  area: Optional[list[Area]]
     #  limit: Optional[list[Limit]]
-     class Config:
-       orm_mode = True
-       use_enum_values = True
-       arbitrary_types_allowed = True
+    class Config:
+      orm_mode = True
+      use_enum_values = True
+      arbitrary_types_allowed = True
 
 
 # class ShowSecurityEnum(BaseModel):

@@ -3,40 +3,24 @@ import Nav from './components/Nav';
 import Footer from './components/Footer';
 import About from './components/About';
 import Home from './components/Home';
-import UpdateItem from './components/UpdateItem';
 import NewItem from './components/NewItem';
 import Login from './auth/Login';
-import check_logged_in_status from './api/check_logged_in_status';
 import Signup from './auth/Signup';
 import Error from './auth/Error';
-import CatchAllRoute from './auth/CatchAllRoute';
 import PreSignup from './auth/PreSignup';
 import NewPassword from './auth/NewPassword';
 import ForgotPassword from './auth/ForgotPassword';
 import Activation from './auth/Activation';
 import ItemPage from './components/ItemPage';
-import { useStoreActions } from 'easy-peasy';
-import { useEffect } from 'react';
-import useAxiosFetch from './hooks/useAxiosFetch';
 import RequireAuth from './components/RequireAuth';
 import { Routes, Route } from 'react-router-dom';
-import { ITEMS_ALL } from './constants';
-
-// for api variable see /etc/nginx/sites-enabled
-// let url = '/';
+import check_logged_in_status from './api/check_logged_in_status';
+import { useEffect } from 'react';
 
 function App() {
-  const setUsers = useStoreActions((actions) => actions.setUsers);
-  // const { data } = useAxiosFetch(ITEMS_ALL);
-
-  // useEffect(() => {
-  //   setUsers(data);
-  //   console.log('data ' + data);
-  // }, [data, setUsers]);
-
   useEffect(() => {
-    check_logged_in_status();
-  }, []);
+    // check_logged_in_status();
+  });
 
   return (
     <div className="App">
@@ -45,6 +29,7 @@ function App() {
 
       <Routes>
         <Route forceRefresh={true} path="/" element={<Home />} />
+        <Route path="/item" element={<NewItem />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/activation/:token" element={<Activation />} />
@@ -69,15 +54,16 @@ function App() {
             </RequireAuth>
           }
         ></Route>
-        <Route
+        {/* <Route
           path="/update/:id"
           element={
             <RequireAuth>
               <UpdateItem />
             </RequireAuth>
           }
-        ></Route>
-        <Route path="/*" element={<CatchAllRoute />} />
+        ></Route>{' '}
+        */}
+        <Route path="/*" element={<Login />} />
       </Routes>
 
       <Footer />

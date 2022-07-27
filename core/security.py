@@ -197,3 +197,15 @@ def create_acess_token_and_create_limit_table_entry(user: str, db: Session, id: 
   create_limit_table_entry(access_token_entry = access_token, token_type_entry = "bearer", user_id = id, db = db)
   
   return access_token
+
+def check_owner(access_token_for_id_check: str, db: Session):
+    try:
+      payload = jwt.decode(access_token_for_id_check, settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
+      user_email: str = payload.get("sub")
+      # print("username/email extracted is", user_email)
+      user = db.query(User).filter(User.email == user_email).first()
+      # print("usnername id extracted is", user.id)
+      return user.id
+
+    except Exception as e:
+      print("Exception ", e)

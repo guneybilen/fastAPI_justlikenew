@@ -109,11 +109,12 @@ def upload_image_by_item_id(id: int, db: Session,
 
 def list_images_with_items(db: Session):
     query = db.query(User).options(joinedload('*')).all()
+    # query = db.query(User).options(joinedload(User.item, innerjoin=True)).one_or_none()
     return query
 
 
 def list_images_with_item(id:int, db: Session):
     # query = db.query(Item).options(joinedload(Item.image, innerjoin=True), contains_eager('image.items')).one()
     # query = db.query(User).options(joinedload(User.item, innerjoin=True), contains_eager('item.users')).one()
-    query = db.query(User).options(joinedload(User.item, innerjoin=True)).one()
+    query = db.query(User).options(joinedload(User.item, innerjoin=True)).one_or_none()
     return query

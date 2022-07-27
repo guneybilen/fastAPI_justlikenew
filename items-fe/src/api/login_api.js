@@ -12,7 +12,6 @@ const login_api = async (form_data, success, fail) => {
     .then(function (response) {
       console.assert(response);
       if (response.status === 401 || response.status === 403) {
-        console.log('bilen');
         fail(response);
       } else if (response.status === 500) {
         fail(response.data);

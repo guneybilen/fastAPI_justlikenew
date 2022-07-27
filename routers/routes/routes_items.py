@@ -5,7 +5,7 @@ from fastapi.responses import FileResponse
 from db.repository.item import update_item_by_id, delete_item_by_id, create_new_item
 from db.repository.item import list_items, retrieve_item, search_item
 from db.repository.image import list_images_with_items, list_images_with_item
-from core.security import get_current_user_from_token
+from core.security import get_current_user_from_token, check_owner
 from schemas.item import ItemBase, ItemCreate, ShowItem
 from typing import List
 from typing import Optional, Dict, Any
@@ -81,15 +81,17 @@ async def create_item(req: Request,
 
 
 # if we keep just "{id}". it would start catching all routes
-@router.get("/{id}", response_model=ShowAllImportantDataAboutUser)
+@router.get("/particular/{id}")
 def read_item(id: int, db: Session = Depends(get_db)):
-  # item = retrieve_item(id=id, db=db)
+  print('guneybilen')
+  item = retrieve_item(id=id, db=db)
 
-  # user = db.query(User).filter(User.id==item.seller_id).first()
+  user = db.query(User).filter(User.id==item.seller_id).first()
 
-  # file_path1 = _os.path.join(path, f"static/images/{user.username}/{item.item_image1}.jpg")
-  # file_path2 = _os.path.join(path, f"static/images/{user.username}/{item.item_image2}.jpg")
-  # file_path3 = _os.path.join(path, f"static/images/{user.username}/{item.item_image3}.jpg")
+  # file_path = _os.path.join(path, f"pictures/images/{user.username}/name")
+  #file_path1 = _os.path.join(path, f"pictures/images/{user.username}/{item.item_image1}.jpg")
+  # file_path2 = _os.path.join(path, f"pictures/images/{user.username}/{item.item_image2}.jpg")
+  # file_path3 = _os.path.join(path, f"pictures/images/{user.username}/{item.item_image3}.jpg")
  
   # if not item:
   #   raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
@@ -106,17 +108,17 @@ def read_item(id: int, db: Session = Depends(get_db)):
 # List[] type in response model is the most important part in order to receive the right answer
 # otherwise all data you receive will be resulted in nulls.
 # https://stackoverflow.com/questions/70634056/problem-with-python-fastapi-pydantic-and-sqlalchemy
-@router.get("/all", response_model=list)
-def read_items(db: Session = Depends(get_db)):
-  # try:         
-    # if app.state is not None:
-  # print('bilen', app.state.current_user)
-  images_items = list_images_with_items(db=db)
-  # print(images_items[0])
-  return images_items
-  #except AttributeError as e:
-  #  return []
-
+@router.get("/total/collection/all", response_model=list[ShowAllImportantDataAboutUser], response_model_exclude_none=True)
+def read_items(req: Request, db: Session = Depends(get_db)):
+  try:
+    access_token = req.headers['access_token']
+    owner = check_owner(access_token_for_id_check=access_token, db=db)
+    items = list_images_with_items(db=db)
+    if owner is not None:
+      items.append({"owner": owner})
+    return items
+  except KeyError as e:
+    print(e)
 
 
 @router.put("/update/{id}")
@@ -137,7 +139,7 @@ def update_item(id: int, item: ItemCreate,
   return {"msg": "Successfully updated data"}
 
 
-@router.delete("/delete/{id}")
+@router.delete("/collection/all/item/{id}")
 def delete_item(id: int,
                 db : Session = Depends(get_db),
                 current_user: User = Depends(get_current_user_from_token)):

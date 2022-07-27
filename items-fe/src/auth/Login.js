@@ -25,39 +25,6 @@ export default function Login() {
     document.getElementById('username').style.pointerEvents = 'none';
   }, [state]);
 
-  // const requestActivation = (e) => {
-  //   e.preventDefault();
-  //   let url = '/repeatactivate/';
-
-  //   axios
-  //     .post(
-  //       url,
-  //       { username: username },
-  //       {
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //       }
-  //     )
-  //     .then((response) => {
-  //       return response.data;
-  //     })
-  //     .then((data) => {
-  //       console.log('data ' + data);
-  //       if (data.state) {
-  //         setError(true);
-  //         setAlert(data.state);
-  //         scrollTo(myRef);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log(error.response);
-  //       setError(true);
-  //       setAlert(error.response.data.message);
-  //       scrollTo(myRef);
-  //     });
-  // };
-
   const scrollTo = (ref) => {
     if (ref && ref.current /* + other conditions */) {
       ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -66,8 +33,8 @@ export default function Login() {
 
   const success = () => {
     console.log('Authenticated!');
-    // console.log(from);
-    nav(from);
+    console.log(from);
+    // nav(from);
   };
 
   const fail = (status) => {

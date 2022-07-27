@@ -248,8 +248,13 @@ li:hover a {
 }
 
 .editButton {
-  background-color: #333 !important;
+  background-color: lightgrey;
   margin-right: 10px;
+}
+
+.deleteButton {
+  background-color: red;
+  color: #fff;
 }
 
 @media only screen and (min-width: 610px) {

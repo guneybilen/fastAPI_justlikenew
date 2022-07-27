@@ -176,7 +176,7 @@ const ItemPage = () => {
               <img
                 className="itemImage"
                 src={
-                  `static/images/${username}${itemId}/${image1}` ||
+                  `pictures/images/${username}${itemId}/${image1}` ||
                   URL.createObjectURL(imageUpload1)
                 }
                 id="newImage1"
@@ -223,7 +223,7 @@ const ItemPage = () => {
                 className="itemImage"
                 id="newImage2"
                 src={
-                  `static/images/${username}${itemId}/${image2}` ||
+                  `pictures/images/${username}${itemId}/${image2}` ||
                   URL.createObjectURL(imageUpload2)
                 }
                 alt="newImage2"
@@ -267,7 +267,7 @@ const ItemPage = () => {
                 className="itemImage"
                 id="newImage3"
                 src={
-                  `static/images/${username}${itemId}/${image3}` ||
+                  `pictures/images/${username}${itemId}/${image3}` ||
                   URL.createObjectURL(imageUpload3)
                 }
                 alt="newImage3"
