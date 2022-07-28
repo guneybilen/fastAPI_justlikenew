@@ -127,8 +127,8 @@ async def get_current_user_from_token(access_token: str, db: Session = Depends(g
         #         raise credentials_exception
         #   token_scopes = payload.get("scopes", [])
         #   token_data = Area(scopes=token_scopes, username=user.username)
-    except (JWTError, ValidationError, ExpiredSignatureError):
-        return "access_token_error"
+    except (JWTError, ValidationError, ExpiredSignatureError) as e:
+        return f"access_token_error {e}"
         #     raise credentials_exception
         # user = db.query(User).filter_by(username=token_data.username).first()
     # if user is None:

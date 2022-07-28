@@ -60,14 +60,14 @@ def list_items(db: Session):
   return items  
 
 def update_item_by_id(id: int, item: ItemCreate, db: Session, seller_id):
-  existing_item = db.query(Item).filter(Item.id == id)  
-  if not existing_item.first(): 
-    return 0 
-
-  item.__dict__.update(seller_id=seller_id)
-  existing_item.update(item.__dict__) 
-  db.commit() 
-  return 1  
+  try:
+    existing_item = db.query(Item).filter(Item.id == id).one_or_none() 
+    item.__dict__.update(seller_id=seller_id)
+    existing_item.update(item.__dict__) 
+    db.commit() 
+    return 1  
+  except Exception as e:
+    print(e)
 
     
 def delete_item_by_id(id: int, db: Session, seller_id):

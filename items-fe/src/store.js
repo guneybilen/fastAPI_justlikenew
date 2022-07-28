@@ -157,15 +157,15 @@ export default createStore({
     const id = updatedItem.id;
     const cb = updatedItem.cb;
 
-    axios({
-      method: 'put',
-      url: `http://localhost:8000/items/single/update/${id}`,
-      data: form_data,
+    const config = {
       headers: {
         'Content-Type': 'x-www-form-urlencoded',
         access_token: `${localStorage.getItem('access_token')}`,
       },
-    })
+    };
+
+    axios
+      .put(`http://localhost:8000/items/single/update/${id}`, form_data, config)
       .then((response) => {
         console.log(response);
         cb();
@@ -173,6 +173,23 @@ export default createStore({
       .catch((error) => {
         console.log(error);
       });
+
+    // axios({
+    //   method: 'put',
+    //   url: `http://localhost:8000/items/single/update/${id}`,
+    //   data: form_data,
+    //   headers: {
+    //     'Content-Type': 'x-www-form-urlencoded',
+    //     access_token: `Bearer ${localStorage.getItem('access_token')}`,
+    //   },
+    // })
+    //   .then((response) => {
+    //     console.log(response);
+    //     cb();
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   }),
 
   // editItem: thunk(async (actions, updatedItem, helpers) => {
