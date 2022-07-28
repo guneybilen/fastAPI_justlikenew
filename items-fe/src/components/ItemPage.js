@@ -1,18 +1,18 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useStoreState, useStoreActions } from 'easy-peasy';
+import { useStoreActions } from 'easy-peasy';
 import React, { useState, useEffect, useRef } from 'react';
 import { ITEM_ID } from '../constants';
 import axios from 'axios';
 import { DefaultEditor } from 'react-simple-wysiwyg';
 
 const ItemPage = () => {
-  const OBJECT_ACCESS_INDEX = 0;
+  // const OBJECT_ACCESS_INDEX = 0;
   const { id } = useParams();
   const navigate = useNavigate();
   const scrollRef = useRef(null);
 
-  const deleteItem = useStoreActions((actions) => actions.deleteItem);
-  const getUserById = useStoreState((state) => state.getUserById);
+  // const deleteItem = useStoreActions((actions) => actions.deleteItem);
+  // const getUserById = useStoreState((state) => state.getUserById);
 
   const [username, setUsername] = useState('');
   const [itemId, setItemId] = useState('');
@@ -30,10 +30,9 @@ const ItemPage = () => {
   const [closeButtonShouldShow, setCloseButtonShouldShow] = useState(false);
   const [html, setHtml] = useState('');
 
-  const user = getUserById(id)[OBJECT_ACCESS_INDEX];
+  // const user = getUserById(id)[OBJECT_ACCESS_INDEX];
 
-  // console.log('user ', user);
-  const savePost = useStoreActions((actions) => actions.savePost);
+  const editItem = useStoreActions((actions) => actions.editItem);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -51,21 +50,22 @@ const ItemPage = () => {
     item.append('location', location);
     item.append('model', model);
 
-    savePost({
+    editItem({
       item: item,
-      cb: (id) => {
-        navigate('/items/' + id);
+      id: itemId,
+      cb: () => {
+        navigate('/');
       },
     });
   };
 
-  const handleDelete = (id) => {
-    let confirmation = window.confirm('Are you sure for deleting the item?');
-    if (confirmation) {
-      deleteItem({ id: id, username: user.username });
-      navigate('/');
-    }
-  };
+  // const handleDelete = (id) => {
+  //   let confirmation = window.confirm('Are you sure for deleting the item?');
+  //   if (confirmation) {
+  //     deleteItem({ id: id, username: user.username });
+  //     navigate('/');
+  //   }
+  // };
 
   useEffect(() => {
     axios
@@ -90,11 +90,11 @@ const ItemPage = () => {
       .catch((error) => console.log(error));
   }, [id]);
 
-  const scrollTo = (ref) => {
-    if (ref && ref.current /* + other conditions */) {
-      ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
+  // const scrollTo = (ref) => {
+  //   if (ref && ref.current /* + other conditions */) {
+  //     ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  //   }
+  // };
 
   function onChange(e) {
     setHtml(e.target.value);
@@ -163,14 +163,6 @@ const ItemPage = () => {
               className="form-control"
               onChange={onChange}
             />
-            {/* <textarea
-            type="text"
-            id="itemBody"
-            className="form-control"
-            required
-            value={entry}
-            onChange={(e) => setEntry(e.target.value)}
-          /> */}
             <div>
               <br />
               {image1 && (

@@ -40,7 +40,8 @@ const Item = ({ searchItem, owner_object_parsed }) => {
     searchItem['item'][0]['image'][0]['item_image3'];
 
   const if_owner =
-    searchItem && owner_object_parsed === searchItem['seller_id']
+    searchItem &&
+    localStorage.getItem('loggedin_username') === searchItem['username']
       ? true
       : false;
 

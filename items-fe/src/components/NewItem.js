@@ -21,11 +21,11 @@ const NewPost = () => {
   const [closeButtonShouldShow, setCloseButtonShouldShow] = useState(false);
   const [html, setHtml] = useState('');
 
-  const scrollTo = (ref) => {
-    if (ref && ref.current /* + other conditions */) {
-      ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
+  // const scrollTo = (ref) => {
+  //   if (ref && ref.current /* + other conditions */) {
+  //     ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  //   }
+  // };
 
   const savePost = useStoreActions((actions) => actions.savePost);
 

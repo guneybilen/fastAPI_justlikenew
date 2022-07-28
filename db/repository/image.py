@@ -21,10 +21,10 @@ oldest_image_removed = False
 
 
 def create_necessary_directory(current_user: str, id: int):
-    _os.chdir("/home/bilen/Desktop/projects/fastapi/justlikenew/static/images")
-    if not _os.path.exists(f"/home/bilen/Desktop/projects/fastapi/justlikenew/static/images/{current_user}{id}"):
+    _os.chdir("/home/bilen/Desktop/projects/fastapi/justlikenew/pictures/images")
+    if not _os.path.exists(f"/home/bilen/Desktop/projects/fastapi/justlikenew/pictures/images/{current_user}{id}"):
      _os.mkdir(f"{current_user}{id}")
-    _os.chdir(f"/home/bilen/Desktop/projects/fastapi/justlikenew/static/images/{current_user}{id}")
+    _os.chdir(f"/home/bilen/Desktop/projects/fastapi/justlikenew/pictures/images/{current_user}{id}")
 
 
 def  check_image_count(record: Image, name: str, db: Session, round_robin = bool):
@@ -32,7 +32,6 @@ def  check_image_count(record: Image, name: str, db: Session, round_robin = bool
       list_of_files = _os.listdir('.')
       if (len(list_of_files) > 3):
         oldest_file = min(list_of_files, key=_os.path.getctime)
-        # print(f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! {oldest_file}")
         for column in inspect(Image).c:
           column_name = column.name
           for value, in db.query(getattr(Image, column_name)):
@@ -116,5 +115,5 @@ def list_images_with_items(db: Session):
 def list_images_with_item(id:int, db: Session):
     # query = db.query(Item).options(joinedload(Item.image, innerjoin=True), contains_eager('image.items')).one()
     # query = db.query(User).options(joinedload(User.item, innerjoin=True), contains_eager('item.users')).one()
-    query = db.query(User).options(joinedload(User.item, innerjoin=True)).one_or_none()
+    query = db.query(User).options(joinedload(User.item, innerjoin=True)).first()
     return query

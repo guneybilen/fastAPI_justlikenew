@@ -304,7 +304,8 @@ article {
 }
 
 article:not(:first-of-type) {
-  margin-top: 12rem;
+  margin-top: 4rem;
+  margin-bottom: 200px;
 }
 
 hr {

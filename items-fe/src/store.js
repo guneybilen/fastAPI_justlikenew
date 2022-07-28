@@ -97,7 +97,6 @@ export default createStore({
   }),
 
   savePost: thunk(async (actions, data, helpers) => {
-    // const { items } = helpers.getState();
     const form_data = data.item;
     const cb = data.cb;
 
@@ -107,40 +106,16 @@ export default createStore({
       data: form_data,
       headers: {
         'Content-Type': 'x-www-form-urlencoded',
-        // accept: 'application/json',
         access_token: `${localStorage.getItem('access_token')}`,
       },
     })
       .then((response) => {
-        // console.log(response.data);
         if (response.data['access_token'] === 'access_token_error')
           window.location = '/';
         if (response.data.result === true) {
           cb(response.data.item_id);
         }
-
-        //   if (response.data['error'])
-        //     return cb(response.data['error'], null, null);
-        //   if (
-        //     !response.data['error'] &&
-        //     (response.data.item_image1?.length > 0 ||
-        //       response.data.item_image2?.length > 0 ||
-        //       response.data.item_image3?.length > 0)
-        //   ) {
-        //     return cb(null, response.data, null);
-        //   } else {
-        //     actions.setItems([...items, response.data]);
-        //     actions.setSlug('');
-        //     actions.setBrand('');
-        //     actions.setPrice('');
-        //     actions.setModel('');
-        //     actions.setEntry('');
-        //     return cb(null, null);
-        //   }
       })
-      // .then((data) => {
-      //   console.log('data', data);
-      // })
       .catch((error) => {
         console.log(error);
       });
@@ -177,59 +152,83 @@ export default createStore({
   }),
 
   editItem: thunk(async (actions, updatedItem, helpers) => {
-    const { items } = helpers.getState();
-
-    const slug = updatedItem.slug;
-    const form_data = updatedItem.form_data;
+    console.log(updatedItem);
+    const form_data = updatedItem.item.form_data;
+    const id = updatedItem.id;
     const cb = updatedItem.cb;
 
-    try {
-      axios
-        .put(`${dest}/items/${slug}/`, form_data, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            access: `Bearer ${localStorage.getItem('access')}`,
-            refresh: `Bearer ${localStorage.getItem('refresh')}`,
-          },
-        })
-        .then((response) => {
-          if (response.data['error'])
-            return cb(response.data['error'], null, null);
-          if (
-            !response.data['error'] &&
-            (response.data.item_image1?.length > 0 ||
-              response.data.item_image2?.length > 0 ||
-              response.data.item_image3?.length > 0)
-          ) {
-            return cb(null, response.data, null);
-          } else {
-            actions.setItems([...items, response.data]);
-            actions.setItems(
-              items.map((item) =>
-                item.slug === slug ? { ...response.data } : item
-              )
-            );
-
-            actions.setSlug('');
-            actions.setBrand('');
-            actions.setPrice('');
-            actions.setModel('');
-            actions.setEntry('');
-            actions.Image1(null);
-            actions.Image2(null);
-            actions.Image3(null);
-
-            return cb(null, null);
-          }
-        })
-        // .then((data) => {
-        //   console.log('data', data);
-        // })
-        .catch((error) => {
-          cb(null, error.response.data, error.response.status);
-        });
-    } catch (err) {
-      console.log(`Error: ${err}`);
-    }
+    axios({
+      method: 'put',
+      url: `http://localhost:8000/items/single/update/${id}`,
+      data: form_data,
+      headers: {
+        'Content-Type': 'x-www-form-urlencoded',
+        access_token: `${localStorage.getItem('access_token')}`,
+      },
+    })
+      .then((response) => {
+        console.log(response);
+        cb();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }),
+
+  // editItem: thunk(async (actions, updatedItem, helpers) => {
+  //   const { items } = helpers.getState();
+
+  //   const slug = updatedItem.slug;
+  //   const form_data = updatedItem.form_data;
+  //   const cb = updatedItem.cb;
+
+  //   try {
+  //     axios
+  //       .put(`${dest}/items/${slug}/`, form_data, {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //           access: `Bearer ${localStorage.getItem('access')}`,
+  //           refresh: `Bearer ${localStorage.getItem('refresh')}`,
+  //         },
+  //       })
+  //       .then((response) => {
+  //         if (response.data['error'])
+  //           return cb(response.data['error'], null, null);
+  //         if (
+  //           !response.data['error'] &&
+  //           (response.data.item_image1?.length > 0 ||
+  //             response.data.item_image2?.length > 0 ||
+  //             response.data.item_image3?.length > 0)
+  //         ) {
+  //           return cb(null, response.data, null);
+  //         } else {
+  //           actions.setItems([...items, response.data]);
+  //           actions.setItems(
+  //             items.map((item) =>
+  //               item.slug === slug ? { ...response.data } : item
+  //             )
+  //           );
+
+  //           actions.setSlug('');
+  //           actions.setBrand('');
+  //           actions.setPrice('');
+  //           actions.setModel('');
+  //           actions.setEntry('');
+  //           actions.Image1(null);
+  //           actions.Image2(null);
+  //           actions.Image3(null);
+
+  //           return cb(null, null);
+  //         }
+  //       })
+  //       // .then((data) => {
+  //       //   console.log('data', data);
+  //       // })
+  //       .catch((error) => {
+  //         cb(null, error.response.data, error.response.status);
+  //       });
+  //   } catch (err) {
+  //     console.log(`Error: ${err}`);
+  //   }
+  // }),
 });
