@@ -299,7 +299,8 @@ li:hover a {
 
 article {
   margin-top: 1rem;
-  zoom: 1.6;
+  transform: scale(1);
+  transform-origin: 0;
 }
 
 article:not(:first-of-type) {

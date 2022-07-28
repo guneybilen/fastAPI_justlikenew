@@ -14,14 +14,8 @@ import Activation from './auth/Activation';
 import ItemPage from './components/ItemPage';
 import RequireAuth from './components/RequireAuth';
 import { Routes, Route } from 'react-router-dom';
-import check_logged_in_status from './api/check_logged_in_status';
-import { useEffect } from 'react';
 
 function App() {
-  useEffect(() => {
-    // check_logged_in_status();
-  });
-
   return (
     <div className="App">
       <Header title="electronics guru" />
@@ -29,7 +23,6 @@ function App() {
 
       <Routes>
         <Route forceRefresh={true} path="/" element={<Home />} />
-        <Route path="/item" element={<NewItem />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/activation/:token" element={<Activation />} />
@@ -54,15 +47,6 @@ function App() {
             </RequireAuth>
           }
         ></Route>
-        {/* <Route
-          path="/update/:id"
-          element={
-            <RequireAuth>
-              <UpdateItem />
-            </RequireAuth>
-          }
-        ></Route>{' '}
-        */}
         <Route path="/*" element={<Login />} />
       </Routes>
 

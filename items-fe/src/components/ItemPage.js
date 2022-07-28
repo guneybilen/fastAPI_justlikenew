@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStoreState, useStoreActions } from 'easy-peasy';
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ITEM_ID } from '../constants';
 import axios from 'axios';
 import { DefaultEditor } from 'react-simple-wysiwyg';
@@ -106,63 +106,64 @@ const ItemPage = () => {
   };
 
   return (
-    <main className="NewPost">
-      {error && closeButtonShouldShow && (
-        <div className="alert text-center" id="id001" ref={scrollRef}>
-          <span className="closebtn" onClick={(e) => displayNone(e)}>
-            &times;
-          </span>
-          <strong>{error}</strong>
-        </div>
-      )}
-      <>
-        <form action="" className="newPostForm" encType="multipart/form-data">
-          <label htmlFor="itemBrand">Brand:</label>
-          <input
-            type="text"
-            id="itemBrand"
-            className="form-control"
-            required
-            value={brand}
-            onChange={(e) => setBrand(e.target.value)}
-          />
-          <label htmlFor="itemModel">Model:</label>
-          <input
-            type="text"
-            id="itemModel"
-            required
-            className="form-control"
-            value={model}
-            onChange={(e) => setModel(e.target.value)}
-          />
-          <label htmlFor="itemModel">Location:</label>
-          <input
-            type="text"
-            id="itemLocation"
-            required
-            className="form-control"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-          />
-          <label htmlFor="itemPrice">CAD$ Price:</label>
-          <input
-            type="text"
-            id="itemPrice"
-            className="form-control"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-          />
-          <label htmlFor="itemBody">
-            Entry (enter your non-private contact details also, so buyers can
-            reach you!):
-          </label>
-          <DefaultEditor
-            value={html}
-            placeholder="You can start typing here..."
-            className="form-control"
-            onChange={onChange}
-          />
-          {/* <textarea
+    <>
+      <main className="NewPost">
+        {error && closeButtonShouldShow && (
+          <div className="alert text-center" id="id001" ref={scrollRef}>
+            <span className="closebtn" onClick={(e) => displayNone(e)}>
+              &times;
+            </span>
+            <strong>{error}</strong>
+          </div>
+        )}
+        <>
+          <form action="" className="newPostForm" encType="multipart/form-data">
+            <label htmlFor="itemBrand">Brand:</label>
+            <input
+              type="text"
+              id="itemBrand"
+              className="form-control"
+              required
+              value={brand}
+              onChange={(e) => setBrand(e.target.value)}
+            />
+            <label htmlFor="itemModel">Model:</label>
+            <input
+              type="text"
+              id="itemModel"
+              required
+              className="form-control"
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+            />
+            <label htmlFor="itemModel">Location:</label>
+            <input
+              type="text"
+              id="itemLocation"
+              required
+              className="form-control"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+            />
+            <label htmlFor="itemPrice">CAD$ Price:</label>
+            <input
+              type="text"
+              id="itemPrice"
+              className="form-control"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+            />
+            <label htmlFor="itemBody">
+              Entry (enter your non-private contact details also, so buyers can
+              reach you!):
+            </label>
+            <DefaultEditor
+              value={html}
+              placeholder="You can start typing here..."
+              className="form-control"
+              onChange={onChange}
+            />
+            {/* <textarea
             type="text"
             id="itemBody"
             className="form-control"
@@ -170,153 +171,154 @@ const ItemPage = () => {
             value={entry}
             onChange={(e) => setEntry(e.target.value)}
           /> */}
-          <div>
-            <br />
-            {image1 && (
-              <img
-                className="itemImage"
-                src={
-                  `pictures/images/${username}${itemId}/${image1}` ||
-                  URL.createObjectURL(imageUpload1)
-                }
-                id="newImage1"
-                alt="newImage1"
-                width="150px"
-                height="75px"
-              />
-            )}
-            <span className="spanImage"></span>
+            <div>
+              <br />
+              {image1 && (
+                <img
+                  className="itemImage"
+                  src={
+                    `pictures/images/${username}${itemId}/${image1}` ||
+                    URL.createObjectURL(imageUpload1)
+                  }
+                  id="newImage1"
+                  alt="newImage1"
+                  width="150px"
+                  height="75px"
+                />
+              )}
+              <span className="spanImage"></span>
 
-            {(imageUpload1 || image1) && (
+              {(imageUpload1 || image1) && (
+                <input
+                  type="button"
+                  value="delete image1"
+                  className="btn btn-sm btn-danger"
+                  onClick={() => {
+                    setImage1(false);
+                    setImageUpload1(false);
+                  }}
+                />
+              )}
+
+              <br />
+            </div>
+            <div>
+              <label htmlFor="image1">
+                {image1 ? 'change image1' : 'add image 1'} &nbsp;
+              </label>
               <input
-                type="button"
-                value="delete image1"
-                className="btn btn-sm btn-danger"
-                onClick={() => {
-                  setImage1(false);
-                  setImageUpload1(false);
+                type="file"
+                alt="item"
+                name="image"
+                accept="image/*"
+                onChange={(e) => {
+                  e.target.files[0] === undefined ||
+                    setImageUpload1(e.target.files[0]);
                 }}
               />
-            )}
-
+            </div>
             <br />
-          </div>
-          <div>
-            <label htmlFor="image1">
-              {image1 ? 'change image1' : 'add image 1'} &nbsp;
-            </label>
-            <input
-              type="file"
-              alt="item"
-              name="image"
-              accept="image/*"
-              onChange={(e) => {
-                e.target.files[0] === undefined ||
-                  setImageUpload1(e.target.files[0]);
-              }}
-            />
-          </div>
-          <br />
-          <div>
-            {image2 && (
-              <img
-                className="itemImage"
-                id="newImage2"
-                src={
-                  `pictures/images/${username}${itemId}/${image2}` ||
-                  URL.createObjectURL(imageUpload2)
-                }
-                alt="newImage2"
-                width="150px"
-                height="75px"
-              />
-            )}
-            <span className="spanImage">
-              {(imageUpload2 || image2) && (
-                <input
-                  type="button"
-                  value="delete image2"
-                  className="btn btn-sm btn-danger"
-                  onClick={() => {
-                    setImage2(false);
-                    setImageUpload2(false);
-                  }}
+            <div>
+              {image2 && (
+                <img
+                  className="itemImage"
+                  id="newImage2"
+                  src={
+                    `pictures/images/${username}${itemId}/${image2}` ||
+                    URL.createObjectURL(imageUpload2)
+                  }
+                  alt="newImage2"
+                  width="150px"
+                  height="75px"
                 />
               )}
-            </span>
-            <br />
-            <label htmlFor="image2">
-              {image2 ? 'change image2' : 'add image 2'} &nbsp;
-            </label>
-            <input
-              type="file"
-              id="image2"
-              alt="item"
-              name="image"
-              accept="image/*"
-              onChange={(e) => {
-                e.target.files[0] === undefined ||
-                  setImageUpload2(e.target.files[0]);
-              }}
-            />
-          </div>
-          <br />
-          <div>
-            {image3 && (
-              <img
-                className="itemImage"
-                id="newImage3"
-                src={
-                  `pictures/images/${username}${itemId}/${image3}` ||
-                  URL.createObjectURL(imageUpload3)
-                }
-                alt="newImage3"
-                width="150px"
-                height="75px"
+              <span className="spanImage">
+                {(imageUpload2 || image2) && (
+                  <input
+                    type="button"
+                    value="delete image2"
+                    className="btn btn-sm btn-danger"
+                    onClick={() => {
+                      setImage2(false);
+                      setImageUpload2(false);
+                    }}
+                  />
+                )}
+              </span>
+              <br />
+              <label htmlFor="image2">
+                {image2 ? 'change image2' : 'add image 2'} &nbsp;
+              </label>
+              <input
+                type="file"
+                id="image2"
+                alt="item"
+                name="image"
+                accept="image/*"
+                onChange={(e) => {
+                  e.target.files[0] === undefined ||
+                    setImageUpload2(e.target.files[0]);
+                }}
               />
-            )}
-            <span className="spanImage">
-              {(imageUpload3 || image3) && (
-                <input
-                  type="button"
-                  value="delete image3"
-                  className="btn btn-sm btn-danger"
-                  onClick={() => {
-                    setImage3(false);
-                    setImageUpload3(false);
-                  }}
+            </div>
+            <br />
+            <div>
+              {image3 && (
+                <img
+                  className="itemImage"
+                  id="newImage3"
+                  src={
+                    `pictures/images/${username}${itemId}/${image3}` ||
+                    URL.createObjectURL(imageUpload3)
+                  }
+                  alt="newImage3"
+                  width="150px"
+                  height="75px"
                 />
               )}
-            </span>
+              <span className="spanImage">
+                {(imageUpload3 || image3) && (
+                  <input
+                    type="button"
+                    value="delete image3"
+                    className="btn btn-sm btn-danger"
+                    onClick={() => {
+                      setImage3(false);
+                      setImageUpload3(false);
+                    }}
+                  />
+                )}
+              </span>
+              <br />
+              <label htmlFor="image3">
+                {image3 ? 'change image3' : 'add image 3'} &nbsp;
+              </label>
+              <input
+                type="file"
+                id="image3"
+                alt="item"
+                name="image"
+                accept="image/*"
+                onChange={(e) => {
+                  e.target.files[0] === undefined ||
+                    setImageUpload3(e.target.files[0]);
+                }}
+              />
+            </div>
             <br />
-            <label htmlFor="image3">
-              {image3 ? 'change image3' : 'add image 3'} &nbsp;
-            </label>
-            <input
-              type="file"
-              id="image3"
-              alt="item"
-              name="image"
-              accept="image/*"
-              onChange={(e) => {
-                e.target.files[0] === undefined ||
-                  setImageUpload3(e.target.files[0]);
+            <button
+              type="submit"
+              onClick={(e) => {
+                handleSubmit(e);
               }}
-            />
-          </div>
-          <br />
-          <button
-            type="submit"
-            onClick={(e) => {
-              handleSubmit(e);
-            }}
-            className="btn btn-primary btn-lg w-100"
-          >
-            Submit
-          </button>
-        </form>
-      </>
-    </main>
+              className="btn btn-primary btn-lg w-100"
+            >
+              Submit
+            </button>
+          </form>
+        </>
+      </main>
+    </>
   );
 };
 

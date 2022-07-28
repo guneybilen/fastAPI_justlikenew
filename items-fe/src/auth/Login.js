@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import login_api from '../api/login_api';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-// import axios from 'axios';
+import axios from 'axios';
 import { useLocation } from 'react-router-dom';
+import { LOGIN_URL } from '../constants';
 
 export default function Login() {
   const myRef = useRef(null);
@@ -18,6 +18,35 @@ export default function Login() {
   const { state } = useLocation();
 
   const from = state === null ? '/' : state.from;
+
+  const send_login_info = (form_data, success, fail) => {
+    axios({
+      method: 'POST',
+      url: LOGIN_URL,
+      data: form_data,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    })
+      .then(function (response) {
+        console.assert(response);
+        if (response.status === 401 || response.status === 403) {
+          fail(response);
+        } else if (response.status === 500) {
+          fail(response.data);
+        } else if (response.status === 200) {
+          localStorage.setItem('access_token', response.data.access_token);
+          localStorage.setItem('token_type', response.data.token_type);
+          localStorage.setItem(
+            'loggedin_username',
+            response.data.loggedin_username
+          );
+          success();
+        }
+      })
+      .catch(function (error) {
+        console.log('login is failed ');
+        fail(error.response);
+      });
+  };
 
   useEffect(() => {
     document.getElementById('sbn-btn').disabled = true;
@@ -34,7 +63,7 @@ export default function Login() {
   const success = () => {
     console.log('Authenticated!');
     console.log(from);
-    // nav(from);
+    nav(from);
   };
 
   const fail = (status) => {
@@ -58,7 +87,7 @@ export default function Login() {
     let form_data = new FormData();
     form_data.append('username', username);
     form_data.append('password', password);
-    await login_api(form_data, success, fail);
+    send_login_info(form_data, success, fail);
   };
 
   const displayNone = (e) => {

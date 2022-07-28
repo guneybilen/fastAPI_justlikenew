@@ -92,7 +92,7 @@ async def check_token_expiration(access_token: str, db: Session):
     access_token_parsed = access_token.split(" ")[1]
     # print(access_token)
     result = await get_current_user_for_token_expiration(access_token_parsed, db)
-    # print('result ', result)
+    print('result ', result)
     return result
 
 # TODO: take care of scoping

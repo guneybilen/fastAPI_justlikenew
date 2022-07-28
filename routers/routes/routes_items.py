@@ -49,10 +49,6 @@ async def create_item(req: Request,
                  
                   db: Session = Depends(get_db)):
 
-                # result = {**item}
-                # print('brand', brand)
-                # return {"item_image1": item_image1.}
-
                 current_user_or_access_token_error = await get_current_user_from_token(access_token= req.headers['access_token'], db=db)
 
                 if(current_user_or_access_token_error=="access_token_error"):
@@ -80,26 +76,10 @@ async def create_item(req: Request,
                 return { "result": boolean_result, "item_id": item_id}
 
 
-# if we keep just "{id}". it would start catching all routes
-@router.get("/particular/{id}")
+@router.get("/particular/{id}", response_model=ShowAllImportantDataAboutUser)
 def read_item(id: int, db: Session = Depends(get_db)):
-  print('guneybilen')
   item = retrieve_item(id=id, db=db)
-
   user = db.query(User).filter(User.id==item.seller_id).first()
-
-  # file_path = _os.path.join(path, f"pictures/images/{user.username}/name")
-  #file_path1 = _os.path.join(path, f"pictures/images/{user.username}/{item.item_image1}.jpg")
-  # file_path2 = _os.path.join(path, f"pictures/images/{user.username}/{item.item_image2}.jpg")
-  # file_path3 = _os.path.join(path, f"pictures/images/{user.username}/{item.item_image3}.jpg")
- 
-  # if not item:
-  #   raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-  #   detail=f"Item with this id {id} not found")
-
-  # if _os.path.exists(file_path1 or file_path2 or file_path3):
-  #   return {"item": item, "images": FileResponse([file_path1, file_path2, file_path3])}
-  # return item
   item_and_image_names = list_images_with_item(id=id, db=db)
   return item_and_image_names
 
