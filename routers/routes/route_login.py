@@ -38,22 +38,17 @@ def authenticate_user(username: str, password: str, db: Session = Depends(get_db
   return user
   
 
-@router.get("/check_if_token_expired", response_class=RedirectResponse)
-# @router.get("/check_if_token_expired")
+@router.get("/check_if_token_expired")
 async def check_if_token_expired(req: Request, res: Response, db: Session = Depends(get_db)):
   access_token_double_checked_from_db = await check_token_expiration(access_token=req.headers['access_token'], db=db)
-  print("access_token_double_checked_from_db ", access_token_double_checked_from_db)
   if access_token_double_checked_from_db == 205:
-    # res.status_code = 302
-    return RedirectResponse(f"{_os.getenv('FRONT_END_URL')}/Error", status_code=status.HTTP_302_FOUND)
+    return {"access_code": access_token_double_checked_from_db, "status_code": status.HTTP_205_RESET_CONTENT}
   return {"access_code": access_token_double_checked_from_db, "status_code": status.HTTP_200_OK}
   
 
 @router.post("/token", response_model=MixedType)
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
                            db: Session = Depends(get_db)):
-
-                          #  print(form_data)
 
                           user = authenticate_user(form_data.username, form_data.password, db)
 
