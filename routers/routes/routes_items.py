@@ -44,7 +44,7 @@ async def create_item(req: Request,
                   brand: str = Form(),
                   location: Optional[str] = Form(None),  
                   description: Optional[str] = Form(None),
-                  price: Optional[float] = Form(None), 
+                  price: Optional[str] = Form(None), 
                   model: Optional[str] = Form(None),
                  
                   db: Session = Depends(get_db)):
@@ -91,54 +91,51 @@ def read_item(id: int, db: Session = Depends(get_db)):
 @router.get("/total/collection/all", response_model=list[ShowAllImportantDataAboutUser], response_model_exclude_none=True)
 def read_items(req: Request, db: Session = Depends(get_db)):
   try:
-    access_token = req.headers['access_token']
-    owner = check_owner(access_token_for_id_check=access_token, db=db)
+    # access_token = req.headers['access_token']
+    # owner = check_owner(access_token_for_id_check=access_token, db=db)
     items = list_images_with_items(db=db)
-    if owner is not None:
-      items.append({"owner": owner})
+    # if owner is not None:
+    # items.append({"owner": owner})
     return items
   except KeyError as e:
     print(e)
 
 
 @router.put("/single/update/{id}")
-async def update_item(id: int,
-                  req: Request,
-                  # item_image1a: bytes | None = File(default=None),
-                  # item_image1b: UploadFile | None = File(default=None),
-                  # item_image2a: bytes | None = File(default=None),
-                  # item_image2b: UploadFile | None = File(default=None),
-                  # item_image3a: bytes | None = File(default=None),
-                  # item_image3b: UploadFile | None = File(default=None),
-                  # brand: str = Form(),
-                  # location: Optional[str] = Form(None),  
-                  # description: Optional[str] = Form(None),
-                  # price: Optional[float] = Form(None), 
-                  # model: Optional[str] = Form(None),
-                  item: Optional[ItemCreate] = Form(None),
+async def update_item(req: Request, id: int,
+                  item_image1a: bytes | None = File(default=None),
+                  item_image1b: UploadFile | None = File(default=None),
+                  item_image2a: bytes | None = File(default=None),
+                  item_image2b: UploadFile | None = File(default=None),
+                  item_image3a: bytes | None = File(default=None),
+                  item_image3b: UploadFile | None = File(default=None),
+                  brand: str = Form(),
+                  location: Optional[str] = Form(None),  
+                  description: Optional[str] = Form(None),
+                  price: Optional[float] = Form(None), 
+                  model: Optional[str] = Form(None),
                   db: Session = Depends(get_db)):
 
-                  # print('description ', description)
 
-                #   item_object = {
-                #     "brand": brand,
-                #     "price": price,
-                #     "location": location,
-                #     "model": model,
-                #     "description": description,
-                #     "item_image1a": item_image1a,
-                #     "item_image1b": item_image1b,
-                #     "item_image2a": item_image2a,
-                #     "item_image2b": item_image2b,
-                #     "item_image3a": item_image3a,
-                #     "item_image3b": item_image3b,
-                # }
+                item_object = {
+                  "brand": brand,
+                  "price": price,
+                  "location": location,
+                  "model": model,
+                  "description": description,
+                  "item_image1a": item_image1a,
+                  "item_image1b": item_image1b,
+                  "item_image2a": item_image2a,
+                  "item_image2b": item_image2b,
+                  "item_image3a": item_image3a,
+                  "item_image3b": item_image3b,
+              }
 
                 try:
                   current_user_or_access_token_error = await get_current_user_from_token(access_token= req.headers['access_token'], db=db)
                   print('current_user_or_access_token_error ', current_user_or_access_token_error)
 
-                  message = update_item_by_id(id=id, item=item, db=db, seller_id=current_user_or_access_token_error.id)
+                  message = update_item_by_id(id=id, db=db, seller_id=current_user_or_access_token_error.id, item=item_object)
                   print('message ', message)
                   if not message:
                     raise HTTPException(

@@ -18,7 +18,7 @@ def include_router(app):
 
 
 def configure_static(app):
-  app.mount("/pictures", StaticFiles(directory="./pictures"), name="pictures")
+  app.mount("/pictures", StaticFiles(directory="pictures"), name="pictures")
 
 
 def create_tables():

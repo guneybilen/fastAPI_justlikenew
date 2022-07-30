@@ -12,6 +12,7 @@ from core.security import get_current_user_from_token
 import os as _os
 from sqlalchemy.orm import Session
 from db.repository.image import upload_image_by_item_id
+from sqlalchemy import update
 
 
 def validate_image(image_size: int):
@@ -59,12 +60,24 @@ def list_items(db: Session):
   items = db.query(Item).all() 
   return items  
 
-def update_item_by_id(id: int, item: ItemCreate, db: Session, seller_id):
+def update_item_by_id(id: int, db: Session, seller_id, item: ItemBase):
+
   try:
-    existing_item = db.query(Item).filter(Item.id == id).one_or_none() 
-    item.__dict__.update(seller_id=seller_id)
-    existing_item.update(item.__dict__) 
-    db.commit() 
+    # existing_item = db.query(Item).filter(Item.id == id).one_or_none() 
+    # db.query(Item).filter(Item.seller_id == seller_id).update(item)
+    # item["seller_id"]= seller_id
+    # existing_item.__dict__.update(item.__dict__) 
+    # db.commit() 
+
+    print(item["model"])
+
+    empty_keys = [k for k,v in item.items() if not v]
+    for k in empty_keys:
+        del item[k]
+
+    stmt = (update(Item).where(Item.seller_id == seller_id).values(**item.dict()))
+
+    print("stmt", stmt)
     return 1  
   except Exception as e:
     print(e)

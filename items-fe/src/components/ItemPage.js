@@ -44,11 +44,11 @@ const ItemPage = () => {
     if (imageUpload2) item.append('item_image2b', imageUpload2);
     if (imageUpload3) item.append('item_image3a', imageUpload3);
     if (imageUpload3) item.append('item_image3b', imageUpload3);
-    item.append('brand', brand);
-    item.append('price', price);
-    item.append('description', html);
-    item.append('location', location);
-    item.append('model', model);
+    item.append('brand', JSON.stringify(brand));
+    item.append('price', JSON.stringify(price));
+    item.append('description', JSON.stringify(html));
+    item.append('location', JSON.stringify(location));
+    item.append('model', JSON.stringify(model));
 
     editItem({
       item: item,
@@ -165,13 +165,20 @@ const ItemPage = () => {
             />
             <div>
               <br />
-              {image1 && (
+              {image1 && !imageUpload1 && (
                 <img
                   className="itemImage"
-                  src={
-                    `pictures/images/${username}${itemId}/${image1}` ||
-                    URL.createObjectURL(imageUpload1)
-                  }
+                  src={`pictures/images/${username}${itemId}/${image1}`}
+                  id="newImage1"
+                  alt="newImage1"
+                  width="150px"
+                  height="75px"
+                />
+              )}
+              {imageUpload1 && (
+                <img
+                  className="itemImage"
+                  src={URL.createObjectURL(imageUpload1)}
                   id="newImage1"
                   alt="newImage1"
                   width="150px"
@@ -211,14 +218,21 @@ const ItemPage = () => {
             </div>
             <br />
             <div>
-              {image2 && (
+              {image2 && !imageUpload2 && (
                 <img
                   className="itemImage"
+                  src={`pictures/images/${username}${itemId}/${image2}`}
                   id="newImage2"
-                  src={
-                    `pictures/images/${username}${itemId}/${image2}` ||
-                    URL.createObjectURL(imageUpload2)
-                  }
+                  alt="newImage2"
+                  width="150px"
+                  height="75px"
+                />
+              )}
+              {imageUpload2 && (
+                <img
+                  className="itemImage"
+                  src={URL.createObjectURL(imageUpload2)}
+                  id="newImage2"
                   alt="newImage2"
                   width="150px"
                   height="75px"
@@ -255,14 +269,21 @@ const ItemPage = () => {
             </div>
             <br />
             <div>
-              {image3 && (
+              {image3 && !imageUpload3 && (
                 <img
                   className="itemImage"
+                  src={`pictures/images/${username}${itemId}/${image3}`}
                   id="newImage3"
-                  src={
-                    `pictures/images/${username}${itemId}/${image3}` ||
-                    URL.createObjectURL(imageUpload3)
-                  }
+                  alt="newImage3"
+                  width="150px"
+                  height="75px"
+                />
+              )}
+              {imageUpload3 && (
+                <img
+                  className="itemImage"
+                  src={URL.createObjectURL(imageUpload3)}
+                  id="newImage3"
                   alt="newImage3"
                   width="150px"
                   height="75px"

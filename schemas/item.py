@@ -27,7 +27,7 @@ class ShowItem(ItemBase):
   model:  Optional[str]
   location: Optional[str]
   description: Optional[str]
-  price: Optional[float]
+  price: Optional[str]
   created_date: Optional[datetime]
   updated_date: Optional[datetime]
   seller_id: Optional[int]

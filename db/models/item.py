@@ -1,6 +1,6 @@
 from ..base_db import Base
 from sqlalchemy import Boolean, Column, Date, ForeignKey, DateTime
-from sqlalchemy import Integer, String, Float, Text
+from sqlalchemy import Integer, String, Text
 from sqlalchemy.orm import relationship 
 from datetime import datetime
 from db.models import *
@@ -15,7 +15,7 @@ class Item(Base):
   description = Column(Text, nullable=True)
   is_active = Column(Boolean(), default=True)
   seller_id = Column(Integer, ForeignKey("user.id"))
-  price = Column(Float(7,2), nullable=True)
+  price = Column(String, nullable=True)
   created_date = Column(DateTime, default=datetime.utcnow)
   updated_date = Column(DateTime, default=datetime.now, onupdate=datetime.now)    
 

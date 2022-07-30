@@ -17,7 +17,7 @@ export default function Login() {
   const [show, setShow] = useState(false);
   const { state } = useLocation();
 
-  console.log(state);
+  // console.log(state);
   const from = state === null ? '/' : state.from;
 
   const send_login_info = (form_data, success, fail) => {

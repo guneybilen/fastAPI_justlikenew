@@ -209,3 +209,4 @@ def check_owner(access_token_for_id_check: str, db: Session):
 
     except Exception as e:
       print("Exception ", e)
+      return str(e)

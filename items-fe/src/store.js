@@ -153,7 +153,7 @@ export default createStore({
 
   editItem: thunk(async (actions, updatedItem, helpers) => {
     console.log(updatedItem);
-    const form_data = updatedItem.item.form_data;
+    const form_data = updatedItem.item;
     const id = updatedItem.id;
     const cb = updatedItem.cb;
 
@@ -163,6 +163,10 @@ export default createStore({
         access_token: `${localStorage.getItem('access_token')}`,
       },
     };
+
+    for (const entry of form_data.entries()) {
+      console.log(entry);
+    }
 
     axios
       .put(`http://localhost:8000/items/single/update/${id}`, form_data, config)

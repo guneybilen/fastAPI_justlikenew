@@ -21,15 +21,17 @@ export const getItemCreatedDate = (users) => {
 };
 
 export const getItemBrand = (searchItem) => {
-  return searchItem['item'].map((singleItem) => {
-    return singleItem.brand.length < 16
-      ? singleItem.brand
-      : singleItem.brand?.slice(0, 15);
+  return searchItem.map((singleOne) => {
+    return singleOne['item'].map((singleItem) => {
+      return singleItem.brand.length < 16
+        ? singleItem.brand
+        : singleItem.brand?.slice(0, 15);
+    });
   });
 };
 
 export const getItemModel = (searchItem) => {
-  return searchItem['item'].map((singleItem) => {
+  return searchItem.item?.map((singleItem) => {
     return singleItem.model.length < 16
       ? singleItem.model
       : singleItem.model?.slice(0, 15);
@@ -37,37 +39,21 @@ export const getItemModel = (searchItem) => {
 };
 
 export const getItemPrice = (searchItem) => {
-  return searchItem['item'].map((singleItem) => {
+  return searchItem.item?.map((singleItem) => {
     return singleItem.price ? 'CAD$ ' + singleItem.price : '';
   });
 };
 
 export const getItemDescription = (searchItem) => {
-  return searchItem['item'].map((singleItem) => {
+  return searchItem.item?.map((singleItem) => {
     return singleItem.description?.length < 25
       ? singleItem.description
       : singleItem.description?.slice(0, 25);
   });
 };
 
-// You may need the following code in ItemPage.js
-//
-//
-// const getItemImages = () => {
-//   return item['items'].map((singleItem) => {
-//     return singleItem['items'].map((img, index) => {
-//       return img['images'].map((singleImage, index) => {
-//         return singleImage.item_image[index]
-//           ? singleImage.item_image[index]
-//           : '';
-//       });
-//     });
-//   });
-// };
-
 export const getUserUserName = (searchItem) => {
-  console.log('searchItem ', searchItem);
-  return searchItem['item'].map((item) => {
+  return searchItem.item?.map((item) => {
     return item['image'].map((singleImage) => {
       console.log(searchItem.username);
       return {
@@ -131,7 +117,7 @@ export const getUserUserName = (searchItem) => {
 // };
 
 export const getItemCreatedDateForSingleUser = (obj) => {
-  return obj['item'][0]['image'][0]['updated_date'];
+  return obj['image'][0]['updated_date'];
 };
 
 // export const getSellerIdForSingleUser = (users) => {

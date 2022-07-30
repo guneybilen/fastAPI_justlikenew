@@ -10,38 +10,23 @@ import { formatDistance, parseISO } from 'date-fns';
 import { Link, useNavigate } from 'react-router-dom';
 import { ITEM_DELETE } from '../constants';
 import axios from 'axios';
+import { el } from 'date-fns/locale';
 
-const Item = ({ searchItem, owner_object_parsed }) => {
+const Item = ({ searchItem, usernameFromFeed }) => {
+  console.log('el ', searchItem);
   const navigate = useNavigate();
 
-  let username = `pictures/images/${searchItem['username']}`;
-  let itemId =
-    searchItem &&
-    searchItem['item'] &&
-    searchItem['item'][0] &&
-    searchItem['item'][0]['id'];
+  let username = `pictures/images/${usernameFromFeed}`;
+  console.log(username);
 
-  let image_number1 =
-    searchItem &&
-    searchItem['item'] &&
-    searchItem['item'][0] &&
-    searchItem['item'][0]['image'][0]['item_image1'];
+  let itemId = searchItem && searchItem.id;
 
-  let image_number2 =
-    searchItem &&
-    searchItem['item'] &&
-    searchItem['item'][0] &&
-    searchItem['item'][0]['image'][0]['item_image2'];
-
-  let image_number3 =
-    searchItem &&
-    searchItem['item'] &&
-    searchItem['item'][0] &&
-    searchItem['item'][0]['image'][0]['item_image3'];
+  let image_number1 = searchItem && searchItem['image'][0]['item_image1'];
+  let image_number2 = searchItem && searchItem['image'][0]['item_image2'];
+  let image_number3 = searchItem && searchItem['image'][0]['item_image3'];
 
   const if_owner =
-    searchItem &&
-    localStorage.getItem('loggedin_username') === searchItem['username']
+    searchItem && localStorage.getItem('loggedin_username') === usernameFromFeed
       ? true
       : false;
 
@@ -51,7 +36,7 @@ const Item = ({ searchItem, owner_object_parsed }) => {
       axios
         .delete(
           ITEM_DELETE,
-          { item_id: searchItem['item'][0]['id'] },
+          { item_id: searchItem[0]['id'] },
           {
             headers: {
               'Content-Type': 'application/json',
@@ -66,17 +51,18 @@ const Item = ({ searchItem, owner_object_parsed }) => {
       navigate('/');
     }
   };
+
   return (
     <>
       {searchItem && (
         <article className="item">
-          {searchItem && getItemBrand(searchItem)}
+          {searchItem && searchItem.brand}
           <br />
-          {searchItem && getItemModel(searchItem)}
+          {searchItem && searchItem.model}
           <br />
-          {searchItem && getItemPrice(searchItem)}
+          {searchItem && searchItem.price}
           <br />
-          {searchItem && getItemDescription(searchItem)}
+          {searchItem && searchItem.description}
           <br />
           {image_number1 && (
             <img
@@ -108,35 +94,25 @@ const Item = ({ searchItem, owner_object_parsed }) => {
               height="75px"
             />
           )}
-          {searchItem &&
-            searchItem['item'] &&
-            searchItem['item'][0] &&
-            searchItem['item'][0]['id'] &&
-            image_number1 && (
-              <p className="postDate">
-                ...
-                {formatDistance(
-                  new Date(),
-                  parseISO(getItemCreatedDateForSingleUser(searchItem))
-                )}
-              </p>
-            )}
-          {searchItem &&
-            searchItem['item'][0] &&
-            searchItem['item'][0]['id'] &&
-            if_owner && (
-              <div className="editdeletebuttons">
-                <Link to={`/items/${searchItem['item'][0]['id']}`}>
-                  <button className="editButton">Edit Item</button>
-                </Link>
-                <button
-                  className="deleteButton"
-                  onClick={() => handleDelete(searchItem['item'][0]['id'])}
-                >
-                  Delete Item
-                </button>
-              </div>
-            )}
+          {searchItem && searchItem['id'] && image_number1 && (
+            <p className="postDate">
+              ...
+              {formatDistance(new Date(), parseISO(searchItem.updated_date))}
+            </p>
+          )}
+          {searchItem && searchItem['id'] && if_owner && (
+            <div className="editdeletebuttons">
+              <Link to={`/items/${searchItem['id']}`}>
+                <button className="editButton">Edit Item</button>
+              </Link>
+              <button
+                className="deleteButton"
+                onClick={() => handleDelete(searchItem['item'][0]['id'])}
+              >
+                Delete Item
+              </button>
+            </div>
+          )}
         </article>
       )}
     </>
