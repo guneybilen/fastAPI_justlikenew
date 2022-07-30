@@ -21,17 +21,22 @@ const Feed = ({ searchItems }) => {
     <>
       {data &&
         data.map((searchItem) =>
-          searchItem['item'].map((el) => {
-            return (
-              <Item
-                key={el.id}
-                searchItem={el}
-                usernameFromFeed={searchItem.username}
-              />
-            );
-          })
-        )}{' '}
-      : 'Loading ...';
+          searchItem && searchItem.map
+            ? searchItem.map((si) => (
+                <Item
+                  key={si.id}
+                  searchItem={si}
+                  usernameFromFeed={searchItem.username}
+                />
+              ))
+            : searchItem['item'].map((el) => (
+                <Item
+                  key={el.id}
+                  searchItem={el}
+                  usernameFromFeed={searchItem.username}
+                />
+              ))
+        )}
     </>
   );
 };

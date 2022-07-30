@@ -10,7 +10,6 @@ import { formatDistance, parseISO } from 'date-fns';
 import { Link, useNavigate } from 'react-router-dom';
 import { ITEM_DELETE } from '../constants';
 import axios from 'axios';
-import { el } from 'date-fns/locale';
 
 const Item = ({ searchItem, usernameFromFeed }) => {
   console.log('el ', searchItem);
