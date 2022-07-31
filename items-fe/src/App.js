@@ -4,6 +4,7 @@ import Footer from './components/Footer';
 import About from './components/About';
 import Home from './components/Home';
 import NewItem from './components/NewItem';
+import UpdateItem from './components/UpdateItem';
 import Login from './auth/Login';
 import Signup from './auth/Signup';
 import Error from './auth/Error';
@@ -12,6 +13,7 @@ import NewPassword from './auth/NewPassword';
 import ForgotPassword from './auth/ForgotPassword';
 import Activation from './auth/Activation';
 import ItemPage from './components/ItemPage';
+import Item from './components/Item';
 import RequireAuth from './components/RequireAuth';
 import { Routes, Route } from 'react-router-dom';
 
@@ -24,6 +26,7 @@ function App() {
       <Routes>
         <Route forceRefresh={true} path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/user_items/:id" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/activation/:token" element={<Activation />} />
         <Route path="/about" element={<About />} />
@@ -39,14 +42,14 @@ function App() {
             </RequireAuth>
           }
         ></Route>
-        <Route
-          path="items/:id"
+        {/* <Route
+          path="update/:id"
           element={
             <RequireAuth>
-              <ItemPage />
+              <UpdateItem />
             </RequireAuth>
           }
-        ></Route>
+        ></Route> */}
         <Route path="/*" element={<Login />} />
       </Routes>
 

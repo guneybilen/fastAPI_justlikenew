@@ -76,10 +76,10 @@ async def create_item(req: Request,
                 return { "result": boolean_result, "item_id": item_id}
 
 
-@router.get("/particular/{id}", response_model=ShowAllImportantDataAboutUser)
+@router.get("/particular_user_items/{id}", response_model=ShowAllImportantDataAboutUser)
 def read_item(id: int, db: Session = Depends(get_db)):
-  item = retrieve_item(id=id, db=db)
-  user = db.query(User).filter(User.id==item.seller_id).first()
+  # item = retrieve_item(id=id, db=db)
+  # user = db.query(User).filter(User.id==item.seller_id).first()
   item_and_image_names = list_images_with_item(id=id, db=db)
   return item_and_image_names
 

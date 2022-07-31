@@ -115,5 +115,6 @@ def list_images_with_items(db: Session):
 def list_images_with_item(id:int, db: Session):
     # query = db.query(Item).options(joinedload(Item.image, innerjoin=True), contains_eager('image.items')).one()
     # query = db.query(User).options(joinedload(User.item, innerjoin=True), contains_eager('item.users')).one()
-    query = db.query(User).options(joinedload(User.item, innerjoin=True)).first()
+    query = db.query(User).options(joinedload(User.item, innerjoin=True)).filter(User.id == id).first()
+    # query = db.query(Item).filter(Item.id == id).options(joinedload(Item.image, innerjoin=True), contains_eager('image.items')).one()
     return query

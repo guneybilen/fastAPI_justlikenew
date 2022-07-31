@@ -1,7 +1,8 @@
 import { useStoreActions } from 'easy-peasy';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { useState, useRef } from 'react';
 import { DefaultEditor } from 'react-simple-wysiwyg';
+import Home from './Home';
 
 const NewPost = () => {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ const NewPost = () => {
   const [error, setError] = useState('');
   const [closeButtonShouldShow, setCloseButtonShouldShow] = useState(false);
   const [html, setHtml] = useState('');
+  const [id, setId] = useState('');
 
   // const scrollTo = (ref) => {
   //   if (ref && ref.current /* + other conditions */) {
@@ -44,11 +46,11 @@ const NewPost = () => {
     item.append('description', html);
     item.append('location', location);
     item.append('model', model);
-
+    navigate('/login', { state: { from: location.pathname } });
     savePost({
       item: item,
       cb: (id) => {
-        navigate('/items/' + id);
+        setId(id);
       },
       // cb: (brandormodelerror, error, status) => {
       //   let error_sentence = null;
@@ -283,6 +285,7 @@ const NewPost = () => {
             Submit
           </button>
         </form>
+        <Navigate to={<Home id={id} />} />
       </>
     </main>
   );

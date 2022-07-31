@@ -1,24 +1,41 @@
 import Feed from './Feed';
 import { useEffect, useState } from 'react';
-import { ITEMS_ALL } from '../constants';
+import { useParams } from 'react-router-dom';
+import { ITEMS_ALL, PARTICULAR_URL } from '../constants';
 import axios from 'axios';
 
-const Home = ({ fetchError, isLoading }) => {
+const Home = ({ isLoading, fetchError }) => {
+  const { id } = useParams();
   const [data, setData] = useState([]);
+  console.log('id ', id);
 
   useEffect(() => {
-    axios
-      .get(ITEMS_ALL, {
-        headers: {
-          'Content-Type': 'application/json',
-          // access_token: `${localStorage.getItem('access_token')}`,
-        },
-      })
-      .then((response) => {
-        setData(response.data);
-      })
-      .catch((error) => console.log(error));
-  }, []);
+    if (id === null || id === undefined) {
+      axios
+        .get(ITEMS_ALL, {
+          headers: {
+            'Content-Type': 'application/json',
+            // access_token: `${localStorage.getItem('access_token')}`,
+          },
+        })
+        .then((response) => {
+          setData(response.data);
+        })
+        .catch((error) => console.log(error));
+    } else {
+      axios
+        .get(PARTICULAR_URL + id, {
+          headers: {
+            'Content-Type': 'application/json',
+            // access_token: `${localStorage.getItem('access_token')}`,
+          },
+        })
+        .then((response) => {
+          setData([response.data]);
+        })
+        .catch((error) => console.log(error));
+    }
+  }, [id]);
 
   return (
     <main className="Home">

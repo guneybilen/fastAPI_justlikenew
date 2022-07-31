@@ -1,34 +1,38 @@
-import {
-  getItemBrand,
-  getItemModel,
-  getItemPrice,
-  getItemDescription,
-  getItemCreatedDateForSingleUser,
-} from '../helpers/helperFunctions';
-
 import { formatDistance, parseISO } from 'date-fns';
 import { Link, useNavigate } from 'react-router-dom';
 import { ITEM_DELETE } from '../constants';
+import { useState, useEffect } from 'react';
+import { DefaultEditor } from 'react-simple-wysiwyg';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
-const Item = ({ searchItem, usernameFromFeed }) => {
-  console.log('el ', searchItem);
+const Item = ({ searchItem, userNameComing }) => {
+  console.log(searchItem);
+  // console.log(userNameComing);
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  let username = `pictures/images/${usernameFromFeed}`;
-  console.log(username);
-
+  const [image_number1, set_Image1] = useState();
+  const [image_number2, set_Image2] = useState();
+  const [image_number3, set_Image3] = useState();
+  let username = `pictures/${userNameComing}`;
   let itemId = searchItem && searchItem.id;
+  let image1 = searchItem['image'][0]['item_image1'];
+  let image2 = searchItem['image'][0]['item_image2'];
+  let image3 = searchItem['image'][0]['item_image3'];
 
-  let image_number1 = searchItem && searchItem['image'][0]['item_image1'];
-  let image_number2 = searchItem && searchItem['image'][0]['item_image2'];
-  let image_number3 = searchItem && searchItem['image'][0]['item_image3'];
+  useEffect(() => {
+    set_Image1(`${username}${itemId}/${searchItem['image'][0]['item_image1']}`);
+    set_Image2(`${username}${itemId}/${searchItem['image'][0]['item_image2']}`);
+    set_Image3(`${username}${itemId}/${searchItem['image'][0]['item_image3']}`);
+  }, [searchItem, username, itemId]);
 
   const if_owner =
-    searchItem && localStorage.getItem('loggedin_username') === usernameFromFeed
+    searchItem && localStorage.getItem('loggedin_username') === userNameComing
       ? true
       : false;
 
+  // console.log(if_owner);
   const handleDelete = (slug) => {
     let confirmation = window.confirm('Are you sure for deleting the item?');
     if (confirmation) {
@@ -51,6 +55,8 @@ const Item = ({ searchItem, usernameFromFeed }) => {
     }
   };
 
+  // image1 && console.log(image_number1);
+
   return (
     <>
       {searchItem && (
@@ -61,45 +67,54 @@ const Item = ({ searchItem, usernameFromFeed }) => {
           <br />
           {searchItem && searchItem.price}
           <br />
-          {searchItem && searchItem.description}
+          <DefaultEditor
+            value={searchItem.description}
+            className="form-control-wysiwyg"
+            contentEditable={false}
+            readOnly={true}
+          />
           <br />
-          {image_number1 && (
+          {image1 && (
             <img
-              src={`${username}${itemId}/${image_number1}`}
               className="itemImage"
-              id="newImage1"
-              alt="newImage1"
+              src={image_number1}
+              id="newImage2"
+              alt="newImage2"
               width="150px"
               height="75px"
             />
           )}
-          {image_number2 && (
+          {image2 && (
             <img
               className="itemImage"
-              src={`${username}${itemId}/${image_number2}`}
-              id="newImage1"
-              alt="newImage1"
+              src={image_number2}
+              id="newImage2"
+              alt="newImage2"
               width="150px"
               height="75px"
             />
           )}
-          {image_number3 && (
+          {image3 && (
             <img
               className="itemImage"
-              src={`${username}${itemId}/${image_number3}`}
-              id="newImage1"
-              alt="newImage1"
+              src={image_number3}
+              id="newImage3"
+              alt="newImage3"
               width="150px"
               height="75px"
             />
           )}
-          {searchItem && searchItem['id'] && image_number1 && (
+
+          {searchItem && searchItem['id'] && (
             <p className="postDate">
               ...
               {formatDistance(new Date(), parseISO(searchItem.updated_date))}
             </p>
           )}
-          {searchItem && searchItem['id'] && if_owner && (
+          <Link to={`user_items/${searchItem.seller_id}`}>goto detail</Link>
+          <br />
+          <br />
+          {searchItem && id && if_owner && (
             <div className="editdeletebuttons">
               <Link to={`/items/${searchItem['id']}`}>
                 <button className="editButton">Edit Item</button>

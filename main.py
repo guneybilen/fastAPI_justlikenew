@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 # from webapps.base import api_router as web_app_router
 from fastapi.middleware.cors import CORSMiddleware
+import os as _os
 
 # origins = ["http://localhost:3000", "http://localhost:3000/login", "http://localhost:8000"]
 origins = ["*"]
@@ -18,7 +19,8 @@ def include_router(app):
 
 
 def configure_static(app):
-  app.mount("/pictures", StaticFiles(directory="pictures"), name="pictures")
+  # print(_os.path.exists("./pictures/images/bilen14/1.jpeg"))
+  app.mount("/pictures", StaticFiles(directory="./pictures/images", check_dir=True), name="pictures")
 
 
 def create_tables():

@@ -304,7 +304,11 @@ article {
 }
 
 article:not(:first-of-type) {
-  margin-top: 4rem;
+  margin-top: 2rem;
+}
+
+article:last-of-type {
+  margin-top: 2rem;
   margin-bottom: 200px;
 }
 
@@ -544,17 +548,27 @@ input[type='checkbox'] {
 }
 
 article > .rsw-editor > .rsw-toolbar {
-  background-color: lightgray !important;
+  background-color: white !important;
   padding-left: 5rem;
-  height: 15rem;
+  height: 25rem;
   overflow: auto;
   display: none;
+  text-align: left;
 }
 
 div.wysiwyg-home {
   width: 15rem;
   height: 5rem;
 }
+
+/* .rsw-editor {
+  width: 10rem;
+  height: 5rem;
+  border: 0px;
+  border-color: lightgray;
+  background-color: lightgray;
+  align-items: center;
+} */
 
 div.wysiwyg-home > .rsw-editor {
   width: 15rem;

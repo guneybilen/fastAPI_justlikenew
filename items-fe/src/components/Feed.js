@@ -7,7 +7,7 @@ const Feed = ({ searchItems }) => {
   //   ? owner_object_needs_parsing['owner']
   //   : '';
 
-  const [data, setData] = useState('');
+  const [data, setData] = useState([]);
 
   // let element = (searchItems && searchItems['item']) || searchItems;
   // console.log(element);
@@ -15,28 +15,23 @@ const Feed = ({ searchItems }) => {
   useEffect(() => {
     setData(searchItems);
   }, [searchItems]);
-  console.log(data);
+  // console.log(data);
 
   return (
     <>
       {data &&
-        data.map((searchItem) =>
-          searchItem && searchItem.map
-            ? searchItem.map((si) => (
-                <Item
-                  key={si.id}
-                  searchItem={si}
-                  usernameFromFeed={searchItem.username}
-                />
-              ))
-            : searchItem['item'].map((el) => (
-                <Item
-                  key={el.id}
-                  searchItem={el}
-                  usernameFromFeed={searchItem.username}
-                />
-              ))
-        )}
+        data.map((searchItem, index1) => {
+          return searchItem.item.map((oneItem, index2) => {
+            // console.log(typeof oneItem);
+            return (
+              <Item
+                key={`${index1}${index2}`}
+                searchItem={oneItem}
+                userNameComing={searchItem.username}
+              />
+            );
+          });
+        })}
     </>
   );
 };
