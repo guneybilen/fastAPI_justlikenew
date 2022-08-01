@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const Item = ({ searchItem, userNameComing }) => {
-  console.log(searchItem);
+  // console.log(searchItem);
   // console.log(userNameComing);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -117,7 +117,7 @@ const Item = ({ searchItem, userNameComing }) => {
           {searchItem && id && if_owner && (
             <div className="editdeletebuttons">
               <Link
-                to={`/edit_item/${searchItem['seller_id']}/particular_id/${searchItem['id']}`}
+                to={`/edit_item/${searchItem['seller_id']}/item/${searchItem['id']}`}
               >
                 <button className="editButton">Edit Item</button>
               </Link>

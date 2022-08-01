@@ -105,7 +105,7 @@ def read_items(req: Request, db: Session = Depends(get_db)):
 
 
 @router.put("/single/update/{id}")
-async def update_item(req: Request, id: int,
+async def update_item(req: Request, particular_item_id: int,
                   item_image1a: bytes | None = File(default=None),
                   item_image1b: UploadFile | None = File(default=None),
                   item_image2a: bytes | None = File(default=None),
@@ -138,7 +138,7 @@ async def update_item(req: Request, id: int,
                   current_user_or_access_token_error = await get_current_user_from_token(access_token= req.headers['access_token'], db=db)
                   print('current_user_or_access_token_error ', current_user_or_access_token_error)
 
-                  message = update_item_by_id(id=id, db=db, seller_id=current_user_or_access_token_error.id, item=item_object)
+                  message = update_item_by_id(id=particular_item_id, db=db, seller_id=current_user_or_access_token_error.id, item=item_object)
                   print('message ', message)
                   if not message:
                     raise HTTPException(

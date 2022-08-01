@@ -7,7 +7,7 @@ import axios from 'axios';
 const Home = ({ isLoading, fetchError }) => {
   const { id } = useParams();
   const [data, setData] = useState([]);
-  console.log('id ', id);
+  // console.log('id ', id);
 
   useEffect(() => {
     if (id === null || id === undefined) {

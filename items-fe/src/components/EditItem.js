@@ -41,12 +41,15 @@ const EditItem = () => {
 
   useEffect(() => {
     axios
-      .get(EDIT_ITEM_URL + user_id + '/particular_item/' + particular_item_id, {
-        headers: {
-          'Content-Type': 'application/json',
-          access_token: localStorage.getItem('access_token'),
-        },
-      })
+      .get(
+        EDIT_ITEM_URL + +user_id + '/particular_item/' + particular_item_id,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            access_token: localStorage.getItem('access_token'),
+          },
+        }
+      )
       .then((response) => {
         setData([response]);
         console.log(response.data['image'][0]['item_image1']);
@@ -79,7 +82,7 @@ const EditItem = () => {
       .catch((error) => console.log(error));
   }, [user_id, particular_item_id]);
 
-  const savePost = useStoreActions((actions) => actions.savePost);
+  const editItem = useStoreActions((actions) => actions.editItem);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -97,10 +100,15 @@ const EditItem = () => {
     item.append('location', location);
     item.append('model', model);
     navigate('/login', { state: { from: location.pathname } });
-    savePost({
+    
+    editItem({
       item: item,
+      particular_item_id: particular_item_id,
       cb: (id) => {
         setIdLocal(id);
+      },
+      err: (error) => {
+        console.log(error);
       },
     });
   };

@@ -20,7 +20,10 @@ const check_logged_in_status = async () => {
         console.log('No content - Logged out status');
         localStorage.clear();
         return null;
-      } else return 'LOGGED';
+      } else {
+        console.log('Logged in status');
+        return 'LOGGED';
+      }
     }
   } catch (error) {
     console.log('error ', error);
