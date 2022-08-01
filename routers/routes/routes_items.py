@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 from db.repository.item import update_item_by_id, delete_item_by_id, create_new_item
 from db.repository.item import list_items, retrieve_item, search_item
-from db.repository.image import list_images_with_items, list_images_with_item
+from db.repository.image import list_images_with_items, list_images_with_item, edit_item
 from core.security import get_current_user_from_token, check_owner
 from schemas.item import ItemBase, ItemCreate, ShowItem
 from typing import List
@@ -83,7 +83,10 @@ def read_item(id: int, db: Session = Depends(get_db)):
   item_and_image_names = list_images_with_item(id=id, db=db)
   return item_and_image_names
 
-
+@router.get("/edit_item/{user_id}/particular_item/{particular_item_id}", response_model=ItemBase)
+def read_item(user_id: int, particular_item_id: int, db: Session = Depends(get_db)):
+  item_and_image_names = edit_item(user_id= user_id, particular_item_id = particular_item_id, db=db)
+  return item_and_image_names
 
 # List[] type in response model is the most important part in order to receive the right answer
 # otherwise all data you receive will be resulted in nulls.

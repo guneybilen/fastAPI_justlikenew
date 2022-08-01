@@ -78,8 +78,8 @@ const Item = ({ searchItem, userNameComing }) => {
             <img
               className="itemImage"
               src={image_number1}
-              id="newImage2"
-              alt="newImage2"
+              id="newImage1"
+              alt="newImage1"
               width="150px"
               height="75px"
             />
@@ -116,7 +116,9 @@ const Item = ({ searchItem, userNameComing }) => {
           <br />
           {searchItem && id && if_owner && (
             <div className="editdeletebuttons">
-              <Link to={`/items/${searchItem['id']}`}>
+              <Link
+                to={`/edit_item/${searchItem['seller_id']}/particular_id/${searchItem['id']}`}
+              >
                 <button className="editButton">Edit Item</button>
               </Link>
               <button

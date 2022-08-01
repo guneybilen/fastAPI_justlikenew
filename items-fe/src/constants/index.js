@@ -1,6 +1,7 @@
 export const ITEMS_URL = 'http://localhost:8000/items/';
 export const PARTICULAR_URL =
   'http://localhost:8000/items/particular_user_items/';
+export const EDIT_ITEM_URL = 'http://localhost:8000/items/edit_item/';
 export const LOGOUT_URL = 'http://localhost:8000/users/logout';
 export const LOGIN_URL = 'http://localhost:8000/login/token';
 export const IMAGES_URL = 'pictures/images/';

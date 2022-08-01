@@ -4,7 +4,7 @@ import Footer from './components/Footer';
 import About from './components/About';
 import Home from './components/Home';
 import NewItem from './components/NewItem';
-import UpdateItem from './components/UpdateItem';
+import EditItem from './components/EditItem';
 import Login from './auth/Login';
 import Signup from './auth/Signup';
 import Error from './auth/Error';
@@ -12,8 +12,6 @@ import PreSignup from './auth/PreSignup';
 import NewPassword from './auth/NewPassword';
 import ForgotPassword from './auth/ForgotPassword';
 import Activation from './auth/Activation';
-import ItemPage from './components/ItemPage';
-import Item from './components/Item';
 import RequireAuth from './components/RequireAuth';
 import { Routes, Route } from 'react-router-dom';
 
@@ -25,16 +23,26 @@ function App() {
 
       <Routes>
         <Route forceRefresh={true} path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/user_items/:id" element={<Home />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/activation/:token" element={<Activation />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/error" element={<Error />} />
-        <Route path="/presignup" element={<PreSignup />} />
-        <Route path="/forgotpassword" element={<ForgotPassword />} />
-        <Route path="/newpassword/:id" element={<NewPassword />} />
+        <Route exact path="/login" element={<Login />} />
+        <Route exact path="/user_items/:id" element={<Home />} />
         <Route
+          exact
+          path="/edit_item/:user_id/item/:particular_item_id"
+          element={
+            <RequireAuth>
+              <EditItem />
+            </RequireAuth>
+          }
+        />
+        <Route exact path="/signup" element={<Signup />} />
+        <Route exact path="/activation/:token" element={<Activation />} />
+        <Route exact path="/about" element={<About />} />
+        <Route exact path="/error" element={<Error />} />
+        <Route exact path="/presignup" element={<PreSignup />} />
+        <Route exact path="/forgotpassword" element={<ForgotPassword />} />
+        <Route exact path="/newpassword/:id" element={<NewPassword />} />
+        <Route
+          exact
           path="/item"
           element={
             <RequireAuth>
@@ -42,17 +50,8 @@ function App() {
             </RequireAuth>
           }
         ></Route>
-        {/* <Route
-          path="update/:id"
-          element={
-            <RequireAuth>
-              <UpdateItem />
-            </RequireAuth>
-          }
-        ></Route> */}
         <Route path="/*" element={<Login />} />
       </Routes>
-
       <Footer />
     </div>
   );

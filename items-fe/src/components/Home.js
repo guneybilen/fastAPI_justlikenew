@@ -15,7 +15,6 @@ const Home = ({ isLoading, fetchError }) => {
         .get(ITEMS_ALL, {
           headers: {
             'Content-Type': 'application/json',
-            // access_token: `${localStorage.getItem('access_token')}`,
           },
         })
         .then((response) => {
@@ -27,7 +26,6 @@ const Home = ({ isLoading, fetchError }) => {
         .get(PARTICULAR_URL + id, {
           headers: {
             'Content-Type': 'application/json',
-            // access_token: `${localStorage.getItem('access_token')}`,
           },
         })
         .then((response) => {

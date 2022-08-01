@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import { DefaultEditor } from 'react-simple-wysiwyg';
 import Home from './Home';
 
-const NewPost = () => {
+const NewItem = () => {
   const navigate = useNavigate();
   const scrollRef = useRef(null);
 
@@ -291,4 +291,4 @@ const NewPost = () => {
   );
 };
 
-export default NewPost;
+export default NewItem;
