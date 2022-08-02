@@ -15,7 +15,7 @@ const Feed = ({ searchItems }) => {
   useEffect(() => {
     setData(searchItems);
   }, [searchItems]);
-  // console.log(data);
+  console.log(data);
 
   return (
     <>

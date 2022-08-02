@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const Item = ({ searchItem, userNameComing }) => {
-  // console.log(searchItem);
+  console.log('searchItem ', searchItem);
   // console.log(userNameComing);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -17,14 +17,23 @@ const Item = ({ searchItem, userNameComing }) => {
   const [image_number3, set_Image3] = useState();
   let username = `pictures/${userNameComing}`;
   let itemId = searchItem && searchItem.id;
-  let image1 = searchItem['image'][0]['item_image1'];
-  let image2 = searchItem['image'][0]['item_image2'];
-  let image3 = searchItem['image'][0]['item_image3'];
+  let image1 = searchItem['image'][0] && searchItem['image'][0]['item_image1'];
+  let image2 = searchItem['image'][0] && searchItem['image'][0]['item_image2'];
+  let image3 = searchItem['image'][0] && searchItem['image'][0]['item_image3'];
 
   useEffect(() => {
-    set_Image1(`${username}${itemId}/${searchItem['image'][0]['item_image1']}`);
-    set_Image2(`${username}${itemId}/${searchItem['image'][0]['item_image2']}`);
-    set_Image3(`${username}${itemId}/${searchItem['image'][0]['item_image3']}`);
+    image1 &&
+      set_Image1(
+        `${username}${itemId}/${searchItem['image'][0]['item_image1']}`
+      );
+    image2 &&
+      set_Image2(
+        `${username}${itemId}/${searchItem['image'][0]['item_image2']}`
+      );
+    image3 &&
+      set_Image3(
+        `${username}${itemId}/${searchItem['image'][0]['item_image3']}`
+      );
   }, [searchItem, username, itemId]);
 
   const if_owner =

@@ -104,14 +104,14 @@ def read_items(req: Request, db: Session = Depends(get_db)):
     print(e)
 
 
-@router.put("/single/update/{id}")
+@router.put("/single/update/{particular_item_id}")
 async def update_item(req: Request, particular_item_id: int,
-                  item_image1a: bytes | None = File(default=None),
-                  item_image1b: UploadFile | None = File(default=None),
-                  item_image2a: bytes | None = File(default=None),
-                  item_image2b: UploadFile | None = File(default=None),
-                  item_image3a: bytes | None = File(default=None),
-                  item_image3b: UploadFile | None = File(default=None),
+                  # item_image1a: bytes | None = File(default=None),
+                  # item_image1b: UploadFile | None = File(default=None),
+                  # item_image2a: bytes | None = File(default=None),
+                  # item_image2b: UploadFile | None = File(default=None),
+                  # item_image3a: bytes | None = File(default=None),
+                  # item_image3b: UploadFile | None = File(default=None),
                   brand: str = Form(),
                   location: Optional[str] = Form(None),  
                   description: Optional[str] = Form(None),
@@ -126,12 +126,12 @@ async def update_item(req: Request, particular_item_id: int,
                   "location": location,
                   "model": model,
                   "description": description,
-                  "item_image1a": item_image1a,
-                  "item_image1b": item_image1b,
-                  "item_image2a": item_image2a,
-                  "item_image2b": item_image2b,
-                  "item_image3a": item_image3a,
-                  "item_image3b": item_image3b,
+                  # "item_image1a": item_image1a,
+                  # "item_image1b": item_image1b,
+                  # "item_image2a": item_image2a,
+                  # "item_image2b": item_image2b,
+                  # "item_image3a": item_image3a,
+                  # "item_image3b": item_image3b,
               }
 
                 try:
@@ -140,7 +140,7 @@ async def update_item(req: Request, particular_item_id: int,
 
                   message = update_item_by_id(id=particular_item_id, db=db, seller_id=current_user_or_access_token_error.id, item=item_object)
                   print('message ', message)
-                  if not message:
+                  if message is None:
                     raise HTTPException(
                       status_code=status.HTTP_404_NOT_FOUND,
                       detail=f"Item with id {id} not found")

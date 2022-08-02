@@ -60,7 +60,7 @@ def list_items(db: Session):
   items = db.query(Item).all() 
   return items  
 
-def update_item_by_id(id: int, db: Session, seller_id, item: ItemBase):
+def update_item_by_id(id: int, db: Session, seller_id: int, item: ItemBase):
 
   try:
     # existing_item = db.query(Item).filter(Item.id == id).one_or_none() 
@@ -69,13 +69,13 @@ def update_item_by_id(id: int, db: Session, seller_id, item: ItemBase):
     # existing_item.__dict__.update(item.__dict__) 
     # db.commit() 
 
-    print(item["model"])
+    # print("item", **item)
 
-    empty_keys = [k for k,v in item.items() if not v]
-    for k in empty_keys:
-        del item[k]
+    # empty_keys = [k for k,v in item.items() if not v]
+    # for k in empty_keys:
+    #     del item[k]
 
-    stmt = (update(Item).where(Item.seller_id == seller_id).values(**item.dict()))
+    stmt = db.query(Item).update(Item).where(Item.seller_id == seller_id).values(**item).execute()
 
     print("stmt", stmt)
     return 1  

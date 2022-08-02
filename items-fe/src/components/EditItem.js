@@ -100,7 +100,7 @@ const EditItem = () => {
     item.append('location', location);
     item.append('model', model);
     navigate('/login', { state: { from: location.pathname } });
-    
+
     editItem({
       item: item,
       particular_item_id: particular_item_id,
@@ -182,7 +182,7 @@ const EditItem = () => {
               className="form-control"
               onChange={onChange}
             />
-            <div>
+            {/* <div>
               <br />
               {image1PresentCheck && (
                 <img
@@ -337,7 +337,7 @@ const EditItem = () => {
                     setImageUpload3(e.target.files[0]);
                 }}
               />
-            </div>
+            </div> */}
             <br />
             <button
               type="submit"

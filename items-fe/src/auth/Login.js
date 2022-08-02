@@ -64,7 +64,7 @@ export default function Login() {
   const success = () => {
     console.log('Authenticated!');
     console.log(from);
-    nav(from);
+    from === undefined ? nav('/') : nav(from);
   };
 
   const fail = (status) => {
