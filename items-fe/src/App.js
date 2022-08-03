@@ -14,6 +14,7 @@ import ForgotPassword from './auth/ForgotPassword';
 import Activation from './auth/Activation';
 import RequireAuth from './components/RequireAuth';
 import { Routes, Route } from 'react-router-dom';
+import EditImage from './components/EditImage';
 
 function App() {
   return (
@@ -29,9 +30,18 @@ function App() {
           exact
           path="/edit_item/:user_id/item/:particular_item_id"
           element={
-            <RequireAuth>
-              <EditItem />
-            </RequireAuth>
+            // <RequireAuth>
+            <EditItem />
+            // </RequireAuth>
+          }
+        />
+        <Route
+          exact
+          path="/edit_image/:user_id/item/:particular_item_id"
+          element={
+            // <RequireAuth>
+            <EditImage />
+            // </RequireAuth>
           }
         />
         <Route exact path="/signup" element={<Signup />} />
@@ -45,12 +55,12 @@ function App() {
           exact
           path="/item"
           element={
-            <RequireAuth>
-              <NewItem />
-            </RequireAuth>
+            // <RequireAuth>
+            <NewItem />
+            // </RequireAuth>
           }
         ></Route>
-        <Route path="/*" element={<Login />} />
+        {/* <Route path="/*" element={<Login />} /> */}
       </Routes>
       <Footer />
     </div>

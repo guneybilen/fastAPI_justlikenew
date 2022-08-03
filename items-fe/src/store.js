@@ -154,7 +154,6 @@ export default createStore({
   editItem: thunk(async (actions, updatedItem, helpers) => {
     // console.log(updatedItem);
     const form_data = updatedItem.item;
-    const id = updatedItem.id;
     const particular_item_id = updatedItem.particular_item_id;
     const cb = updatedItem.cb;
     const err = updatedItem.err;
@@ -174,8 +173,37 @@ export default createStore({
       )
       .then((response) => {
         console.log(response);
-        return null;
-        // cb(id);
+        cb();
+      })
+      .catch((error) => {
+        console.log(error);
+        err(error);
+      });
+  }),
+
+  editImage: thunk(async (actions, updatedImage, helpers) => {
+    // console.log(updatedItem);
+    const form_data = updatedImage.item;
+    const particular_item_id = updatedImage.particular_item_id;
+    const cb = updatedImage.cb;
+    const err = updatedImage.err;
+
+    const config = {
+      headers: {
+        'Content-Type': 'x-www-form-urlencoded',
+        access_token: `${localStorage.getItem('access_token')}`,
+      },
+    };
+
+    axios
+      .put(
+        `http://localhost:8000/image/single/update/${particular_item_id}`,
+        form_data,
+        config
+      )
+      .then((response) => {
+        console.log(response);
+        cb();
       })
       .catch((error) => {
         console.log(error);

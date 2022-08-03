@@ -1,5 +1,5 @@
 import { formatDistance, parseISO } from 'date-fns';
-import { Link, useNavigate } from 'react-router-dom';
+import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { ITEM_DELETE } from '../constants';
 import { useState, useEffect } from 'react';
 import { DefaultEditor } from 'react-simple-wysiwyg';
@@ -9,17 +9,20 @@ import axios from 'axios';
 const Item = ({ searchItem, userNameComing }) => {
   // console.log('searchItem ', searchItem);
   // console.log(userNameComing);
+  const location = useLocation();
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [image_number1, set_Image1] = useState();
   const [image_number2, set_Image2] = useState();
   const [image_number3, set_Image3] = useState();
-  let username = `pictures/${userNameComing}`;
+  let username = `/pictures/${userNameComing}`;
   let itemId = searchItem && searchItem.id;
   let image1 = searchItem['image'][0] && searchItem['image'][0]['item_image1'];
   let image2 = searchItem['image'][0] && searchItem['image'][0]['item_image2'];
   let image3 = searchItem['image'][0] && searchItem['image'][0]['item_image3'];
+
+  const loc = location.pathname.match(`/user_items/${searchItem.seller_id}`);
 
   useEffect(() => {
     image1 &&
@@ -34,7 +37,7 @@ const Item = ({ searchItem, userNameComing }) => {
       set_Image3(
         `${username}${itemId}/${searchItem['image'][0]['item_image3']}`
       );
-  }, [searchItem, username, itemId]);
+  }, [searchItem, username, itemId, image1, image2, image3]);
 
   const if_owner =
     searchItem && localStorage.getItem('loggedin_username') === userNameComing
@@ -113,14 +116,17 @@ const Item = ({ searchItem, userNameComing }) => {
               height="75px"
             />
           )}
-
           {searchItem && searchItem['id'] && (
             <p className="postDate">
               ...
               {formatDistance(new Date(), parseISO(searchItem.updated_date))}
             </p>
           )}
-          <Link to={`user_items/${searchItem.seller_id}`}>goto detail</Link>
+          {loc?.index === 0 ? (
+            ''
+          ) : (
+            <Link to={`/user_items/${searchItem.seller_id}`}>goto detail</Link>
+          )}
           <br />
           <br />
           {searchItem && id && if_owner && (

@@ -20,7 +20,7 @@ def include_router(app):
 
 def configure_static(app):
   # note to self: check_dir below is utmost important. cures broken images on reactjs side... 
-  app.mount("/pictures", StaticFiles(directory="./pictures/images", check_dir=True), name="pictures")
+  app.mount("/pictures", StaticFiles(directory="pictures/images", check_dir=True), name="pictures")
 
 
 def create_tables():

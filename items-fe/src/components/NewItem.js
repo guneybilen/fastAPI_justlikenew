@@ -46,7 +46,8 @@ const NewItem = () => {
     item.append('description', html);
     item.append('location', location);
     item.append('model', model);
-    navigate('/login', { state: { from: location.pathname } });
+
+    
     savePost({
       item: item,
       cb: (id) => {

@@ -126,3 +126,19 @@ def edit_item(user_id: int, particular_item_id: int, db: Session):
     query = db.query(Item).get(particular_item_id)
     print(query.id)
     return query
+
+
+def update_image_by_item_id(id: int, db: Session, seller_username: str,  
+                                        item_object):
+
+    try: 
+      for i in range(1,4):
+        if(item_object[f"item_image{i}b"]) is not None:
+          upload_image_by_item_id(id=id, 
+                                  db=db, current_user=seller_username, 
+                                  file = item_object[f"item_image{i}b"], 
+                                  file_size = item_object[f"item_image{i}a"])
+      return 1
+    except Exception as e:
+      print(e)
+      return None
