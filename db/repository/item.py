@@ -60,24 +60,14 @@ def list_items(db: Session):
   items = db.query(Item).all() 
   return items  
 
-def update_item_by_id(id: int, db: Session, seller_id: int, item: ItemBase):
+def update_item_by_id(id: int, db: Session, seller_id: int, brand: str, price: str, location: str, model: str,description: str):
 
   try:
-    # existing_item = db.query(Item).filter(Item.id == id).one_or_none() 
-    # db.query(Item).filter(Item.seller_id == seller_id).update(item)
-    # item["seller_id"]= seller_id
-    # existing_item.__dict__.update(item.__dict__) 
-    # db.commit() 
 
-    # print("item", **item)
+    stmt = (update(Item).where(Item.seller_id == seller_id, Item.id==id).values(brand=brand, price=price, location=location, model=model,description=description))
 
-    # empty_keys = [k for k,v in item.items() if not v]
-    # for k in empty_keys:
-    #     del item[k]
-
-    stmt = db.query(Item).update(Item).where(Item.seller_id == seller_id).values(**item).execute()
-
-    print("stmt", stmt)
+    db.execute(stmt)
+    db.commit()
     return 1  
   except Exception as e:
     print(e)

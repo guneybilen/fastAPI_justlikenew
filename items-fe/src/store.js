@@ -152,7 +152,7 @@ export default createStore({
   }),
 
   editItem: thunk(async (actions, updatedItem, helpers) => {
-    console.log(updatedItem);
+    // console.log(updatedItem);
     const form_data = updatedItem.item;
     const id = updatedItem.id;
     const particular_item_id = updatedItem.particular_item_id;
@@ -166,10 +166,6 @@ export default createStore({
       },
     };
 
-    for (const entry of form_data.entries()) {
-      console.log(entry);
-    }
-
     axios
       .put(
         `http://localhost:8000/items/single/update/${particular_item_id}`,
@@ -178,7 +174,8 @@ export default createStore({
       )
       .then((response) => {
         console.log(response);
-        cb(id);
+        return null;
+        // cb(id);
       })
       .catch((error) => {
         console.log(error);

@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const Item = ({ searchItem, userNameComing }) => {
-  console.log('searchItem ', searchItem);
+  // console.log('searchItem ', searchItem);
   // console.log(userNameComing);
   const { id } = useParams();
   const navigate = useNavigate();

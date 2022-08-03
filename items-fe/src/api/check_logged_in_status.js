@@ -15,13 +15,13 @@ const check_logged_in_status = async () => {
           access_token: `Bearer ${localStorage.getItem('access_token')}`,
         },
       });
-      console.log('result: ' + result.data.status_code);
+      // console.log('result: ' + result.data.status_code);
       if (result.data.status_code !== 200) {
         console.log('No content - Logged out status');
         localStorage.clear();
         return null;
       } else {
-        console.log('Logged in status');
+        console.log('Logged in');
         return 'LOGGED';
       }
     }

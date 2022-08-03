@@ -138,7 +138,9 @@ async def update_item(req: Request, particular_item_id: int,
                   current_user_or_access_token_error = await get_current_user_from_token(access_token= req.headers['access_token'], db=db)
                   print('current_user_or_access_token_error ', current_user_or_access_token_error)
 
-                  message = update_item_by_id(id=particular_item_id, db=db, seller_id=current_user_or_access_token_error.id, item=item_object)
+                  message = update_item_by_id(id=particular_item_id, db=db, 
+                                              seller_id=current_user_or_access_token_error.id, 
+                                              brand=brand, price=price, location=location, model=model,description=description)
                   print('message ', message)
                   if message is None:
                     raise HTTPException(

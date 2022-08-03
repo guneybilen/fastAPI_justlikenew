@@ -9,7 +9,7 @@ const EditItem = () => {
   const navigate = useNavigate();
   const { user_id } = useParams();
   const { particular_item_id } = useParams();
-  console.log('user_id ', user_id);
+  // console.log('user_id ', user_id);
   const scrollRef = useRef(null);
 
   const [brand, setBrand] = useState('');
@@ -52,7 +52,7 @@ const EditItem = () => {
       )
       .then((response) => {
         setData([response]);
-        console.log(response.data['image'][0]['item_image1']);
+        // console.log(response.data['image'][0]['item_image1']);
         setBrand(response.data.brand);
         setModel(response.data.model);
         setPrice(response.data.price);
@@ -88,18 +88,18 @@ const EditItem = () => {
     e.preventDefault();
 
     let item = new FormData(e.form);
-    if (imageUpload1) item.append('item_image1a', imageUpload1);
-    if (imageUpload1) item.append('item_image1b', imageUpload1);
-    if (imageUpload2) item.append('item_image2a', imageUpload2);
-    if (imageUpload2) item.append('item_image2b', imageUpload2);
-    if (imageUpload3) item.append('item_image3a', imageUpload3);
-    if (imageUpload3) item.append('item_image3b', imageUpload3);
+    // if (imageUpload1) item.append('item_image1a', imageUpload1);
+    // if (imageUpload1) item.append('item_image1b', imageUpload1);
+    // if (imageUpload2) item.append('item_image2a', imageUpload2);
+    // if (imageUpload2) item.append('item_image2b', imageUpload2);
+    // if (imageUpload3) item.append('item_image3a', imageUpload3);
+    // if (imageUpload3) item.append('item_image3b', imageUpload3);
     item.append('brand', brand);
     item.append('price', price);
     item.append('description', html);
     item.append('location', location);
     item.append('model', model);
-    navigate('/login', { state: { from: location.pathname } });
+    // navigate('/login', { state: { from: location.pathname } });
 
     editItem({
       item: item,
