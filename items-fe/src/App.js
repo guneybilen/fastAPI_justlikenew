@@ -30,18 +30,18 @@ function App() {
           exact
           path="/edit_item/:user_id/item/:particular_item_id"
           element={
-            // <RequireAuth>
-            <EditItem />
-            // </RequireAuth>
+            <RequireAuth>
+              <EditItem />
+            </RequireAuth>
           }
         />
         <Route
           exact
           path="/edit_image/:user_id/item/:particular_item_id"
           element={
-            // <RequireAuth>
-            <EditImage />
-            // </RequireAuth>
+            <RequireAuth>
+              <EditImage />
+            </RequireAuth>
           }
         />
         <Route exact path="/signup" element={<Signup />} />
@@ -55,12 +55,12 @@ function App() {
           exact
           path="/item"
           element={
-            // <RequireAuth>
-            <NewItem />
-            // </RequireAuth>
+            <RequireAuth>
+              <NewItem />
+            </RequireAuth>
           }
         ></Route>
-        {/* <Route path="/*" element={<Login />} /> */}
+        <Route path="/*" element={<Home />} />
       </Routes>
       <Footer />
     </div>

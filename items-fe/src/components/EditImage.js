@@ -59,17 +59,17 @@ const EditImage = () => {
         setImage2PresentCheck(response.data['image'][0]['item_image2']);
         setImage3PresentCheck(response.data['image'][0]['item_image3']);
         setImage1(
-          `/pictures/${localStorage.getItem(
+          `/static/images/${localStorage.getItem(
             'loggedin_username'
           )}${particular_item_id}/${response.data['image'][0]['item_image1']}`
         );
         setImage2(
-          `/pictures/${localStorage.getItem(
+          `/static/images/${localStorage.getItem(
             'loggedin_username'
           )}${particular_item_id}/${response.data['image'][0]['item_image2']}`
         );
         setImage3(
-          `/pictures/${localStorage.getItem(
+          `/static/images/${localStorage.getItem(
             'loggedin_username'
           )}${particular_item_id}/${response.data['image'][0]['item_image3']}`
         );

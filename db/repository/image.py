@@ -21,10 +21,10 @@ oldest_image_removed = False
 
 
 def create_necessary_directory(current_user: str, id: int):
-    _os.chdir("/home/bilen/Desktop/projects/fastapi/justlikenew/pictures/images")
-    if not _os.path.exists(f"/home/bilen/Desktop/projects/fastapi/justlikenew/pictures/images/{current_user}{id}"):
+    _os.chdir("/home/bilen/Desktop/projects/fastapi/justlikenew/static/images")
+    if not _os.path.exists(f"/home/bilen/Desktop/projects/fastapi/justlikenew/static/images/{current_user}{id}"):
      _os.mkdir(f"{current_user}{id}")
-    _os.chdir(f"/home/bilen/Desktop/projects/fastapi/justlikenew/pictures/images/{current_user}{id}")
+    _os.chdir(f"/home/bilen/Desktop/projects/fastapi/justlikenew/static/images/{current_user}{id}")
 
 
 def  check_image_count(record: Image, name: str, db: Session, round_robin = bool):

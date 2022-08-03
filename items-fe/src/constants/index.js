@@ -5,7 +5,7 @@ export const EDIT_ITEM_URL = 'http://localhost:8000/items/edit_item/';
 export const EDIT_IMAGE_URL = 'http://localhost:8000/images';
 export const LOGOUT_URL = 'http://localhost:8000/users/logout';
 export const LOGIN_URL = 'http://localhost:8000/login/token';
-export const IMAGES_URL = 'pictures/images/';
+export const IMAGES_URL = '/static/images/';
 export const SECURITY_ENUM_URL =
   'http://localhost:8000/users/security_questions';
 export const ITEMS_ALL = 'http://localhost:8000/items/total/collection/all';

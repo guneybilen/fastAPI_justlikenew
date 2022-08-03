@@ -17,7 +17,7 @@ const ItemPage = () => {
   const [image_number1, set_Image1] = useState();
   const [image_number2, set_Image2] = useState();
   const [image_number3, set_Image3] = useState();
-  let username = `pictures/${userNameComing}`;
+  let username = `/static/images/${userNameComing}`;
   let itemId = searchItem && searchItem.id;
   let image1 = searchItem['image'][0]['item_image1'];
   let image2 = searchItem['image'][0]['item_image2'];

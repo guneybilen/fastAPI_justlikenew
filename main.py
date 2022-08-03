@@ -7,11 +7,13 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 # from webapps.base import api_router as web_app_router
 from fastapi.middleware.cors import CORSMiddleware
-import os as _os
+from pathlib import Path
 
 # origins = ["http://localhost:3000", "http://localhost:3000/login", "http://localhost:8000"]
 origins = ["*"]
 
+BASE_DIR = Path('./main.py').resolve().parent
+print(BASE_DIR)
 
 def include_router(app):
   app.include_router(api_router)
@@ -20,7 +22,8 @@ def include_router(app):
 
 def configure_static(app):
   # note to self: check_dir below is utmost important. cures broken images on reactjs side... 
-  app.mount("/pictures", StaticFiles(directory="pictures/images", check_dir=True), name="pictures")
+  # app.mount("/pictures", StaticFiles(directory="pictures", check_dir=True), name="pictures")
+  app.mount("/static", StaticFiles(directory=Path(BASE_DIR, 'static'), check_dir=True), name="static")
 
 
 def create_tables():
