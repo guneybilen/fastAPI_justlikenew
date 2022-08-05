@@ -13,7 +13,7 @@ from pathlib import Path
 origins = ["*"]
 
 BASE_DIR = Path('./main.py').resolve().parent
-print(BASE_DIR)
+# print(BASE_DIR)
 
 def include_router(app):
   app.include_router(api_router)

@@ -1,5 +1,5 @@
 import { formatDistance, parseISO } from 'date-fns';
-import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ITEM_DELETE } from '../constants';
 import { useState, useEffect } from 'react';
 import { DefaultEditor } from 'react-simple-wysiwyg';
@@ -44,7 +44,6 @@ const Item = ({ searchItem, userNameComing }) => {
       ? true
       : false;
 
-  // console.log(if_owner);
   const handleDelete = (slug) => {
     let confirmation = window.confirm('Are you sure for deleting the item?');
     if (confirmation) {
@@ -66,8 +65,6 @@ const Item = ({ searchItem, userNameComing }) => {
       navigate('/');
     }
   };
-
-  // image1 && console.log(image_number1);
 
   return (
     <>

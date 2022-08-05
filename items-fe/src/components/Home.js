@@ -15,6 +15,9 @@ const Home = ({ isLoading, fetchError }) => {
         .get(ITEMS_ALL, {
           headers: {
             'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache',
+            Pragma: 'no-cache',
+            Expires: '0',
           },
         })
         .then((response) => {
@@ -26,6 +29,9 @@ const Home = ({ isLoading, fetchError }) => {
         .get(PARTICULAR_URL + id, {
           headers: {
             'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache',
+            Pragma: 'no-cache',
+            Expires: '0',
           },
         })
         .then((response) => {

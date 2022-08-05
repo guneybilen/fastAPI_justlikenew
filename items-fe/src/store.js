@@ -152,7 +152,6 @@ export default createStore({
   }),
 
   editItem: thunk(async (actions, updatedItem, helpers) => {
-    // console.log(updatedItem);
     const form_data = updatedItem.item;
     const particular_item_id = updatedItem.particular_item_id;
     const cb = updatedItem.cb;
@@ -166,7 +165,7 @@ export default createStore({
     };
 
     axios
-      .put(
+      .patch(
         `http://localhost:8000/items/single/update/${particular_item_id}`,
         form_data,
         config
@@ -182,21 +181,33 @@ export default createStore({
   }),
 
   editImage: thunk(async (actions, updatedImage, helpers) => {
-    // console.log(updatedItem);
     const form_data = updatedImage.item;
     const particular_item_id = updatedImage.particular_item_id;
     const cb = updatedImage.cb;
     const err = updatedImage.err;
+    const image1ExtraData = updatedImage.image1ExtraData;
+    const image2ExtraData = updatedImage.image2ExtraData;
+    const image3ExtraData = updatedImage.image3ExtraData;
+
+    // console.log(`Image ${image1ExtraData}`);
+    // console.log(`Image ${image2ExtraData}`);
+    // console.log(`Image ${image3ExtraData}`);
 
     const config = {
       headers: {
         'Content-Type': 'x-www-form-urlencoded',
         access_token: `${localStorage.getItem('access_token')}`,
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+        Expires: '0',
+        image1ExtraData: image1ExtraData,
+        image2ExtraData: image2ExtraData,
+        image3ExtraData: image3ExtraData,
       },
     };
 
     axios
-      .put(
+      .patch(
         `http://localhost:8000/image/single/update/${particular_item_id}`,
         form_data,
         config

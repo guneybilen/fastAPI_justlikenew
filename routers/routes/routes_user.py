@@ -66,7 +66,6 @@ async def forgot_password(user: UserPreCreate):
     # address for all logic beyond this point (especially
     # before going to a database query where equality
     # does not take into account normalization).
-
     email = validate_email(user.email).email
     returned_boolean_result = await communicate_for_forgotten_password(email)
     print(returned_boolean_result)

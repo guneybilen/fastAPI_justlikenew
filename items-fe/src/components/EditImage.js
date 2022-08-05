@@ -20,8 +20,11 @@ const EditImage = () => {
   const [image2PresentCheck, setImage2PresentCheck] = useState('');
   const [image3PresentCheck, setImage3PresentCheck] = useState('');
   const [image1, setImage1] = useState('');
+  const [image1ExtraData, setImage1ExtraData] = useState('');
   const [image2, setImage2] = useState('');
+  const [image2ExtraData, setImage2ExtraData] = useState('');
   const [image3, setImage3] = useState('');
+  const [image3ExtraData, setImage3ExtraData] = useState('');
   const [imageUpload1, setImageUpload1] = useState(null);
   const [imageUpload2, setImageUpload2] = useState(null);
   const [imageUpload3, setImageUpload3] = useState(null);
@@ -44,6 +47,9 @@ const EditImage = () => {
         headers: {
           'Content-Type': 'application/json',
           access_token: localStorage.getItem('access_token'),
+          'Cache-Control': 'no-cache',
+          Pragma: 'no-cache',
+          Expires: '0',
         },
       })
       .then((response) => {
@@ -93,6 +99,9 @@ const EditImage = () => {
     editImage({
       item: item,
       particular_item_id: particular_item_id,
+      image1ExtraData: image1ExtraData,
+      image2ExtraData: image2ExtraData,
+      image3ExtraData: image3ExtraData,
       cb: () => {
         navigate('/');
       },
@@ -101,10 +110,6 @@ const EditImage = () => {
       },
     });
   };
-
-  function onChange(e) {
-    setHtml(e.target.value);
-  }
 
   const displayNone = (e) => {
     e.preventDefault();
@@ -132,7 +137,6 @@ const EditImage = () => {
                 className="form-control"
                 required
                 value={brand}
-                // onChange={(e) => setBrand(e.target.value)}
                 readOnly
               />
             )}
@@ -143,7 +147,6 @@ const EditImage = () => {
               required
               className="form-control"
               value={model}
-              // onChange={(e) => setModel(e.target.value)}
               readOnly
             />
             <label htmlFor="itemModel">Location:</label>
@@ -153,7 +156,6 @@ const EditImage = () => {
               required
               className="form-control"
               value={location}
-              // onChange={(e) => setLocation(e.target.value)}
               readOnly
             />
             <label htmlFor="itemPrice">CAD$ Price:</label>
@@ -162,7 +164,6 @@ const EditImage = () => {
               id="itemPrice"
               className="form-control"
               value={price}
-              // onChange={(e) => setPrice(e.target.value)}
               readOnly
             />
             <label htmlFor="itemBody">
@@ -183,6 +184,7 @@ const EditImage = () => {
                   src={image1}
                   id="newImage1"
                   alt="newImage1"
+                  name="image1"
                   width="150px"
                   height="75px"
                 />
@@ -193,6 +195,7 @@ const EditImage = () => {
                   src={URL.createObjectURL(imageUpload1)}
                   id="newImage1"
                   alt="newImage1"
+                  name="image1"
                   width="150px"
                   height="75px"
                 />
@@ -207,6 +210,7 @@ const EditImage = () => {
                   onClick={() => {
                     setImage1(false);
                     setImageUpload1(false);
+                    setImage1ExtraData(null);
                   }}
                 />
               )}
@@ -220,9 +224,9 @@ const EditImage = () => {
               <input
                 type="file"
                 alt="item"
-                name="image"
                 accept="image/*"
                 onChange={(e) => {
+                  setImage1ExtraData(1);
                   e.target.files[0] === undefined ||
                     setImageUpload1(e.target.files[0]);
                 }}
@@ -260,6 +264,7 @@ const EditImage = () => {
                     onClick={() => {
                       setImage2(false);
                       setImageUpload2(false);
+                      setImage2ExtraData(null);
                     }}
                   />
                 )}
@@ -272,9 +277,9 @@ const EditImage = () => {
                 type="file"
                 id="image2"
                 alt="item"
-                name="image"
                 accept="image/*"
                 onChange={(e) => {
+                  setImage2ExtraData(2);
                   e.target.files[0] === undefined ||
                     setImageUpload2(e.target.files[0]);
                 }}
@@ -311,6 +316,7 @@ const EditImage = () => {
                     onClick={() => {
                       setImage3(false);
                       setImageUpload3(false);
+                      setImage3ExtraData(null);
                     }}
                   />
                 )}
@@ -323,9 +329,9 @@ const EditImage = () => {
                 type="file"
                 id="image3"
                 alt="item"
-                name="image"
                 accept="image/*"
                 onChange={(e) => {
+                  setImage3ExtraData(3);
                   e.target.files[0] === undefined ||
                     setImageUpload3(e.target.files[0]);
                 }}

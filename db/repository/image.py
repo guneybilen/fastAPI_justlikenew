@@ -61,54 +61,81 @@ def validate_image(file_size):
      return 0
 
 
-def upload_image_by_item_id(id: int, db: Session,  
-                            current_user: str,
-                            file: UploadFile = File(...),
-                            file_size: bytes = File(...)):
+# def upload_image_by_item_id(id: int, db: Session,  
+#                             current_user: str,
+#                             file: UploadFile = File(...),
+#                             file_size: bytes = File(...)):
+#     try:
+#         validate_image(len(file_size))
+
+#         create_necessary_directory(current_user, id)     
+#         file_name = file.filename.replace(" ", "")
+#         dir_list = _os.listdir(".")
+
+#         round_robin = False
+#         counter = len(dir_list)
+
+#         if counter == 3:
+#           oldest_file = min(dir_list, key=_os.path.getctime)
+#           regex = _re.search(r'\d+', oldest_file)
+#           counter = int(regex.group(0)) - 1
+#           round_robin = True
+#         counter = counter + 1
+        
+#         with open(file_name,'wb+') as f:
+#           f.write(file.file.read())
+#           _os.rename(file_name, f"{counter}.jpeg")
+#           existing_item = db.query(Item).filter_by(id=id).first()
+#           existing_image_for_item = db.query(Image).filter_by(item_id=id).first()
+#           if (existing_image_for_item ==  None):
+#             image = Image(item_id=id)
+#             db.add(image)   
+#             db.commit()
+
+#           q = db.query(Image)
+#           record = q.filter_by(item_id=id).first()
+#           if not existing_item.id: 
+#             return 0
+#           returned_record = check_image_count(record, f"{counter}.jpeg", db, round_robin)
+#           f.close()
+#           db.add(returned_record)
+#           db.commit() 
+#           db.refresh(returned_record)
+#           return returned_record
+
+#     except Exception as e:
+#         print(e)
+
+def upload_image_by_item_id(  req, 
+                              id: int, 
+                              db: Session,  
+                              current_user: str,
+                              file: UploadFile = File(...),
+                              file_size: bytes = File(...),
+                              imageExtraData: int | None = None
+                            ):
     try:
         validate_image(len(file_size))
 
-        create_necessary_directory(current_user, id)     
+        create_necessary_directory(current_user, id) 
+
         file_name = file.filename.replace(" ", "")
-        dir_list = _os.listdir(".")
-
-        round_robin = False
-        counter = len(dir_list)
-
-        if counter == 3:
-          oldest_file = min(dir_list, key=_os.path.getctime)
-          regex = _re.search(r'\d+', oldest_file)
-          counter = int(regex.group(0)) - 1
-          round_robin = True
-        counter = counter + 1
         
         with open(file_name,'wb+') as f:
           f.write(file.file.read())
-          _os.rename(file_name, f"{counter}.jpeg")
-          existing_item = db.query(Item).filter_by(id=id).first()
-          existing_image_for_item = db.query(Image).filter_by(item_id=id).first()
-          if (existing_image_for_item ==  None):
-            image = Image(item_id=id)
-            db.add(image)   
-            db.commit()
-
-          q = db.query(Image)
-          record = q.filter_by(item_id=id).first()
-          if not existing_item.id: 
-            return 0
-          returned_record = check_image_count(record, f"{counter}.jpeg", db, round_robin)
-          f.close()
-          db.add(returned_record)
-          db.commit() 
-          db.refresh(returned_record)
-          return returned_record
+          _os.rename(file_name, f"{imageExtraData}.jpeg")
+          db.query(Item).filter_by(id=id).first()
+          image = Image(item_id=id)
+          db.add(image)
+          db.commit()
+          db.refresh(image)   
 
     except Exception as e:
         print(e)
 
+
 def list_images_with_items(db: Session):
     query = db.query(User).options(joinedload('*')).all()
-    # query = db.query(User).options(joinedload(User.item, innerjoin=True)).one_or_none()
     return query
 
 
@@ -128,16 +155,20 @@ def edit_item(user_id: int, particular_item_id: int, db: Session):
     return query
 
 
-def update_image_by_item_id(id: int, db: Session, seller_username: str,  
+def update_image_by_item_id(req, id: int, db: Session, seller_username: str,  
                                         item_object):
 
     try: 
       for i in range(1,4):
         if(item_object[f"item_image{i}b"]) is not None:
-          upload_image_by_item_id(id=id, 
-                                  db=db, current_user=seller_username, 
+          upload_image_by_item_id(req, 
+                                  id=id, 
+                                  db=db, 
+                                  current_user=seller_username, 
                                   file = item_object[f"item_image{i}b"], 
-                                  file_size = item_object[f"item_image{i}a"])
+                                  file_size = item_object[f"item_image{i}a"],
+                                  imageExtraData = item_object[f"image{i}ExtraData"]
+                                )
       return 1
     except Exception as e:
       print(e)
