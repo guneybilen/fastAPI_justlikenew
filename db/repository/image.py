@@ -11,9 +11,13 @@ from sqlalchemy.inspection import inspect
 from fastapi import UploadFile, File, HTTPException, status
 from core.config import settings as _settings
 import os as _os
-import re as _re
-import json as _json
-from sqlalchemy.orm import subqueryload
+from datetime import datetime, timezone
+from pathlib import Path
+import re
+ 
+def timestamp(dt):
+  return dt.replace(tzinfo=timezone.utc).timestamp() * 1000
+   
 
 first_image_addition = False
 second_image_addition = False
@@ -114,24 +118,52 @@ def upload_image_by_item_id(  req,
                               file_size: bytes = File(...),
                               imageExtraData: int | None = None
                             ):
+
+    print(imageExtraData)                       
     try:
+        dt = datetime.now()
         validate_image(len(file_size))
 
         create_necessary_directory(current_user, id) 
 
         file_name = file.filename.replace(" ", "")
+
+        BASE_DIR = Path('./image.py').resolve().parent
+        print(BASE_DIR)
+        # static/images/bilen9
+        # directory = f"{current_user}"f"{id}"
         
+        # iterate over files in
+        # that directory
+        for filename in _os.listdir(BASE_DIR):
+            f = _os.path.join(BASE_DIR, filename)
+            if _os.path.isfile(f):
+              m = re.findall(r'(\d)-\d+', filename)
+              if (m[0] == imageExtraData):
+                t = re.findall(r".*", filename)
+                image_file_name = f"{t[0]}"
+                _os.remove(image_file_name)
+              
+    
+    except Exception as e:
+        print(e)
+
         with open(file_name,'wb+') as f:
           f.write(file.file.read())
-          _os.rename(file_name, f"{imageExtraData}.jpeg")
+          file_image_name = f"{imageExtraData}-{timestamp(dt)}.jpeg"
+          _os.rename(file_name, file_image_name)
           db.query(Item).filter_by(id=id).first()
-          image = Image(item_id=id)
+          if (imageExtraData == 1):
+            image = Image(item_image1=file_image_name, item_id=id)
+          if (imageExtraData == 2):
+            image = Image(item_image2=file_image_name, item_id=id)
+          if (imageExtraData == 3):
+            image = Image(item_image3=file_image_name, item_id=id)
           db.add(image)
           db.commit()
           db.refresh(image)   
+        return True
 
-    except Exception as e:
-        print(e)
 
 
 def list_images_with_items(db: Session):

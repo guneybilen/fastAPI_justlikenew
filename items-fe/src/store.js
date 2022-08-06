@@ -189,10 +189,6 @@ export default createStore({
     const image2ExtraData = updatedImage.image2ExtraData;
     const image3ExtraData = updatedImage.image3ExtraData;
 
-    // console.log(`Image ${image1ExtraData}`);
-    // console.log(`Image ${image2ExtraData}`);
-    // console.log(`Image ${image3ExtraData}`);
-
     const config = {
       headers: {
         'Content-Type': 'x-www-form-urlencoded',

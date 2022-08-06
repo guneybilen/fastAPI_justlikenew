@@ -35,13 +35,10 @@ async def update_image(  req: Request,
                          particular_item_id: int,
                          item_image1a: bytes | None = File(default=None),
                          item_image1b: UploadFile | None = File(default=None),
-                         image1ExtraData: int | None = None,
                          item_image2a: bytes | None = File(default=None),
                          item_image2b: UploadFile | None = File(default=None),
-                         image2ExtraData: int | None = None,
                          item_image3a: bytes | None = File(default=None),
                          item_image3b: UploadFile | None = File(default=None),
-                         image3ExtraData: int | None = None,
                          db: Session = Depends(get_db)
                        ):
                
