@@ -12,6 +12,7 @@ from fastapi import UploadFile, File, HTTPException, status
 from core.config import settings as _settings
 import os as _os
 from datetime import datetime, timezone
+from sqlalchemy import update
 from pathlib import Path
 import re
  
@@ -58,7 +59,7 @@ def  check_image_count(record: Image, name: str, db: Session, round_robin = bool
       return record
 
 def validate_image(file_size):
-     print(f"incoming image.size is {file_size} bytes")
+     #  print(f"incoming image.size is {file_size} bytes")
      limit_MB = _settings.LIMIT_MB
      if file_size > limit_MB * 1024000:
         raise HTTPException(status_code= status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, detail= "max image size is has to be less than %s MB" % limit_MB)  
@@ -119,7 +120,6 @@ def upload_image_by_item_id(  req,
                               imageExtraData: int | None = None
                             ):
 
-    print(imageExtraData)                       
     try:
         dt = datetime.now()
         validate_image(len(file_size))
@@ -129,41 +129,41 @@ def upload_image_by_item_id(  req,
         file_name = file.filename.replace(" ", "")
 
         BASE_DIR = Path('./image.py').resolve().parent
-        print(BASE_DIR)
+        # print('BASE_DIR', BASE_DIR)
         # static/images/bilen9
         # directory = f"{current_user}"f"{id}"
         
-        # iterate over files in
-        # that directory
         for filename in _os.listdir(BASE_DIR):
-            f = _os.path.join(BASE_DIR, filename)
-            if _os.path.isfile(f):
-              m = re.findall(r'(\d)-\d+', filename)
+          f = _os.path.join(BASE_DIR, filename)
+          if _os.path.isfile(f):
+            m = re.findall(r'(\d)-\d+', f)
+            if(len(m)>0):
               if (m[0] == imageExtraData):
-                t = re.findall(r".*", filename)
+                t = re.findall(r".*", f)
                 image_file_name = f"{t[0]}"
-                _os.remove(image_file_name)
-              
-    
-    except Exception as e:
-        print(e)
+                _os.remove(image_file_name)          
 
         with open(file_name,'wb+') as f:
           f.write(file.file.read())
           file_image_name = f"{imageExtraData}-{timestamp(dt)}.jpeg"
           _os.rename(file_name, file_image_name)
           db.query(Item).filter_by(id=id).first()
-          if (imageExtraData == 1):
-            image = Image(item_image1=file_image_name, item_id=id)
-          if (imageExtraData == 2):
-            image = Image(item_image2=file_image_name, item_id=id)
-          if (imageExtraData == 3):
-            image = Image(item_image3=file_image_name, item_id=id)
-          db.add(image)
-          db.commit()
-          db.refresh(image)   
+          if (int(imageExtraData) == 1):
+                stmt = (update(Image).where(Image.item_id==id).values(item_image1=file_image_name))
+                db.execute(stmt)
+                db.commit()
+          if (int(imageExtraData) == 2):
+                stmt = (update(Image).where(Image.item_id==id).values(item_image2=file_image_name))
+                db.execute(stmt)
+                db.commit()
+          if (int(imageExtraData) == 3):
+                stmt = (update(Image).where(Image.item_id==id).values(item_image3=file_image_name))
+                db.execute(stmt)
+                db.commit()
         return True
 
+    except Exception as e:
+      print(e)
 
 
 def list_images_with_items(db: Session):
@@ -183,7 +183,7 @@ def edit_item(user_id: int, particular_item_id: int, db: Session):
     # query = db.query(Item).filter(Item.id == particular_item_id).first()
     # query = db.query(Item).filter(Item.id == particular_item_id).options(joinedload(Item.image, innerjoin=True), contains_eager('image.items')).one()
     query = db.query(Item).get(particular_item_id)
-    print(query.id)
+    # print(query.id)
     return query
 
 

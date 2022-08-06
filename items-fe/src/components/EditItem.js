@@ -35,9 +35,6 @@ const EditItem = () => {
         headers: {
           'Content-Type': 'application/json',
           access_token: localStorage.getItem('access_token'),
-          'Cache-Control': 'no-cache',
-          Pragma: 'no-cache',
-          Expires: '0',
         },
       })
       .then((response) => {

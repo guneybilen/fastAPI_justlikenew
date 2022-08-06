@@ -26,13 +26,6 @@ path = "/home/bilen/Desktop/projects/fastapi/justlikenew"
 
 app = FastAPI()
 
-def add_headers(r):
-    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    r.headers["Pragma"] = "no-cache"
-    r.headers["Expires"] = "0"
-    r.headers['Cache-Control'] = 'public, max-age=0'
-    r.headers['Last-Modified'] = str(datetime.datetime.now() - datetime.timedelta(days=365))
-    return r
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc):
@@ -99,10 +92,8 @@ def read_item(user_id: int, particular_item_id: int, db: Session = Depends(get_d
 @router.get("/total/collection/all", response_model=list[ShowAllImportantDataAboutUser], response_model_exclude_none=True)
 def read_items(req: Request, resp: Response, db: Session = Depends(get_db)):
   try:
-    resp = add_headers(resp)
     items = list_images_with_items(db=db)
-    json_compatible_item_data = jsonable_encoder(items)
-    return JSONResponse(content=json_compatible_item_data, headers=resp.headers)
+    return items
   except KeyError as e:
     print(e)
 
