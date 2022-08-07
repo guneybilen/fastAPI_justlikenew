@@ -90,63 +90,6 @@ def forgot_password_request_accept(access_token: str, db: Session = Depends(get_
          }
 
 
-# @router.get("/user_create", response_class=HTMLResponse)
-# def create_user():
-
-#   return f"""
-#        <form method="POST" enctype="application/x-www-form-urlencoded" action="/users/completing_user_create">
-
-#           <p>
-#           <label>First Name
-#           <input type="text" name="first_name" required>
-#           </label> 
-#           </p>
-
-#           <p>
-#           <label>Last Name
-#           <input type="text" name="last_name" required>
-#           </label> 
-#           </p>
-
-#           <p>
-#           <label>Username
-#           <input type="text" name="username" required>
-#           </label> 
-#           </p>
-
-#           <p>
-#           <label>Email 
-#           <input type="email" name="email" value="{app.state.current_user}">
-#           </label>
-#           </p>
-
-#           <p>
-#           <label>Password 
-#           <input type="password" name="password">
-#           </label>
-#           </p>
-
-#           <fieldset>
-#           <legend>ENTER THE ONE AND ONLY ONE EXACTLY TO THE TEXTBOX BESIDE THE LABEL, PLEASE</legend>
-#               <p><label> FAVORITE_PET <input type="text" name="s_name"> </label></p>
-#               <p><label> BORN_CITY <input type="text" name="s_name"> </label></p>
-#               <p><label> MOTHER_MAIDEN_NAME <input type="text" name="s_name"> </label></p>
-#               <p><label> GRADUATED_HIGH_SCHOOL_NAME <input type="text" name="s_name"> </label></p>
-#               <p><label> FIRST_CAR <input type="text" name="s_name"> </label></p>
-#               <p><label> FAVORITE_FOOD <input type="text" name="s_name"> </label></p>
-#           </fieldset>
-
-#           <p>
-#           <label>Secret Answer 
-#           <input type="text" name="s_answer">
-#           </label>
-#           </p>
-
-#           <p><button>Submit</button></p>
-#           </form>
-#   """
-
-
 @router.post("/user_create", response_model=UserResponse)
 async def post_user_create(data: UserCreate, db: Session = Depends(get_db)):
 
@@ -165,8 +108,6 @@ async def post_user_create(data: UserCreate, db: Session = Depends(get_db)):
                 "security_name": data.security_name,
               }
 
-              # casted_for_list = list(data.security_name)
-
               try:
                 returned_user_or_error = await create_new_user(user=user, db=db)
                 print(returned_user_or_error.email)
@@ -178,10 +119,7 @@ async def post_user_create(data: UserCreate, db: Session = Depends(get_db)):
               except AttributeError as e:
                 print(e)
                 return {"result": "email or username is present errror on server"}                                                           
-
-              # if (isinstance(returned_user_or_error, IntegrityError)):
-              #     return {"result": returned_user_or_error.orig}
-             
+           
 
 @router.get("/users/me/", response_model=ShowUser)
 async def read_users_me(current_user: ShowUser = Depends(get_current_active_user)):
