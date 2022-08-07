@@ -147,9 +147,12 @@ def list_images_with_items(db: Session):
 
 
 def list_images_with_item(id:int, db: Session):
-    query = db.query(User).join(User.item).filter(User.id == id).one_or_none()
+    query = db.query(User).join(User.item).filter(Item.id == id).one_or_none()
     return query
 
+def user_all_items(id:int, db: Session):
+    query = db.query(User).join(User.item).filter(User.id == id).one_or_none()
+    return query
 
 def edit_item(user_id: int, particular_item_id: int, db: Session):
     query = db.query(Item).get(particular_item_id)

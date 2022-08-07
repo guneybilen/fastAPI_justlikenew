@@ -9,6 +9,7 @@ import axios from 'axios';
 const Item = ({ searchItem, userNameComing }) => {
   const { item_id } = useParams();
   const navigate = useNavigate();
+
   const current_url = window.location.href;
   const items_url = /\/items\//g;
   const user_items_url = /\/user_items\//g;

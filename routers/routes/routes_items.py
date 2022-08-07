@@ -1,17 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, status, Request, Form, Response
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import JSONResponse
-from fastapi.encoders import jsonable_encoder
 from db.repository.item import update_item_by_id, delete_item_by_id, create_new_item
-from db.repository.item import list_items, retrieve_item, search_item
-from db.repository.image import list_images_with_items, list_images_with_item, edit_item
+from db.repository.item import retrieve_item, search_item
+from db.repository.image import list_images_with_items, list_images_with_item, edit_item, user_all_items
 from core.security import get_current_user_from_token, check_owner
-from schemas.item import ItemBase, ItemCreate, ShowItem
+from schemas.item import ItemBase
 from typing import List
-from typing import Optional, Dict, Any
+from typing import Optional, Dict
 from db.models.user import User
 from schemas.user import ShowAllImportantDataAboutUser
-
 from db.session import get_db
 from sqlalchemy.orm import Session
 from fastapi import FastAPI
@@ -79,9 +76,9 @@ def read_item(id: int, db: Session = Depends(get_db)):
   single_item_and_images = list_images_with_item(id=id, db=db)
   return single_item_and_images
 
-@router.get("/particular_user_items/{id}", response_model=ShowAllImportantDataAboutUser)
+@router.get("/user_all_items/{id}", response_model=ShowAllImportantDataAboutUser)
 def read_item(id: int, db: Session = Depends(get_db)):
-  item_and_images = list_images_with_item(id=id, db=db)
+  item_and_images = user_all_items(id=id, db=db)
   return item_and_images
 
 @router.get("/edit_item/{user_id}/particular_item/{particular_item_id}", response_model=ItemBase)

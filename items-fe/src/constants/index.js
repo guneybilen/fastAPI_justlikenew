@@ -1,6 +1,5 @@
 export const ITEMS_URL = 'http://localhost:8000/items/';
-export const ALL_USERS_ITEMS_URL =
-  'http://localhost:8000/items/particular_user_items/';
+export const USER_ALL_ITEMS_URL = 'http://localhost:8000/items/user_all_items/';
 export const SPECIFIC_USER_ITEM_URL = 'http://localhost:8000/items/item/';
 export const EDIT_ITEM_URL = 'http://localhost:8000/items/edit_item/';
 export const EDIT_IMAGE_URL = 'http://localhost:8000/images';

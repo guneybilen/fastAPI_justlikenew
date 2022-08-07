@@ -12,11 +12,9 @@ from db.repository.user import create_new_user
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from fastapi import FastAPI, Request
-# from fastapi.responses import HTMLResponse
 from email_validator import validate_email, EmailNotValidError
 from schemas.user import ShowUser, UserResponse
 from fastapi.responses import RedirectResponse
-from sqlalchemy.exc import IntegrityError
 from dotenv import load_dotenv
 from pathlib import Path
 import os as _os

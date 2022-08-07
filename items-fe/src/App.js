@@ -5,6 +5,8 @@ import About from './components/About';
 import Home from './components/Home';
 import NewItem from './components/NewItem';
 import EditItem from './components/EditItem';
+import UserItems from './components/UserItems';
+import ItemById from './components/ItemById';
 import Login from './auth/Login';
 import Signup from './auth/Signup';
 import Error from './auth/Error';
@@ -34,8 +36,8 @@ function App() {
           }
         ></Route>
         <Route exact path="/login" element={<Login />} />
-        <Route exact path="/user_items/:user_id" element={<Home />} />
-        <Route exact path="/items/:item_id" element={<Home />} />
+        <Route exact path="/user_items/:user_id" element={<UserItems />} />
+        <Route exact path="/items/:item_id" element={<ItemById />} />
         <Route
           exact
           path="/edit_item/:user_id/item/:particular_item_id"
