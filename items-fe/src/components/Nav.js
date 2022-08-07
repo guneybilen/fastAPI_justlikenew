@@ -102,7 +102,7 @@ const Nav = () => {
           <NavLink to="/about">About</NavLink>
         </li>
         <li>
-          {localStorage.getItem('nickname') && (
+          {localStorage.getItem('loggedin_username') && (
             <>
               <NavLink to="/profile" className="profileLink">
                 Profile

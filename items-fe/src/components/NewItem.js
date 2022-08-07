@@ -11,12 +11,6 @@ const NewItem = () => {
   const [model, setModel] = useState('');
   const [location, setLocation] = useState('');
   const [price, setPrice] = useState('');
-  // const [image1, setImage1] = useState(false);
-  // const [image2, setImage2] = useState(false);
-  // const [image3, setImage3] = useState(false);
-  // const [imageUpload1, setImageUpload1] = useState(null);
-  // const [imageUpload2, setImageUpload2] = useState(null);
-  // const [imageUpload3, setImageUpload3] = useState(null);
   const [error, setError] = useState('');
   const [closeButtonShouldShow, setCloseButtonShouldShow] = useState(false);
   const [html, setHtml] = useState('');
@@ -27,25 +21,19 @@ const NewItem = () => {
   //   }
   // };
 
-  const editItem = useStoreActions((actions) => actions.editItem);
+  const saveItem = useStoreActions((actions) => actions.saveItem);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     let item = new FormData(e.form);
-    // if (imageUpload1) item.append('item_image1a', imageUpload1);
-    // if (imageUpload1) item.append('item_image1b', imageUpload1);
-    // if (imageUpload2) item.append('item_image2a', imageUpload2);
-    // if (imageUpload2) item.append('item_image2b', imageUpload2);
-    // if (imageUpload3) item.append('item_image3a', imageUpload3);
-    // if (imageUpload3) item.append('item_image3b', imageUpload3);
     item.append('brand', brand);
     item.append('price', price);
     item.append('description', html);
     item.append('location', location);
     item.append('model', model);
 
-    editItem({
+    saveItem({
       item: item,
       cb: (user_id, particular_item_id) => {
         navigate(`/edit_image/${user_id}/item/${particular_item_id}`);
@@ -122,132 +110,6 @@ const NewItem = () => {
             className="form-control"
             onChange={onChange}
           />
-          {/* <div>
-            <br />
-            {imageUpload1 && (
-              <img
-                className="itemImage"
-                src={URL.createObjectURL(imageUpload1)}
-                id="newImage1"
-                alt="newImage1"
-                width="150px"
-                height="75px"
-              />
-            )}
-            <span className="spanImage"></span>
-
-            {(imageUpload1 || image1) && (
-              <input
-                type="button"
-                value="delete image1"
-                className="btn btn-sm btn-danger"
-                onClick={() => {
-                  setImage1(false);
-                  setImageUpload1(false);
-                }}
-              />
-            )}
-
-            <br />
-          </div>
-          <div>
-            <label htmlFor="image1">
-              {image1 ? 'change image1' : 'add image 1'} &nbsp;
-            </label>
-            <input
-              type="file"
-              alt="item"
-              name="image"
-              accept="image/*"
-              onChange={(e) => {
-                e.target.files[0] === undefined ||
-                  setImageUpload1(e.target.files[0]);
-              }}
-            />
-          </div>
-          <br />
-          <div>
-            {imageUpload2 && (
-              <img
-                className="itemImage"
-                id="newImage2"
-                src={URL.createObjectURL(imageUpload2)}
-                alt="newImage2"
-                width="150px"
-                height="75px"
-              />
-            )}
-            <span className="spanImage">
-              {(imageUpload2 || image2) && (
-                <input
-                  type="button"
-                  value="delete image2"
-                  className="btn btn-sm btn-danger"
-                  onClick={() => {
-                    setImage2(false);
-                    setImageUpload2(false);
-                  }}
-                />
-              )}
-            </span>
-            <br />
-            <label htmlFor="image2">
-              {image2 ? 'change image2' : 'add image 2'} &nbsp;
-            </label>
-            <input
-              type="file"
-              id="image2"
-              alt="item"
-              name="image"
-              accept="image/*"
-              onChange={(e) => {
-                e.target.files[0] === undefined ||
-                  setImageUpload2(e.target.files[0]);
-              }}
-            />
-          </div>
-          <br />
-          <div>
-            {imageUpload3 && (
-              <img
-                className="itemImage"
-                id="newImage3"
-                src={URL.createObjectURL(imageUpload3)}
-                alt="newImage3"
-                width="150px"
-                height="75px"
-              />
-            )}
-            <span className="spanImage">
-              {(imageUpload3 || image3) && (
-                <input
-                  type="button"
-                  value="delete image3"
-                  className="btn btn-sm btn-danger"
-                  onClick={() => {
-                    setImage3(false);
-                    setImageUpload3(false);
-                  }}
-                />
-              )}
-            </span>
-            <br />
-            <label htmlFor="image3">
-              {image3 ? 'change image3' : 'add image 3'} &nbsp;
-            </label>
-            <input
-              type="file"
-              id="image3"
-              alt="item"
-              name="image"
-              accept="image/*"
-              onChange={(e) => {
-                e.target.files[0] === undefined ||
-                  setImageUpload3(e.target.files[0]);
-              }}
-            /> 
-          </div>
-          */}
           <br />
           <button
             type="submit"

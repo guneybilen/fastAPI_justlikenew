@@ -9,6 +9,7 @@ import sqlalchemy.sql.functions as _func
 from sqlalchemy import delete
 from sqlalchemy.inspection import inspect
 from fastapi import UploadFile, File, HTTPException, status
+from sqlalchemy.dialects.postgresql import insert
 from core.config import settings as _settings
 import os as _os
 from datetime import datetime, timezone
@@ -131,6 +132,8 @@ def upload_image_by_item_id(  id: int,
         # print('BASE_DIR', BASE_DIR)
         # static/images/bilen9
         # directory = f"{current_user}"f"{id}"
+
+        print("imageExtraData ", imageExtraData)
         
         for filename in _os.listdir(BASE_DIR):
           f = _os.path.join(BASE_DIR, filename)
@@ -146,19 +149,40 @@ def upload_image_by_item_id(  id: int,
           f.write(file.file.read())
           file_image_name = f"{imageExtraData}-{timestamp(dt)}.jpeg"
           _os.rename(file_name, file_image_name)
-          db.query(Item).filter_by(id=id).first()
+          # item = db.query(Item).filter_by(id=id).first()
           if (int(imageExtraData) == 1):
-                stmt = (update(Image).where(Image.item_id==id).values(item_image1=file_image_name))
-                db.execute(stmt)
-                db.commit()
+            insert_stmt = insert(Image).values(
+              item_id=id,
+              item_image1=file_image_name
+            )
+            do_update_stmt = insert_stmt.on_conflict_do_update(
+              index_elements=['item_id'],
+              set_=dict(item_image1=file_image_name),
+            )
+            db.execute(do_update_stmt)
+            db.commit()
           if (int(imageExtraData) == 2):
-                stmt = (update(Image).where(Image.item_id==id).values(item_image2=file_image_name))
-                db.execute(stmt)
-                db.commit()
+            insert_stmt = insert(Image).values(
+              item_id=id,
+              item_image2=file_image_name
+            )
+            do_update_stmt=insert_stmt.on_conflict_do_update(
+              index_elements=['item_id'],
+              set_=dict(item_image2=file_image_name)
+            )
+            db.execute(do_update_stmt)
+            db.commit()
           if (int(imageExtraData) == 3):
-                stmt = (update(Image).where(Image.item_id==id).values(item_image3=file_image_name))
-                db.execute(stmt)
-                db.commit()
+            insert_stmt = insert(Image).values(
+              item_id=id,
+              item_image3=file_image_name
+            )
+            do_update_stmt = insert_stmt.on_conflict_do_update(
+              index_elements=['item_id'],
+              set_=dict(item_image3=file_image_name)
+            )
+            db.execute(do_update_stmt)
+            db.commit()
         return True
 
     except Exception as e:
@@ -173,7 +197,7 @@ def list_images_with_items(db: Session):
 def list_images_with_item(id:int, db: Session):
     # query = db.query(Item).options(joinedload(Item.image, innerjoin=True), contains_eager('image.items')).one()
     # query = db.query(User).options(joinedload(User.item, innerjoin=True), contains_eager('item.users')).one()
-    query = db.query(User).options(joinedload(User.item, innerjoin=True)).filter(User.id == id).first()
+    query = db.query(User).join(User.item).filter(Item.id == id).one_or_none()
     # query = db.query(Item).filter(Item.id == id).options(joinedload(Item.image, innerjoin=True), contains_eager('image.items')).one()
     return query
 

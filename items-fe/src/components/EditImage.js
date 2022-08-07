@@ -16,9 +16,9 @@ const EditImage = () => {
   const [model, setModel] = useState('');
   const [location, setLocation] = useState('');
   const [price, setPrice] = useState('');
-  const [image1PresentCheck, setImage1PresentCheck] = useState('');
-  const [image2PresentCheck, setImage2PresentCheck] = useState('');
-  const [image3PresentCheck, setImage3PresentCheck] = useState('');
+  const [image1PresentCheck, setImage1PresentCheck] = useState(false);
+  const [image2PresentCheck, setImage2PresentCheck] = useState(false);
+  const [image3PresentCheck, setImage3PresentCheck] = useState(false);
   const [image1, setImage1] = useState('');
   const [image1ExtraData, setImage1ExtraData] = useState('');
   const [image2, setImage2] = useState('');
@@ -47,9 +47,6 @@ const EditImage = () => {
         headers: {
           'Content-Type': 'application/json',
           access_token: localStorage.getItem('access_token'),
-          'Cache-Control': 'no-cache',
-          Pragma: 'no-cache',
-          Expires: '0',
         },
       })
       .then((response) => {
@@ -61,24 +58,45 @@ const EditImage = () => {
         setLocation(response.data.location);
         setBrand(response.data.brand);
         setBrand(response.data.brand);
-        setImage1PresentCheck(response.data['image'][0]['item_image1']);
-        setImage2PresentCheck(response.data['image'][0]['item_image2']);
-        setImage3PresentCheck(response.data['image'][0]['item_image3']);
+        response.data.image[0]?.item_image1 && setImage1PresentCheck(true);
+        response.data.image[0]?.item_image2 && setImage2PresentCheck(true);
+        response.data.image[0]?.item_image3 && setImage3PresentCheck(true);
+
+        // response.data['image'][0]['item_image1'] && setImage1PresentCheck(true);
+        // response.data['image'][0]['item_image2'] && setImage2PresentCheck(true);
+        // response.data['image'][0]['item_image3'] && setImage3PresentCheck(true);
+
         setImage1(
           `/static/images/${localStorage.getItem(
             'loggedin_username'
-          )}${particular_item_id}/${response.data['image'][0]['item_image1']}`
+          )}${particular_item_id}/${response.data.image[0]?.item_image1}`
         );
         setImage2(
           `/static/images/${localStorage.getItem(
             'loggedin_username'
-          )}${particular_item_id}/${response.data['image'][0]['item_image2']}`
+          )}${particular_item_id}/${response.data.image[0]?.item_image2}`
         );
         setImage3(
           `/static/images/${localStorage.getItem(
             'loggedin_username'
-          )}${particular_item_id}/${response.data['image'][0]['item_image3']}`
+          )}${particular_item_id}/${response.data.image[0]?.item_image3}`
         );
+
+        // setImage1(
+        //   `/static/images/${localStorage.getItem(
+        //     'loggedin_username'
+        //   )}${particular_item_id}/${response.data['image'][0]['item_image1']}`
+        // );
+        // setImage2(
+        //   `/static/images/${localStorage.getItem(
+        //     'loggedin_username'
+        //   )}${particular_item_id}/${response.data['image'][0]['item_image2']}`
+        // );
+        // setImage3(
+        //   `/static/images/${localStorage.getItem(
+        //     'loggedin_username'
+        //   )}${particular_item_id}/${response.data['image'][0]['item_image3']}`
+        // );
       })
       .catch((error) => console.log(error));
   }, [user_id, particular_item_id]);
@@ -103,6 +121,7 @@ const EditImage = () => {
       image2ExtraData: image2ExtraData,
       image3ExtraData: image3ExtraData,
       cb: (id) => {
+        console.log('BILeN');
         navigate(`/items/${id}`);
       },
       err: (error) => {
@@ -201,30 +220,29 @@ const EditImage = () => {
                   height="75px"
                 />
               )}
-              <span className="spanImage"></span>
-
-              {(imageUpload1 || image1) && (
-                <input
-                  type="button"
-                  value="delete image1"
-                  className="btn btn-sm btn-danger"
-                  onClick={() => {
-                    setImage1(false);
-                    setImageUpload1(false);
-                    setImage1ExtraData(null);
-                  }}
-                />
-              )}
-
-              <br />
             </div>
             <div>
+              <span className="spanImage">
+                {(imageUpload1 || image1) && (
+                  <input
+                    type="button"
+                    value="delete image1"
+                    className="btn btn-sm btn-danger"
+                    onClick={() => {
+                      setImage1(false);
+                      setImageUpload1(false);
+                      setImage1ExtraData(null);
+                    }}
+                  />
+                )}
+              </span>
               <label htmlFor="image1">
                 {image1 ? 'change image1' : 'add image 1'} &nbsp;
               </label>
               <input
                 type="file"
                 alt="item"
+                id="image1"
                 accept="image/*"
                 onChange={(e) => {
                   setImage1ExtraData(1);
@@ -255,6 +273,7 @@ const EditImage = () => {
                   height="75px"
                 />
               )}
+              <br />
 
               <span className="spanImage">
                 {(imageUpload2 || image2) && (
@@ -270,7 +289,6 @@ const EditImage = () => {
                   />
                 )}
               </span>
-              <br />
               <label htmlFor="image2">
                 {image2 ? 'change image2' : 'add image 2'} &nbsp;
               </label>
@@ -308,6 +326,7 @@ const EditImage = () => {
                   height="75px"
                 />
               )}
+              <br />
               <span className="spanImage">
                 {(imageUpload3 || image3) && (
                   <input
@@ -322,7 +341,6 @@ const EditImage = () => {
                   />
                 )}
               </span>
-              <br />
               <label htmlFor="image3">
                 {image3 ? 'change image3' : 'add image 3'} &nbsp;
               </label>

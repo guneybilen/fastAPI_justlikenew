@@ -23,7 +23,7 @@ def upgrade() -> None:
         sa.Column('item_image1',  sa.String(100), nullable=True),
         sa.Column('item_image2',  sa.String(100), nullable=True),
         sa.Column('item_image3',  sa.String(100), nullable=True),
-        sa.Column('item_id', sa.Integer, sa.ForeignKey("item.id"), nullable=False),
+        sa.Column('item_id', sa.Integer, sa.ForeignKey("item.id"), unique=True, nullable=False),
         sa.Column('created_date', sa.DateTime, nullable=False, default=datetime.utcnow),
         sa.Column('updated_date', sa.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow ),
     )

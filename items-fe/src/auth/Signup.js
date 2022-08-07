@@ -31,23 +31,8 @@ const Signup = () => {
     }
   };
 
-  // useEffect(() => {
-  //   const grab_security_enum = async () => {
-  //     const result = await axios.get(SECURITY_ENUM_URL);
-  //     setNames(Object.keys(result.data));
-  //     setValues(Object.values(result.data));
-  //   };
-
-  //   const grab_email = async () => {
-  //     const result = await axios.get(CREATE_PROCEDURE);
-  //     setEmail(result);
-  //   };
-
-  //   grab_security_enum();
-  //   grab_email();
-  // }, []);
-
   useEffect(() => {
+    localStorage.clear();
     async function fetchData() {
       const [res1, res2] = await axios.all([
         axios.get(SECURITY_ENUM_URL),
@@ -95,7 +80,6 @@ const Signup = () => {
           security_answer: answer,
         }),
 
-        // { data: { form_data: JSON.stringify(form_data) } },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -108,10 +92,7 @@ const Signup = () => {
           setShow(false);
 
           localStorage.setItem('access_token', response.data.access_token);
-          localStorage.setItem(
-            'loggedin_username',
-            response.data.loggedin_username
-          );
+          localStorage.setItem('loggedin_username', response.data.username);
 
           document.getElementById('human').checked = false;
 

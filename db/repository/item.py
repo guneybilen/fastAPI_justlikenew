@@ -38,19 +38,22 @@ def create_new_item(item_object: ItemBase,
                         seller_id = current_user.id)
 
     db.add(item_object_to_be_created)
-    db.flush()
-
-    for i in range(1,4):
-      if(item_object[f"item_image{i}b"]) is not None:
-        upload_image_by_item_id(id= item_object_to_be_created.id, 
-                                db=db, current_user=current_user.username, 
-                                file = item_object[f"item_image{i}b"], 
-                                file_size = item_object[f"item_image{i}a"])
-
-
-
     db.commit() 
     return [True, item_object_to_be_created.id]
+
+    # db.flush()
+
+    # for i in range(1,4):
+    #   if(item_object[f"item_image{i}b"]) is not None:
+    #     upload_image_by_item_id(id= item_object_to_be_created.id, 
+    #                             db=db, current_user=current_user.username, 
+    #                             file = item_object[f"item_image{i}b"], 
+    #                             file_size = item_object[f"item_image{i}a"])
+
+
+
+    # db.commit() 
+    # return [True, item_object_to_be_created.id]
 
 def retrieve_item(id: int, db: Session):
   item = db.query(Item).filter(Item.id==id).first()  

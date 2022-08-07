@@ -96,7 +96,7 @@ export default createStore({
     };
   }),
 
-  savePost: thunk(async (actions, data, helpers) => {
+  saveItem: thunk(async (actions, data, helpers) => {
     const form_data = data.item;
     const cb = data.cb;
     const err = data.err;

@@ -20,7 +20,7 @@ def upgrade() -> None:
         op.create_table(
         'item',
         sa.Column('id', sa.Integer, primary_key=True, index=True),
-        sa.Column('price', sa.Float(7,2), nullable=True),
+        sa.Column('price', sa.String, nullable=True),
         sa.Column('is_active', sa.Boolean, nullable=False, default=True),
         sa.Column('created_date', sa.DateTime, nullable=False, default=datetime.utcnow),
         sa.Column('updated_date', sa.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow ),

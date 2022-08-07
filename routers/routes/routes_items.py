@@ -69,7 +69,6 @@ async def create_item(req: Request,
                   "item_image3b": item_image3b,
                 }
 
-
                 boolean_result, item_id = create_new_item(item_object=item_object, db=db, 
                                       current_user=current_user_or_access_token_error) 
 
