@@ -17,7 +17,6 @@ from sqlalchemy.orm import Session
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import PlainTextResponse
-import datetime
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -73,13 +72,15 @@ async def create_item(req: Request,
 
                 return { "result": boolean_result, "item_id": item_id}
 
+@router.get("/item/{id}", response_model=ShowAllImportantDataAboutUser)
+def read_item(id: int, db: Session = Depends(get_db)):
+  single_item_and_images = list_images_with_item(id=id, db=db)
+  return single_item_and_images
 
 @router.get("/particular_user_items/{id}", response_model=ShowAllImportantDataAboutUser)
 def read_item(id: int, db: Session = Depends(get_db)):
-  # item = retrieve_item(id=id, db=db)
-  # user = db.query(User).filter(User.id==item.seller_id).first()
-  item_and_image_names = list_images_with_item(id=id, db=db)
-  return item_and_image_names
+  item_and_images = list_images_with_item(id=id, db=db)
+  return item_and_images
 
 @router.get("/edit_item/{user_id}/particular_item/{particular_item_id}", response_model=ItemBase)
 def read_item(user_id: int, particular_item_id: int, db: Session = Depends(get_db)):

@@ -624,3 +624,9 @@ div.wysiwyg-home > .rsw-editor > .rsw-toolbar {
 .signupForm {
   margin-bottom: 100px;
 }
+
+.disabled-link {
+  pointer-events: none;
+  text-decoration: none;
+  color: black;
+}

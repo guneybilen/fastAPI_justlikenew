@@ -25,7 +25,8 @@ function App() {
       <Routes>
         <Route forceRefresh={true} path="/" element={<Home />} />
         <Route exact path="/login" element={<Login />} />
-        <Route exact path="/user_items/:id" element={<Home />} />
+        <Route exact path="/user_items/:user_id" element={<Home />} />
+        <Route exact path="/items/:item_id" element={<Home />} />
         <Route
           exact
           path="/edit_item/:user_id/item/:particular_item_id"

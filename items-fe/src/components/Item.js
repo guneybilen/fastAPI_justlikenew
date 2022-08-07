@@ -7,15 +7,19 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const Item = ({ searchItem, userNameComing }) => {
-  // console.log('searchItem ', searchItem);
-  // console.log(userNameComing);
   const location = useLocation();
   const { id } = useParams();
   const navigate = useNavigate();
+  const current_url = window.location.href;
+  const items_url = /\/items\//g;
+  const user_items_url = /\/user_items\//g;
+  const result_is_array_for_items_url = current_url.match(items_url);
+  const result_is_array_for_user_items_url = current_url.match(user_items_url);
 
   const [image_number1, set_Image1] = useState();
   const [image_number2, set_Image2] = useState();
   const [image_number3, set_Image3] = useState();
+
   let username = `/static/images/${userNameComing}`;
   let itemId = searchItem && searchItem.id;
   let image1 = searchItem['image'][0] && searchItem['image'][0]['item_image1'];
@@ -119,11 +123,35 @@ const Item = ({ searchItem, userNameComing }) => {
               {formatDistance(new Date(), parseISO(searchItem.updated_date))}
             </p>
           )}
-          {loc?.index === 0 ? (
-            ''
-          ) : (
-            <Link to={`/user_items/${searchItem.seller_id}`}>goto detail</Link>
-          )}
+          <>
+            <Link
+              to={`/items/${searchItem.id}`}
+              className={
+                result_is_array_for_items_url &&
+                result_is_array_for_items_url.length > 0
+                  ? 'disabled-link'
+                  : ''
+              }
+            >
+              detail of this item
+            </Link>
+            <span> | </span>
+            <Link
+              to={`/user_items/${searchItem.seller_id}`}
+              className={
+                result_is_array_for_user_items_url &&
+                result_is_array_for_user_items_url
+                  ? 'disabled-link'
+                  : ''
+              }
+            >
+              all items
+              <i>
+                <b> {userNameComing} </b>
+              </i>
+              sells
+            </Link>
+          </>
           <br />
           <br />
           {searchItem && id && if_owner && (

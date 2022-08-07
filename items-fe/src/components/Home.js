@@ -1,16 +1,31 @@
 import Feed from './Feed';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ITEMS_ALL, PARTICULAR_URL } from '../constants';
+import {
+  ITEMS_ALL,
+  ALL_USERS_ITEMS_URL,
+  SPECIFIC_USER_ITEM_URL,
+} from '../constants';
 import axios from 'axios';
 
 const Home = ({ isLoading, fetchError }) => {
-  const { id } = useParams();
+  const { user_id } = useParams();
+  const { item_id } = useParams();
   const [data, setData] = useState([]);
-  // console.log('id ', id);
 
   useEffect(() => {
-    if (id === null || id === undefined) {
+    if (item_id && Number.isInteger(item_id)) {
+      axios
+        .get(SPECIFIC_USER_ITEM_URL + item_id, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        .then((response) => {
+          setData(response.data);
+        })
+        .catch((error) => console.log(error));
+    } else if (user_id === null || user_id === undefined) {
       axios
         .get(ITEMS_ALL, {
           headers: {
@@ -23,7 +38,7 @@ const Home = ({ isLoading, fetchError }) => {
         .catch((error) => console.log(error));
     } else {
       axios
-        .get(PARTICULAR_URL + id, {
+        .get(ALL_USERS_ITEMS_URL + user_id, {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -33,7 +48,7 @@ const Home = ({ isLoading, fetchError }) => {
         })
         .catch((error) => console.log(error));
     }
-  }, [id]);
+  }, [user_id]);
 
   return (
     <main className="Home">
