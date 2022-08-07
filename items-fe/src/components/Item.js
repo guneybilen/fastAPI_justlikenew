@@ -79,7 +79,12 @@ const Item = ({ searchItem, userNameComing }) => {
           C${searchItem && searchItem.price}
           <br />
           <DefaultEditor
-            value={searchItem.description}
+            value={
+              result_is_array_for_items_url ||
+              result_is_array_for_user_items_url
+                ? searchItem.description
+                : searchItem.description.substring(0, 50) + ' ...'
+            }
             className="form-control-wysiwyg"
             contentEditable={false}
             readOnly={true}
