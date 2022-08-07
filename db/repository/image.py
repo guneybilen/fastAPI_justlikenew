@@ -1,11 +1,7 @@
 from ..models.image import Image
 from ..models.item import Item
 from ..models.user import User
-from ..models.limit import Limit
-from ..models.area import Area
-from sqlalchemy.orm import Session, contains_eager,joinedload
-import sqlalchemy.sql as _sqlalchemy_sql
-import sqlalchemy.sql.functions as _func
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import delete
 from sqlalchemy.inspection import inspect
 from fastapi import UploadFile, File, HTTPException, status
@@ -13,7 +9,6 @@ from sqlalchemy.dialects.postgresql import insert
 from core.config import settings as _settings
 import os as _os
 from datetime import datetime, timezone
-from sqlalchemy import update
 from sqlalchemy import text
 from pathlib import Path
 import re
