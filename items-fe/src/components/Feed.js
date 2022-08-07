@@ -7,7 +7,6 @@ const Feed = ({ searchItems }) => {
   useEffect(() => {
     setData(searchItems);
   }, [searchItems]);
-  console.log('searchItems ', searchItems);
 
   return (
     <>
