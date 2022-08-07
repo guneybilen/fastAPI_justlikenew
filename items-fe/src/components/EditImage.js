@@ -39,7 +39,7 @@ const EditImage = () => {
   //   }
   // };
 
-  useEffect(() => {}, [particular_item_id]);
+  // useEffect(() => {}, [particular_item_id]);
 
   useEffect(() => {
     axios
@@ -102,11 +102,12 @@ const EditImage = () => {
       image1ExtraData: image1ExtraData,
       image2ExtraData: image2ExtraData,
       image3ExtraData: image3ExtraData,
-      cb: () => {
-        navigate('/');
+      cb: (id) => {
+        navigate(`/items/${id}`);
       },
       err: (error) => {
         console.log(error);
+        setError(error);
       },
     });
   };

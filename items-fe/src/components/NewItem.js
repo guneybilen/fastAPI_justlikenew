@@ -1,27 +1,25 @@
 import { useStoreActions } from 'easy-peasy';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useState, useRef } from 'react';
 import { DefaultEditor } from 'react-simple-wysiwyg';
-import Home from './Home';
 
 const NewItem = () => {
-  const navigate = useNavigate();
   const scrollRef = useRef(null);
+  const navigate = useNavigate();
 
   const [brand, setBrand] = useState('');
   const [model, setModel] = useState('');
   const [location, setLocation] = useState('');
   const [price, setPrice] = useState('');
-  const [image1, setImage1] = useState(false);
-  const [image2, setImage2] = useState(false);
-  const [image3, setImage3] = useState(false);
-  const [imageUpload1, setImageUpload1] = useState(null);
-  const [imageUpload2, setImageUpload2] = useState(null);
-  const [imageUpload3, setImageUpload3] = useState(null);
+  // const [image1, setImage1] = useState(false);
+  // const [image2, setImage2] = useState(false);
+  // const [image3, setImage3] = useState(false);
+  // const [imageUpload1, setImageUpload1] = useState(null);
+  // const [imageUpload2, setImageUpload2] = useState(null);
+  // const [imageUpload3, setImageUpload3] = useState(null);
   const [error, setError] = useState('');
   const [closeButtonShouldShow, setCloseButtonShouldShow] = useState(false);
   const [html, setHtml] = useState('');
-  const [id, setId] = useState('');
 
   // const scrollTo = (ref) => {
   //   if (ref && ref.current /* + other conditions */) {
@@ -29,50 +27,32 @@ const NewItem = () => {
   //   }
   // };
 
-  const savePost = useStoreActions((actions) => actions.savePost);
+  const editItem = useStoreActions((actions) => actions.editItem);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     let item = new FormData(e.form);
-    if (imageUpload1) item.append('item_image1a', imageUpload1);
-    if (imageUpload1) item.append('item_image1b', imageUpload1);
-    if (imageUpload2) item.append('item_image2a', imageUpload2);
-    if (imageUpload2) item.append('item_image2b', imageUpload2);
-    if (imageUpload3) item.append('item_image3a', imageUpload3);
-    if (imageUpload3) item.append('item_image3b', imageUpload3);
+    // if (imageUpload1) item.append('item_image1a', imageUpload1);
+    // if (imageUpload1) item.append('item_image1b', imageUpload1);
+    // if (imageUpload2) item.append('item_image2a', imageUpload2);
+    // if (imageUpload2) item.append('item_image2b', imageUpload2);
+    // if (imageUpload3) item.append('item_image3a', imageUpload3);
+    // if (imageUpload3) item.append('item_image3b', imageUpload3);
     item.append('brand', brand);
     item.append('price', price);
     item.append('description', html);
     item.append('location', location);
     item.append('model', model);
 
-    
-    savePost({
+    editItem({
       item: item,
-      cb: (id) => {
-        setId(id);
+      cb: (user_id, particular_item_id) => {
+        navigate(`/edit_image/${user_id}/item/${particular_item_id}`);
       },
-      // cb: (brandormodelerror, error, status) => {
-      //   let error_sentence = null;
-      //   if (brandormodelerror) {
-      //     setError(brandormodelerror);
-      //     setCloseButtonShouldShow(true);
-      //     scrollTo(scrollRef);
-      //   } else {
-      //     error_sentence =
-      //       status === 400 &&
-      //       (error?.item_image1 ||
-      //         error?.item_image2 ||
-      //         error?.item_image3 ||
-      //         error?.price);
-      //     setError(error_sentence);
-      //     setCloseButtonShouldShow(true);
-      //     scrollTo(scrollRef);
-      //   }
-
-      // if (!brandormodelerror && !error_sentence) navigate('/');
-      // },
+      err: (error) => {
+        setError(error);
+      },
     });
   };
 
@@ -124,7 +104,7 @@ const NewItem = () => {
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
-          <label htmlFor="itemPrice">CAD$ Price:</label>
+          <label htmlFor="itemPrice">C$ Price:</label>
           <input
             type="text"
             id="itemPrice"
@@ -142,15 +122,7 @@ const NewItem = () => {
             className="form-control"
             onChange={onChange}
           />
-          {/* <textarea
-            type="text"
-            id="itemBody"
-            className="form-control"
-            required
-            value={entry}
-            onChange={(e) => setEntry(e.target.value)}
-          /> */}
-          <div>
+          {/* <div>
             <br />
             {imageUpload1 && (
               <img
@@ -273,8 +245,9 @@ const NewItem = () => {
                 e.target.files[0] === undefined ||
                   setImageUpload3(e.target.files[0]);
               }}
-            />
+            /> 
           </div>
+          */}
           <br />
           <button
             type="submit"
@@ -286,7 +259,6 @@ const NewItem = () => {
             Submit
           </button>
         </form>
-        <Navigate to={<Home id={id} />} />
       </>
     </main>
   );

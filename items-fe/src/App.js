@@ -24,6 +24,15 @@ function App() {
 
       <Routes>
         <Route forceRefresh={true} path="/" element={<Home />} />
+        <Route
+          exact
+          path="/item"
+          element={
+            <RequireAuth>
+              <NewItem />
+            </RequireAuth>
+          }
+        ></Route>
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/user_items/:user_id" element={<Home />} />
         <Route exact path="/items/:item_id" element={<Home />} />
@@ -52,15 +61,7 @@ function App() {
         <Route exact path="/presignup" element={<PreSignup />} />
         <Route exact path="/forgotpassword" element={<ForgotPassword />} />
         <Route exact path="/newpassword/:id" element={<NewPassword />} />
-        <Route
-          exact
-          path="/item"
-          element={
-            <RequireAuth>
-              <NewItem />
-            </RequireAuth>
-          }
-        ></Route>
+
         <Route path="/*" element={<Home />} />
       </Routes>
       <Footer />

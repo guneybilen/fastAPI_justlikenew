@@ -1,5 +1,5 @@
 import { formatDistance, parseISO } from 'date-fns';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ITEM_DELETE } from '../constants';
 import { useState, useEffect } from 'react';
 import { DefaultEditor } from 'react-simple-wysiwyg';
@@ -7,8 +7,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const Item = ({ searchItem, userNameComing }) => {
-  const location = useLocation();
-  const { id } = useParams();
+  const { item_id } = useParams();
   const navigate = useNavigate();
   const current_url = window.location.href;
   const items_url = /\/items\//g;
@@ -25,8 +24,6 @@ const Item = ({ searchItem, userNameComing }) => {
   let image1 = searchItem['image'][0] && searchItem['image'][0]['item_image1'];
   let image2 = searchItem['image'][0] && searchItem['image'][0]['item_image2'];
   let image3 = searchItem['image'][0] && searchItem['image'][0]['item_image3'];
-
-  const loc = location.pathname.match(`/user_items/${searchItem.seller_id}`);
 
   useEffect(() => {
     image1 &&
@@ -154,7 +151,7 @@ const Item = ({ searchItem, userNameComing }) => {
           </>
           <br />
           <br />
-          {searchItem && id && if_owner && (
+          {searchItem && item_id && if_owner && (
             <div className="editdeletebuttons">
               <Link
                 to={`/edit_item/${searchItem['seller_id']}/item/${searchItem['id']}`}

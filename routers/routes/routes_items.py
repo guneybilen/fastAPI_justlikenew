@@ -52,6 +52,9 @@ async def create_item(req: Request,
                   return {'access_token': 'access_token_error'}
 
 
+                current_user_id = current_user_or_access_token_error.id
+
+
                 item_object = {
                   "brand": brand,
                   "price": price,
@@ -70,7 +73,7 @@ async def create_item(req: Request,
                 boolean_result, item_id = create_new_item(item_object=item_object, db=db, 
                                       current_user=current_user_or_access_token_error) 
 
-                return { "result": boolean_result, "item_id": item_id}
+                return { "result": boolean_result, "user_id": current_user_id,  "item_id": item_id}
 
 @router.get("/item/{id}", response_model=ShowAllImportantDataAboutUser)
 def read_item(id: int, db: Session = Depends(get_db)):

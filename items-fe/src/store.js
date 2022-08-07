@@ -99,6 +99,7 @@ export default createStore({
   savePost: thunk(async (actions, data, helpers) => {
     const form_data = data.item;
     const cb = data.cb;
+    const err = data.err;
 
     axios({
       method: 'post',
@@ -113,11 +114,12 @@ export default createStore({
         if (response.data['access_token'] === 'access_token_error')
           window.location = '/';
         if (response.data.result === true) {
-          cb(response.data.item_id);
+          cb(response.data.user_id, response.data.item_id);
         }
       })
       .catch((error) => {
         console.log(error);
+        err(error);
       });
   }),
 
@@ -139,13 +141,13 @@ export default createStore({
         }
       );
       actions.setItems(items.filter((items) => items.slug !== slug));
-      actions.setBrand('');
-      actions.setPrice('');
-      actions.setModel('');
-      actions.setEntry('');
-      actions.setImage1('');
-      actions.setImage2('');
-      actions.setImage3('');
+      // actions.setBrand('');
+      // actions.setPrice('');
+      // actions.setModel('');
+      // actions.setEntry('');
+      // actions.setImage1('');
+      // actions.setImage2('');
+      // actions.setImage3('');
     } catch (err) {
       console.log(`Error: ${err.message}`);
     }
@@ -193,9 +195,6 @@ export default createStore({
       headers: {
         'Content-Type': 'x-www-form-urlencoded',
         access_token: `${localStorage.getItem('access_token')}`,
-        'Cache-Control': 'no-cache',
-        Pragma: 'no-cache',
-        Expires: '0',
         image1ExtraData: image1ExtraData,
         image2ExtraData: image2ExtraData,
         image3ExtraData: image3ExtraData,
@@ -210,7 +209,7 @@ export default createStore({
       )
       .then((response) => {
         console.log(response);
-        cb();
+        cb(particular_item_id);
       })
       .catch((error) => {
         console.log(error);

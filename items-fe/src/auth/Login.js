@@ -12,13 +12,18 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
   const [alert, setAlert] = useState('');
-  // const [link, setLink] = useState(false);
   const [ckbox, setCkbox] = useState(false);
   const [show, setShow] = useState(false);
   const { state } = useLocation();
 
-  // console.log(state);
+  console.log(state);
   const from = state === null ? '/' : state.from;
+
+  useEffect(() => {
+    document.getElementById('sbn-btn').disabled = true;
+    document.getElementById('sbn-pass').disabled = true;
+    document.getElementById('username').style.pointerEvents = 'none';
+  }, [state]);
 
   const send_login_info = (form_data, success, fail) => {
     axios({
@@ -49,12 +54,6 @@ export default function Login() {
       });
   };
 
-  useEffect(() => {
-    document.getElementById('sbn-btn').disabled = true;
-    document.getElementById('sbn-pass').disabled = true;
-    document.getElementById('username').style.pointerEvents = 'none';
-  }, [state]);
-
   const scrollTo = (ref) => {
     if (ref && ref.current /* + other conditions */) {
       ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -69,17 +68,9 @@ export default function Login() {
 
   const fail = (status) => {
     console.log('Authentication Failed!');
-    // console.log(status);
     localStorage.clear();
     scrollTo(myRef);
     if (status.status === 401) setAlert(status.data.detail);
-    // if (status === 403) {
-    //   setLink(true);
-
-    //   setAlert(
-    //     'You need to activate your account in order to authorize. You can request another activtion email from the link below'
-    //   );
-    // }
     if (status === 500) setAlert('a problem in the server occurred');
   };
 

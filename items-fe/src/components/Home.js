@@ -48,7 +48,7 @@ const Home = ({ isLoading, fetchError }) => {
         })
         .catch((error) => console.log(error));
     }
-  }, [user_id]);
+  }, [user_id, item_id]);
 
   return (
     <main className="Home">

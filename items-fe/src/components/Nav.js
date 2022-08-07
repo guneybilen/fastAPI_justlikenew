@@ -20,10 +20,6 @@ const Nav = () => {
     setShow(true);
     logout_api();
     localStorage.clear();
-    //   .then(() => {
-    //     setShow(false);
-    //   })
-    //   .catch(() => {});
     setCloseOnClick(false);
     history('/');
   };
@@ -43,7 +39,7 @@ const Nav = () => {
     } else {
       setSearchResults('');
     }
-  }, [items, search, setSearchResults]);
+  }, [items, setSearchResults]);
 
   const displayNone = (e) => {
     e.preventDefault();

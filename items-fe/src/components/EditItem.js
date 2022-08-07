@@ -70,6 +70,7 @@ const EditItem = () => {
       },
       err: (error) => {
         console.log(error);
+        setError(error);
       },
     });
   };

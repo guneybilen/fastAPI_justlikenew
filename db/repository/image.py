@@ -111,8 +111,7 @@ def validate_image(file_size):
 #     except Exception as e:
 #         print(e)
 
-def upload_image_by_item_id(  req, 
-                              id: int, 
+def upload_image_by_item_id(  id: int, 
                               db: Session,  
                               current_user: str,
                               file: UploadFile = File(...),
@@ -187,19 +186,21 @@ def edit_item(user_id: int, particular_item_id: int, db: Session):
     return query
 
 
-def update_image_by_item_id(req, id: int, db: Session, seller_username: str,  
-                                        item_object):
+def update_image_by_item_id(  id: int, 
+                              db: Session, 
+                              seller_username: str,  
+                              item_object
+                           ):
 
     try: 
       for i in range(1,4):
         if(item_object[f"item_image{i}b"]) is not None:
-          upload_image_by_item_id(req, 
-                                  id=id, 
-                                  db=db, 
-                                  current_user=seller_username, 
-                                  file = item_object[f"item_image{i}b"], 
-                                  file_size = item_object[f"item_image{i}a"],
-                                  imageExtraData = item_object[f"image{i}ExtraData"]
+          upload_image_by_item_id(  id=id, 
+                                    db=db, 
+                                    current_user=seller_username, 
+                                    file = item_object[f"item_image{i}b"], 
+                                    file_size = item_object[f"item_image{i}a"],
+                                    imageExtraData = item_object[f"image{i}ExtraData"]
                                 )
       return 1
     except Exception as e:

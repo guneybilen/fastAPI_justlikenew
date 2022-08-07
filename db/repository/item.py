@@ -43,9 +43,9 @@ def create_new_item(item_object: ItemBase,
     for i in range(1,4):
       if(item_object[f"item_image{i}b"]) is not None:
         upload_image_by_item_id(id= item_object_to_be_created.id, 
-                              db=db, current_user=current_user.username, 
-                              file = item_object[f"item_image{i}b"], 
-                              file_size = item_object[f"item_image{i}a"])
+                                db=db, current_user=current_user.username, 
+                                file = item_object[f"item_image{i}b"], 
+                                file_size = item_object[f"item_image{i}a"])
 
 
 
