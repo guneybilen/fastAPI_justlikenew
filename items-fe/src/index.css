@@ -539,9 +539,9 @@ input[type='checkbox'] {
   align-items: center;
   /* float: center; */
 }
-
-.rsw-editor {
-  height: 15rem;
+.rsw-ce {
+  min-height: 10em !important;
+  min-height: 10em !important;
   overflow: auto;
   background-color: rgb(232, 240, 254) !important;
   text-align: left;
@@ -556,24 +556,13 @@ article > .rsw-editor > .rsw-toolbar {
   text-align: left;
 }
 
-div.wysiwyg-home {
-  width: 15rem;
-  height: 5rem;
+/* div.wysiwyg-home {
+  width: 156rem;
 }
-
-/* .rsw-editor {
-  width: 10rem;
-  height: 5rem;
-  border: 0px;
-  border-color: lightgray;
-  background-color: lightgray;
-  align-items: center;
-} */
 
 div.wysiwyg-home > .rsw-editor {
   width: 15rem;
-  height: 5rem;
-}
+} */
 
 div.wysiwyg-home > .rsw-editor > .rsw-toolbar {
   display: none;

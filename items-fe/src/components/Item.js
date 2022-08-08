@@ -2,7 +2,6 @@ import { formatDistance, parseISO } from 'date-fns';
 import { Link, useNavigate } from 'react-router-dom';
 import { ITEM_DELETE } from '../constants';
 import { useState, useEffect } from 'react';
-import { DefaultEditor } from 'react-simple-wysiwyg';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
@@ -78,17 +77,12 @@ const Item = ({ searchItem, userNameComing }) => {
           <br />
           C${searchItem && searchItem.price}
           <br />
-          <DefaultEditor
-            value={
-              result_is_array_for_items_url ||
-              result_is_array_for_user_items_url
-                ? searchItem.description
-                : searchItem.description.substring(0, 50) + ' ...'
-            }
-            className="form-control-wysiwyg"
-            contentEditable={false}
-            readOnly={true}
-          />
+          <br />
+          <span>
+            {result_is_array_for_items_url || result_is_array_for_user_items_url
+              ? searchItem.description
+              : searchItem.description.substring(0, 50) + ' ...'}
+          </span>
           <br />
           {image1 && (
             <img
