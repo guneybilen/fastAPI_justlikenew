@@ -84,6 +84,7 @@ const Item = ({ searchItem, userNameComing }) => {
               : searchItem.description.substring(0, 50) + ' ...'}
           </span>
           <br />
+          <br />
           {image1 && (
             <img
               className="itemImage"
