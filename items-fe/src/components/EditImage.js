@@ -62,10 +62,6 @@ const EditImage = () => {
         response.data.image[0]?.item_image2 && setImage2PresentCheck(true);
         response.data.image[0]?.item_image3 && setImage3PresentCheck(true);
 
-        // response.data['image'][0]['item_image1'] && setImage1PresentCheck(true);
-        // response.data['image'][0]['item_image2'] && setImage2PresentCheck(true);
-        // response.data['image'][0]['item_image3'] && setImage3PresentCheck(true);
-
         setImage1(
           `/static/images/${localStorage.getItem(
             'loggedin_username'
@@ -81,22 +77,6 @@ const EditImage = () => {
             'loggedin_username'
           )}${particular_item_id}/${response.data.image[0]?.item_image3}`
         );
-
-        // setImage1(
-        //   `/static/images/${localStorage.getItem(
-        //     'loggedin_username'
-        //   )}${particular_item_id}/${response.data['image'][0]['item_image1']}`
-        // );
-        // setImage2(
-        //   `/static/images/${localStorage.getItem(
-        //     'loggedin_username'
-        //   )}${particular_item_id}/${response.data['image'][0]['item_image2']}`
-        // );
-        // setImage3(
-        //   `/static/images/${localStorage.getItem(
-        //     'loggedin_username'
-        //   )}${particular_item_id}/${response.data['image'][0]['item_image3']}`
-        // );
       })
       .catch((error) => console.log(error));
   }, [user_id, particular_item_id]);
@@ -121,7 +101,6 @@ const EditImage = () => {
       image2ExtraData: image2ExtraData,
       image3ExtraData: image3ExtraData,
       cb: (id) => {
-        console.log('BILeN');
         navigate(`/items/${id}`);
       },
       err: (error) => {

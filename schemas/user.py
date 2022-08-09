@@ -43,6 +43,19 @@ class UserCreate(BaseModel):
     use_enum_values = True
 
 
+class UserUpdate(BaseModel):
+  email: EmailStr
+  username: constr(strip_whitespace=True, min_length=3, max_length=50)
+  password: constr(strip_whitespace=True, min_length=7, max_length=50)
+  password_confirm: constr(strip_whitespace=True, min_length=7, max_length=50)
+  security_name: SecurityEnum
+  security_answer: str
+  
+  class Config:
+    orm_mode = True
+    use_enum_values = True
+
+
 
 class ShowUser(BaseModel):
   username: Optional[str]

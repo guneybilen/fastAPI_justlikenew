@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-// import logout_api from '../api/logout_api';
-
-let backend = '/securityquestions/';
+import { SECURITY_ENUM_URL, GET_SECURITY_ENUM_URL } from '../constants';
+import { useStoreActions } from 'easy-peasy';
 
 const Profile = () => {
   const scrollRef = useRef(null);
@@ -11,14 +10,16 @@ const Profile = () => {
 
   const [email, setEmail] = useState('');
   const [error, setError] = useState(false);
-  const [names, setNames] = useState([]);
-  const [values, setValues] = useState([]);
-  const [forsend, setForSend] = useState('');
-  const [answer, setAnswer] = useState('');
-
+  const [securityQuestion, setSecurityQuestion] = useState('');
+  const [securityDataComingFromServer, setSecurityDataComingFromServer] =
+    useState([]);
+  const [securityQuestionGoingToServer, setSecurityQuestionGoingToServer] =
+    useState('');
+  const [securityAnswerGoingToServer, setSecurityAnswerGoingToServer] =
+    useState('');
   const [password1, setPassword1] = useState('');
   const [password2, setPassword2] = useState('');
-  const [nickname, setNickname] = useState('');
+  const [username, setUserName] = useState('');
   const [alert, setAlert] = useState('');
   const [show, setShow] = useState(false);
 
@@ -28,64 +29,62 @@ const Profile = () => {
     }
   };
 
+  const updateUser = useStoreActions((actions) => actions.updateUser);
+
   useEffect(() => {
-    setEmail('');
-    setPassword1('');
-    setPassword2('');
-    setNickname('');
-    setForSend('');
-    setAnswer('');
+    axios
+      .get(GET_SECURITY_ENUM_URL, {
+        headers: {
+          'Content-Type': 'application/json',
+          access_token: localStorage.getItem('access_token'),
+        },
+      })
+      .then((response) => {
+        setEmail(response.data['email']);
+        setSecurityQuestion(response.data['security_name']);
+        setUserName(response.data['username']);
+      })
+      .catch((error) => console.log(error));
+  }, []);
 
-    const grab = async () => {
-      const result = await axios.get(backend);
-      setNames(result.data.names);
-      setValues(result.data.values);
-    };
-
-    grab();
+  useEffect(() => {
+    axios
+      .get(SECURITY_ENUM_URL, {
+        headers: {
+          'Content-Type': 'application/json',
+          access_token: localStorage.getItem('access_token'),
+        },
+      })
+      .then((response) => {
+        // console.log(response.data);
+        setSecurityDataComingFromServer(response.data);
+      })
+      .catch((error) => console.log(error));
   }, []);
 
   const onSubmit = (e) => {
     e.preventDefault();
     setShow(true);
+
     const user = {
-      pk: localStorage.getItem('loggedInId'),
       email: email,
       password: password1,
       passwordConfirm: password2,
-      nickname: nickname,
-      security_name: forsend,
-      security_answer: answer,
+      username: username,
+      security_name: securityQuestionGoingToServer,
+      security_answer: securityAnswerGoingToServer,
     };
 
-    let url = '/updateuser/';
-
-    axios
-      .patch(url, user, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      .then((response) => {
-        return response.data;
-      })
-      .then((data) => {
-        console.log(data);
-        localStorage.setItem('nickname', data.nickname);
-        setShow(true);
-        if (data.id) {
-          history('/');
-        }
-      })
-      .catch((error) => {
-        console.log(error.response);
-        setShow(false);
-        setForSend('');
-        setError(true);
-        setAlert(error.response.data.message);
-        scrollTo(scrollRef);
-        document.getElementById('profileForm').reset();
-      });
+    updateUser({
+      user: user,
+      cb: () => {
+        // navigate(`/edit_image/${user_id}/item/${particular_item_id}`);
+      },
+      err: (error) => {
+        console.log(error);
+        setError(error);
+      },
+    });
   };
 
   const displayNone = (e) => {
@@ -159,38 +158,69 @@ const Profile = () => {
               onChange={(e) => setPassword2(e.target.value)}
             />{' '}
             <br />
-            <label htmlFor="nickname" className="form-label">
-              Change Nickname:
+            <label htmlFor="username" className="form-label">
+              Change Username:
             </label>{' '}
             <br />
             <input
-              name="nickname"
+              name="username"
               type="text"
-              value={nickname}
+              value={username}
               className="form-control"
-              onChange={(e) => setNickname(e.target.value)}
+              onChange={(e) => setUserName(e.target.value)}
             />
+            <br />
+            <br />
+            <span>
+              <label>
+                Your Current Security Question is: {securityQuestion}
+              </label>
+            </span>
+            <br />
             <br />
             <label htmlFor="security_question" className="form-label">
               Update For Your Security Question:
             </label>
-            <select
-              id="security_question"
-              className="form-select"
-              aria-label="Default select example"
-              value={forsend}
-              onChange={(e) => setForSend(e.target.value)}
-            >
-              <>
-                <option value="">Choose one from the list</option>
-                <option value={names[0]}>{values[0]}</option>
-                <option value={names[1]}>{values[1]}</option>
-                <option value={names[2]}>{values[2]}</option>
-                <option value={names[3]}>{values[3]}</option>
-                <option value={names[4]}>{values[4]}</option>
-                <option value={names[5]}>{values[5]}</option>
-              </>
-            </select>
+            <br />
+            {securityDataComingFromServer && (
+              <select
+                id="security_question"
+                className="form-select"
+                aria-label="Default select example"
+                value={securityQuestionGoingToServer}
+                onChange={(e) =>
+                  setSecurityQuestionGoingToServer(e.target.value)
+                }
+              >
+                <>
+                  <option value="">Choose one from the list</option>
+                  <option value={securityDataComingFromServer['BORN_CITY']}>
+                    {securityDataComingFromServer['BORN_CITY']}
+                  </option>
+                  <option value={securityDataComingFromServer['FAVORITE_FOOD']}>
+                    {securityDataComingFromServer['FAVORITE_FOOD']}
+                  </option>
+                  <option value={securityDataComingFromServer['FAVORITE_PET']}>
+                    {securityDataComingFromServer['FAVORITE_PET']}
+                  </option>
+                  <option value={securityDataComingFromServer['FIRST_CAR']}>
+                    {securityDataComingFromServer['FIRST_CAR']}
+                  </option>
+                  <option
+                    value={
+                      securityDataComingFromServer['GRADUATED_HIGH_SCHOOL_NAME']
+                    }
+                  >
+                    {securityDataComingFromServer['GRADUATED_HIGH_SCHOOL_NAME']}
+                  </option>
+                  <option
+                    value={securityDataComingFromServer['MOTHER_MAIDEN_NAME']}
+                  >
+                    {securityDataComingFromServer['MOTHER_MAIDEN_NAME']}
+                  </option>
+                </>
+              </select>
+            )}
             <br />
             <label htmlFor="security_question_answer" className="form-label">
               Type Your Answer For The Updated Security Question:
@@ -200,9 +230,9 @@ const Profile = () => {
               name="sqanswer"
               id="security_question_answer"
               type="text"
-              value={answer}
+              value={securityAnswerGoingToServer}
               className="form-control"
-              onChange={(e) => setAnswer(e.target.value)}
+              onChange={(e) => setSecurityAnswerGoingToServer(e.target.value)}
             />
             <br />
             <br />

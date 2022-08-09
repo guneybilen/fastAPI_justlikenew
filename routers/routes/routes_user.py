@@ -1,12 +1,12 @@
-from schemas.user import ShowUser, SecurityEnum, UserCreate, UserPreCreate
+from schemas.user import ShowUser, SecurityEnum, UserCreate, UserPreCreate, UserUpdate
 from schemas.user import SecurityEnum
 from fastapi import APIRouter, Depends
 from db.session import get_db
 from sqlalchemy.orm import Session
-from fastapi import APIRouter, Depends, HTTPException, status, Security
+from fastapi import APIRouter, Depends, HTTPException, status
 from core.communication import communicate_for_forgotten_password
 from core.communication import pre_create_new_user_communication
-from core.security import get_current_user_from_token, get_current_active_user, get_current_user_from_token_during_signup, create_acess_token_and_create_limit_table_entry
+from core.security import get_current_user_from_token, get_current_user_from_token_during_signup, create_acess_token_and_create_limit_table_entry
 from db.session import get_db
 from db.repository.user import create_new_user
 from fastapi.responses import RedirectResponse
@@ -77,9 +77,9 @@ async def forgot_password(user: UserPreCreate):
 
 
 @router.get("/forgot_password_request_accept/{access_token}", response_model=ShowUser)
-def forgot_password_request_accept(access_token: str, db: Session = Depends(get_db)):
-  returned_user =  get_current_user_from_token(access_token=access_token, db=db)
-  print(returned_user)
+async def forgot_password_request_accept(access_token: str, db: Session = Depends(get_db)):
+  returned_user =  await get_current_user_from_token(access_token=access_token, db=db)
+  # print(returned_user)
 
   return {  "email":returned_user.email,
             "username":returned_user.username,
@@ -116,25 +116,36 @@ async def post_user_create(data: UserCreate, db: Session = Depends(get_db)):
                       "result": "Signing up completed. Please, click on a link."}
               except AttributeError as e:
                 print(e)
-                return {"result": "email or username is present errror on server"}                                                           
+                return {"result": "email or username is present errror on server"}     
+
            
+@router.patch("/update_user", response_model=UserResponse)
+async def post_user_create(data: UserUpdate, db: Session = Depends(get_db)):
 
-@router.get("/users/me/", response_model=ShowUser)
-async def read_users_me(current_user: ShowUser = Depends(get_current_active_user)):
-    return current_user
+            if data.password != data.password_confirm:
+              return {"result": "password and password confirmation boxes inputs do not match."}
 
+            else: 
 
-@router.get("/users/me/items/")
-async def read_own_items(
-    current_user: ShowUser = Security(get_current_active_user, scopes=["items"])
-):
-    return [{"item_id": "Foo", "owner": current_user.username}]
+              user = {
+                "email": data.email,
+                "password": data.password,
+                "username": data.username,
+                "security_answer": data.security_answer,
+                "security_name": data.security_name,
+              }
 
-
-@router.get("/status/")
-async def read_system_status(current_user: ShowUser = Depends(get_current_user_from_token)):
-    return {"status": "ok"}
-
+              try:
+                returned_user_or_error = await create_new_user(user=user, db=db)
+                print(returned_user_or_error.email)
+                print(returned_user_or_error.id)
+                access_token = create_acess_token_and_create_limit_table_entry(user= returned_user_or_error.email, db=db, id= returned_user_or_error.id)
+                return {"username": returned_user_or_error.username, 
+                      "access_token": access_token,
+                      "result": "Signing up completed. Please, click on a link."}
+              except AttributeError as e:
+                print(e)
+                return {"result": "email or username is present errror on server"}                                                           
 
 @router.get("/security_questions")
 async def security_questions():
@@ -145,6 +156,13 @@ async def security_questions():
             "FIRST_CAR": SecurityEnum.FIRST_CAR,
             "FAVORITE_FOOD": SecurityEnum.FAVORITE_FOOD,
             }
+
+@router.get("/security_question")
+async def security_question(req: Request, db: Session = Depends(get_db)):
+  returned_user =  await get_current_user_from_token(access_token=req.headers['access_token'], db=db)
+  return {"email": returned_user.email, "security_name": returned_user.security_name, "username": returned_user.username}
+
+
 
 
 @router.get("/logout")

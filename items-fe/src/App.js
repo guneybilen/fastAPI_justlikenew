@@ -7,6 +7,7 @@ import NewItem from './components/NewItem';
 import EditItem from './components/EditItem';
 import UserItems from './components/UserItems';
 import ItemById from './components/ItemById';
+import Profile from './components/Profile';
 import Login from './auth/Login';
 import Signup from './auth/Signup';
 import Error from './auth/Error';
@@ -62,6 +63,10 @@ function App() {
         <Route exact path="/error" element={<Error />} />
         <Route exact path="/presignup" element={<PreSignup />} />
         <Route exact path="/forgotpassword" element={<ForgotPassword />} />
+
+        {/* profile path has to be protected by RequireAuth after implementation complete */}
+        <Route exact path="/profile" element={<Profile />} />
+
         <Route exact path="/newpassword/:id" element={<NewPassword />} />
 
         <Route path="/*" element={<Home />} />

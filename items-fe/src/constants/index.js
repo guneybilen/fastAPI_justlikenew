@@ -8,6 +8,9 @@ export const LOGIN_URL = 'http://localhost:8000/login/token';
 export const IMAGES_URL = '/static/images/';
 export const SECURITY_ENUM_URL =
   'http://localhost:8000/users/security_questions';
+export const UPDATE_USER_URL = 'http://localhost:8000/users/update_user';
+export const GET_SECURITY_ENUM_URL =
+  'http://localhost:8000/users/security_question';
 export const ITEMS_ALL = 'http://localhost:8000/items/total/collection/all';
 export const ITEM_DELETE = 'http://localhost:8000/items/collection/all/item';
 export const ITEM_ID = 'http://localhost:8000/items/particular';

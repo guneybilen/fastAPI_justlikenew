@@ -216,4 +216,27 @@ export default createStore({
         err(error);
       });
   }),
+  updateUser: thunk(async (actions, updatedUser, helpers) => {
+    const form_data = updatedUser.item;
+    // const cb = updatedUser.cb;
+    const err = updatedUser.err;
+
+    const config = {
+      headers: {
+        'Content-Type': 'x-www-form-urlencoded',
+        access_token: `${localStorage.getItem('access_token')}`,
+      },
+    };
+
+    axios
+      .patch(`http://localhost:8000/user/update_user`, form_data, config)
+      .then((response) => {
+        console.log(response);
+        // cb(particular_item_id);
+      })
+      .catch((error) => {
+        console.log(error);
+        err(error);
+      });
+  }),
 });
