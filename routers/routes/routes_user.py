@@ -163,8 +163,6 @@ async def security_question(req: Request, db: Session = Depends(get_db)):
   return {"email": returned_user.email, "security_name": returned_user.security_name, "username": returned_user.username}
 
 
-
-
 @router.get("/logout")
 async def logout(req: Request, db: Session = Depends(get_db)):
   await logout_user(access_token=req.headers['access_token'], db=db)

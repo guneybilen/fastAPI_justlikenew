@@ -19,8 +19,9 @@ const Profile = () => {
     useState('');
   const [password1, setPassword1] = useState('');
   const [password2, setPassword2] = useState('');
-  const [passwordAltered, setPasswordAltered] = useState(true);
   const [username, setUserName] = useState('');
+  const [passwordAltered, setPasswordAltered] = useState(true);
+  const [passwordChangeInfo, setPasswordChangeInfo] = useState(null);
   const [alert, setAlert] = useState('');
   const [show, setShow] = useState(false);
 
@@ -29,6 +30,8 @@ const Profile = () => {
   //     ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
   //   }
   // };
+
+  const updateUser = useStoreActions((actions) => actions.updateUser);
 
   useEffect(() => {
     axios
@@ -42,9 +45,22 @@ const Profile = () => {
         setEmail(response.data['email']);
         setSecurityQuestion(response.data['security_name']);
         setUserName(response.data['username']);
+        setPasswordChangeInfo(localStorage.getItem('password'));
+        setPasswordAltered(localStorage.getItem('passwordAltered'));
+        setEmail(localStorage.getItem('email'));
+        if (passwordAltered) {
+          setPasswordChangeInfo(
+            'Password changed but you can not see the password here due to security matters.'
+          );
+        } else {
+          setPasswordChangeInfo('Password has not been altered.');
+        }
+        setUserName(localStorage.getItem('username'));
+        setSecurityQuestionGoingToServer(localStorage.getItem('security_name'));
+        setSecurityAnswerGoingToServer(localStorage.getItem('security_answer'));
       })
       .catch((error) => console.log(error));
-  }, []);
+  }, [passwordAltered]);
 
   useEffect(() => {
     axios
@@ -55,6 +71,7 @@ const Profile = () => {
         },
       })
       .then((response) => {
+        // console.log(response.data);
         setSecurityDataComingFromServer(response.data);
       })
       .catch((error) => console.log(error));
@@ -62,15 +79,27 @@ const Profile = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    if (password1 !== '' && password2 !== '') {
-      setPasswordAltered(true);
-    }
-    localStorage.setItem('email', email);
-    localStorage.setItem('passwordChangeInfo', passwordAltered);
-    localStorage.setItem('username', username);
-    localStorage.setItem('security_name', securityQuestionGoingToServer);
-    localStorage.setItem('security_answer', securityAnswerGoingToServer);
-    navigate('/profile_confirm');
+    setShow(true);
+
+    const user = {
+      email: email,
+      password: password1,
+      passwordConfirm: password2,
+      username: username,
+      security_name: securityQuestionGoingToServer,
+      security_answer: securityAnswerGoingToServer,
+    };
+
+    updateUser({
+      user: user,
+      cb: () => {
+        navigate('/');
+      },
+      err: (error) => {
+        console.log(error);
+        setError(error);
+      },
+    });
   };
 
   const displayNone = (e) => {
@@ -98,6 +127,11 @@ const Profile = () => {
             <strong>{alert}</strong>
           </div>
         )}
+        <br />
+        <span>
+          <h3>Confirmation Page</h3>
+        </span>
+        <br />
         <form onSubmit={onSubmit} id="profileForm">
           <div>
             <br />
@@ -114,7 +148,11 @@ const Profile = () => {
               value={email}
               onClick={() => setEmail('')}
               onChange={(e) => setEmail(e.target.value)}
-            />{' '}
+            />
+            <br />
+            <span>
+              <label>{passwordChangeInfo ? passwordChangeInfo : ''}</label>
+            </span>
             <br />
             <label htmlFor="password1" className="form-label">
               Change Password:
