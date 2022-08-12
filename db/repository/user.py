@@ -47,7 +47,6 @@ async def create_new_user(user: UserCreate, db: Session):
   # raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="user sign up and required user email confirmation does not match")
 
 async def update_user(user: UserUpdate, db: Session):  
-  
   if user['security_name'] == SecurityEnum.BORN_CITY:
       security_name = SecurityEnum.BORN_CITY
   if user['security_name'] == SecurityEnum.MOTHER_MAIDEN_NAME:
@@ -70,6 +69,10 @@ async def update_user(user: UserUpdate, db: Session):
         security_name= security_name,
         security_answer=Hasher.get_hash(user['security_answer'])
   )
+
+  print(user_being_saved.username)
+
+  return None;
   try: 
     db.add(user_being_saved)
     db.commit() 

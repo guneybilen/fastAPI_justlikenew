@@ -19,7 +19,6 @@ const Profile = () => {
     useState('');
   const [password1, setPassword1] = useState('');
   const [password2, setPassword2] = useState('');
-  const [passwordAltered, setPasswordAltered] = useState(true);
   const [username, setUserName] = useState('');
   const [alert, setAlert] = useState('');
   const [show, setShow] = useState(false);
@@ -29,6 +28,8 @@ const Profile = () => {
   //     ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
   //   }
   // };
+
+  const updateUser = useStoreActions((actions) => actions.updateUser);
 
   useEffect(() => {
     axios
@@ -42,6 +43,8 @@ const Profile = () => {
         setEmail(response.data['email']);
         setSecurityQuestion(response.data['security_name']);
         setUserName(response.data['username']);
+        document.getElementById('password1').value = '';
+        document.getElementById('password2').value = '';
       })
       .catch((error) => console.log(error));
   }, []);
@@ -62,15 +65,28 @@ const Profile = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    if (password1 !== '' && password2 !== '') {
-      setPasswordAltered(true);
-    }
-    localStorage.setItem('email', email);
-    localStorage.setItem('passwordChangeInfo', passwordAltered);
-    localStorage.setItem('username', username);
-    localStorage.setItem('security_name', securityQuestionGoingToServer);
-    localStorage.setItem('security_answer', securityAnswerGoingToServer);
-    navigate('/profile_confirm');
+    setShow(true);
+
+    const user = {
+      email: email,
+      password: password1,
+      passwordConfirm: password2,
+      username: username,
+      security_name: securityQuestionGoingToServer,
+      security_answer: securityAnswerGoingToServer,
+    };
+
+    updateUser({
+      user: user,
+      cb: () => {
+        return null;
+        // navigate('/');
+      },
+      err: (error) => {
+        console.log(error);
+        setError(error);
+      },
+    });
   };
 
   const displayNone = (e) => {
@@ -122,11 +138,12 @@ const Profile = () => {
             <br />
             <input
               name="password1"
+              id="password1"
               type="password"
               className="form-control"
+              autoComplete="Off"
               value={password1}
               onClick={() => setPassword1('')}
-              autoComplete="off"
               onChange={(e) => setPassword1(e.target.value)}
             />{' '}
             <br />
@@ -136,9 +153,10 @@ const Profile = () => {
             <br />
             <input
               name="password2"
-              autoComplete="off"
+              id="password2"
               type="password"
               className="form-control"
+              autoComplete="Off"
               value={password2}
               onClick={() => setPassword2('')}
               onChange={(e) => setPassword2(e.target.value)}

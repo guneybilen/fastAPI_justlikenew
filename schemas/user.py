@@ -44,12 +44,12 @@ class UserCreate(BaseModel):
 
 
 class UserUpdate(BaseModel):
-  email: EmailStr
-  username: constr(strip_whitespace=True, min_length=3, max_length=50)
-  password: constr(strip_whitespace=True, min_length=7, max_length=50)
-  password_confirm: constr(strip_whitespace=True, min_length=7, max_length=50)
-  security_name: SecurityEnum
-  security_answer: str
+  email: Optional[EmailStr]
+  username: Optional[constr(strip_whitespace=True, min_length=3, max_length=50)]
+  password: Optional[constr(strip_whitespace=True, min_length=7, max_length=50)]
+  password_confirm: Optional[constr(strip_whitespace=True, min_length=7, max_length=50)]
+  security_name: Optional[SecurityEnum]
+  security_answer: Optional[str]
   
   class Config:
     orm_mode = True

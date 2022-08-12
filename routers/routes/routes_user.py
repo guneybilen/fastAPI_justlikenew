@@ -1,6 +1,6 @@
 from schemas.user import ShowUser, SecurityEnum, UserCreate, UserPreCreate, UserUpdate
 from schemas.user import SecurityEnum
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Form
 from db.session import get_db
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -8,7 +8,7 @@ from core.communication import communicate_for_forgotten_password
 from core.communication import pre_create_new_user_communication
 from core.security import get_current_user_from_token, get_current_user_from_token_during_signup, create_acess_token_and_create_limit_table_entry
 from db.session import get_db
-from db.repository.user import create_new_user
+from db.repository.user import create_new_user, update_user
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from fastapi import FastAPI, Request
@@ -119,14 +119,15 @@ async def post_user_create(data: UserCreate, db: Session = Depends(get_db)):
                 return {"result": "email or username is present errror on server"}     
 
            
-@router.patch("/update_user", response_model=UserResponse)
-async def post_user_create(data: UserUpdate, db: Session = Depends(get_db)):
+@router.patch("/update_user")
+async def patch_user(data: UserUpdate, db: Session = Depends(get_db)):
+            print(dir(data))
+            return None
 
             if data.password != data.password_confirm:
               return {"result": "password and password confirmation boxes inputs do not match."}
 
             else: 
-
               user = {
                 "email": data.email,
                 "password": data.password,
@@ -136,16 +137,18 @@ async def post_user_create(data: UserUpdate, db: Session = Depends(get_db)):
               }
 
               try:
-                returned_user_or_error = await create_new_user(user=user, db=db)
+                returned_user_or_error = await update_user(user=user, db=db)
                 print(returned_user_or_error.email)
-                print(returned_user_or_error.id)
-                access_token = create_acess_token_and_create_limit_table_entry(user= returned_user_or_error.email, db=db, id= returned_user_or_error.id)
-                return {"username": returned_user_or_error.username, 
-                      "access_token": access_token,
-                      "result": "Signing up completed. Please, click on a link."}
+                return None
+              #   print(returned_user_or_error.id)
+              #   access_token = create_acess_token_and_create_limit_table_entry(user= returned_user_or_error.email, db=db, id= returned_user_or_error.id)
+              #   return {"username": returned_user_or_error.username, 
+              #         "access_token": access_token,
+              #         "result": "Signing up completed. Please, click on a link."}
               except AttributeError as e:
                 print(e)
-                return {"result": "email or username is present errror on server"}                                                           
+                return {"result": "email or username is present errror on server"}    
+
 
 @router.get("/security_questions")
 async def security_questions():

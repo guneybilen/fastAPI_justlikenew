@@ -221,15 +221,15 @@ export default createStore({
     // const cb = updatedUser.cb;
     const err = updatedUser.err;
 
-    const config = {
+    axios({
+      method: 'patch',
+      url: `http://localhost:8000/users/update_user/`,
+      data: { body: form_data },
       headers: {
         'Content-Type': 'x-www-form-urlencoded',
         access_token: `${localStorage.getItem('access_token')}`,
       },
-    };
-
-    axios
-      .patch(`http://localhost:8000/user/update_user`, form_data, config)
+    })
       .then((response) => {
         console.log(response);
         // cb(particular_item_id);
