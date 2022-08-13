@@ -67,17 +67,17 @@ const Profile = () => {
     e.preventDefault();
     setShow(true);
 
-    const user = {
+    const data = {
       email: email,
       password: password1,
-      passwordConfirm: password2,
+      password_confirm: password2,
       username: username,
       security_name: securityQuestionGoingToServer,
       security_answer: securityAnswerGoingToServer,
     };
 
     updateUser({
-      user: user,
+      user: data,
       cb: () => {
         return null;
         // navigate('/');

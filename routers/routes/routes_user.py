@@ -19,6 +19,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os as _os
 from core.security import logout_user
+from typing import Optional
 
 
 env_path = Path(".") / ".env"
@@ -119,10 +120,20 @@ async def post_user_create(data: UserCreate, db: Session = Depends(get_db)):
                 return {"result": "email or username is present errror on server"}     
 
            
-@router.patch("/update_user")
-async def patch_user(data: UserUpdate, db: Session = Depends(get_db)):
-            print(dir(data))
-            return None
+@router.patch("/update_user", response_model=UserResponse)
+# async def patch_user(
+#                       email: Optional[str] = Form(None),
+#                       password: Optional[str] = Form(None),  
+#                       password_confirm: Optional[str] = Form(None),
+#                       username: Optional[float] = Form(None), 
+#                       security_answer: Optional[str] = Form(None),
+#                       security_name: Optional[str] = Form(None),
+#                       db: Session = Depends(get_db)
+#                     ):
+async def patch_user(
+                      data: UserUpdate,
+                      db: Session = Depends(get_db)
+                    ):
 
             if data.password != data.password_confirm:
               return {"result": "password and password confirmation boxes inputs do not match."}

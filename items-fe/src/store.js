@@ -217,16 +217,18 @@ export default createStore({
       });
   }),
   updateUser: thunk(async (actions, updatedUser, helpers) => {
-    const form_data = updatedUser.item;
+    const user = updatedUser.user;
     // const cb = updatedUser.cb;
     const err = updatedUser.err;
 
+    console.log(user);
+
     axios({
       method: 'patch',
-      url: `http://localhost:8000/users/update_user/`,
-      data: { body: form_data },
+      url: 'http://localhost:8000/users/update_user',
+      data: user,
       headers: {
-        'Content-Type': 'x-www-form-urlencoded',
+        'content-type': 'application/json',
         access_token: `${localStorage.getItem('access_token')}`,
       },
     })
