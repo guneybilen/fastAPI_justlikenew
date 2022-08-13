@@ -122,6 +122,7 @@ async def get_current_user_from_token(access_token: str, db: Session = Depends(g
         email: str = payload.get("sub")
         user = db.query(User).filter(User.email == email).first()
         print("usnername/email extracted is", user.email)
+        print("user.id extracted is", user.id)
         return user
         # if user is None:
         #         raise credentials_exception

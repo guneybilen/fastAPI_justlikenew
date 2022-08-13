@@ -218,10 +218,8 @@ export default createStore({
   }),
   updateUser: thunk(async (actions, updatedUser, helpers) => {
     const user = updatedUser.user;
-    // const cb = updatedUser.cb;
+    const cb = updatedUser.cb;
     const err = updatedUser.err;
-
-    console.log(user);
 
     axios({
       method: 'patch',
@@ -233,8 +231,8 @@ export default createStore({
       },
     })
       .then((response) => {
-        console.log(response);
-        // cb(particular_item_id);
+        console.log(response.data.result);
+        cb(response.data.result);
       })
       .catch((error) => {
         console.log(error);

@@ -93,7 +93,7 @@ async def forgot_password_request_accept(access_token: str, db: Session = Depend
 async def post_user_create(data: UserCreate, db: Session = Depends(get_db)):
 
             if data.password != data.password_confirm:
-              return {"result": "password and password confirmation boxes inputs do not match."}
+              return {"result": "password and password confirmation boxes do not match."}
 
             else: 
 
@@ -131,12 +131,15 @@ async def post_user_create(data: UserCreate, db: Session = Depends(get_db)):
 #                       db: Session = Depends(get_db)
 #                     ):
 async def patch_user(
+                      req: Request,
                       data: UserUpdate,
                       db: Session = Depends(get_db)
                     ):
 
+            current_user_or_access_token_error = await get_current_user_from_token(access_token= req.headers['access_token'], db=db)
+            
             if data.password != data.password_confirm:
-              return {"result": "password and password confirmation boxes inputs do not match."}
+              return {"result": "password and password confirmation boxes do not match."}
 
             else: 
               user = {
@@ -148,14 +151,11 @@ async def patch_user(
               }
 
               try:
-                returned_user_or_error = await update_user(user=user, db=db)
-                print(returned_user_or_error.email)
-                return None
-              #   print(returned_user_or_error.id)
-              #   access_token = create_acess_token_and_create_limit_table_entry(user= returned_user_or_error.email, db=db, id= returned_user_or_error.id)
-              #   return {"username": returned_user_or_error.username, 
-              #         "access_token": access_token,
-              #         "result": "Signing up completed. Please, click on a link."}
+                returned_user_or_error = await update_user(user=user, user_id=current_user_or_access_token_error.id, db=db)
+                # return {
+                #           "username": returned_user_or_error, 
+                #           "result": "Profile updating completed. Please, click on a link."
+                #         }
               except AttributeError as e:
                 print(e)
                 return {"result": "email or username is present errror on server"}    

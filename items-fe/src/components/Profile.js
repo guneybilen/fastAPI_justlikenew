@@ -78,13 +78,19 @@ const Profile = () => {
 
     updateUser({
       user: data,
-      cb: () => {
+      cb: (result) => {
+        console.log(result);
+        setShow(false);
+        setError(true);
+        setAlert(result);
         return null;
         // navigate('/');
       },
       err: (error) => {
         console.log(error);
-        setError(error);
+        setShow(false);
+        setError(true);
+        setAlert(error);
       },
     });
   };

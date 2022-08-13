@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from schemas.user import SecurityEnum
 from sqlalchemy.exc import IntegrityError
 from core.security import create_area_table_entry
+from sqlalchemy import update
 
 
 async def create_new_user(user: UserCreate, db: Session):  
@@ -46,7 +47,7 @@ async def create_new_user(user: UserCreate, db: Session):
   return user_being_saved
   # raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="user sign up and required user email confirmation does not match")
 
-async def update_user(user: UserUpdate, db: Session):  
+async def update_user(user: UserUpdate, user_id: int, db: Session):  
   if user['security_name'] == SecurityEnum.BORN_CITY:
       security_name = SecurityEnum.BORN_CITY
   if user['security_name'] == SecurityEnum.MOTHER_MAIDEN_NAME:
@@ -60,28 +61,25 @@ async def update_user(user: UserUpdate, db: Session):
   if user['security_name'] == SecurityEnum.FIRST_CAR:
     security_name =  SecurityEnum.FIRST_CAR
 
-  user_being_saved = User(
-        username=user['username'],
-        email=user['email'],
-        hashed_password=Hasher.get_hash(user['password']),
-        is_active=True,
-        is_superuser=False,
-        security_name= security_name,
-        security_answer=Hasher.get_hash(user['security_answer'])
-  )
 
-  print(user_being_saved.username)
+  print("user['username']", user["username"])
 
-  return None;
-  try: 
-    db.add(user_being_saved)
-    db.commit() 
-    db.refresh(user_being_saved)
-  except IntegrityError as error:
-    return IntegrityError(params=[], 
-                          statement=[],
-                          orig=f"{error}")
-  return user_being_saved
+  try:
+    stmt = (update(User).where(User.id == user_id).values(
+                                                          username=user["username"],
+                                                          email=user["email"],
+                                                          hashed_password=Hasher.get_hash(user['password']),
+                                                          is_active=True,
+                                                          is_superuser=False,
+                                                          security_name= security_name,
+                                                          security_answer=Hasher.get_hash(user['security_answer'])
+                                                        ))
+    db.execute(stmt)
+    db.commit()
+    return 1  
+  except Exception as e:
+    print(e)
+
 
 def get_user_by_email(email: str, db: Session):
   user= db.query(User).filter(User.email == email).first() 

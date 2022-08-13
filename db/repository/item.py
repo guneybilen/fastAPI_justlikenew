@@ -66,9 +66,7 @@ def list_items(db: Session):
 def update_item_by_id(id: int, db: Session, seller_id: int, brand: str, price: str, location: str, model: str,description: str):
 
   try:
-
     stmt = (update(Item).where(Item.seller_id == seller_id, Item.id==id).values(brand=brand, price=price, location=location, model=model,description=description))
-
     db.execute(stmt)
     db.commit()
     return 1  
