@@ -78,13 +78,18 @@ const Profile = () => {
 
     updateUser({
       user: data,
-      cb: (username, result) => {
+      cb: (username, EMAIL_CHANGED, result) => {
         // console.log(result);
         // setShow(false);
         // setError(true);
         // setAlert(result);
+        if (EMAIL_CHANGED) {
+          setAlert(
+            'Please confirm with the email send to your new email address.'
+          );
+        }
         localStorage.setItem('loggedin_username', username);
-        navigate('/');
+        // navigate('/');
       },
       err: (error) => {
         console.log(error);

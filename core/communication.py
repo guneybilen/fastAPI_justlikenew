@@ -6,34 +6,61 @@ from datetime import timedelta
 from dotenv import load_dotenv
 from pathlib import Path
 import os as _os
+import inspect
 
 
 env_path = Path(".") / ".env"
 load_dotenv(dotenv_path = env_path)
 
 
-async def pre_create_new_user_communication(user: UserPreCreate, db):
+async def email_confirmation_communication(user: UserPreCreate, db, proposed_email: UserPreCreate = None):
 
-  searching_for_email_in_database = db.query(User).filter(User.email==user.email).first()
+  if(inspect.stack()[1][3]=="pre_create_user"):
+    searching_for_email_in_database = db.query(User).filter(User.email==user.email).first()
 
-  if(searching_for_email_in_database is not None):
-    return False
+    if(searching_for_email_in_database is not None):
+      return False
 
-  # expires_delta is measured in minutes
-  access_token = create_access_token(
-                            data={"sub": user.email}, expires_delta = timedelta(minutes=10)
-                           )  
-  URL_FOR_SIGNUP = _os.getenv('SIGNUP_URL') + f"{access_token}"
+    FILLER = "signing up"
+    REQUIRED_URL = _os.getenv("SIGNUP_URL")
+
+    # creating list       
+    list = [] 
+    print(user.email)
+
+    # appending instances to list 
+    list.append(['email', user.email])
+
+    # expires_delta is measured in minutes
+    access_token = create_access_token(
+                                        data={"sub": user.email, "user_id": user.id}, expires_delta = timedelta(minutes=10)
+                                      )  
+
+  if(inspect.stack()[1][3]=="patch_user"):
+    searching_for_email_in_database = db.query(User).filter(User.email==proposed_email).first()
+
+    if(searching_for_email_in_database is not None):
+      return False
+
+    FILLER = "update email procedure"
+    REQUIRED_URL = _os.getenv("UPDATE_EMAIL_URL")
+
+    # creating list       
+    list = [] 
+    print(proposed_email)
+
+    # appending instances to list 
+    list.append(['email', proposed_email])
+
+    # expires_delta is measured in minutes
+    access_token = create_access_token(
+                              data={"sub": proposed_email, "user_id": user.id}, expires_delta = timedelta(minutes=10)
+                            )  
+
+  URL_FOR = REQUIRED_URL + f"{access_token}"
   
-  html = f"<br /><br /><br /><p>thanks for signing up at our website.</p><p>please follow the link below to complete your sign up process</p><a href={URL_FOR_SIGNUP}>{URL_FOR_SIGNUP}</a><p>sincerely,<br />admin</p>"
-  subject_line = "for completing signing up..."
-
-  # creating list       
-  list = [] 
-  print(user.email)
-    
-  # appending instances to list 
-  list.append(['email', user.email])
+  html = f"<br /><br /><br /><p>thanks for {FILLER} at our website.</p><p>please follow the link below to complete your process</p><a href={URL_FOR}>{URL_FOR}</a><p>sincerely,<br />admin</p>"
+  subject_line = f"for completing {FILLER}..."
 
   await communicate(list, subject_line, html)
 

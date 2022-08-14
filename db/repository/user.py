@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from schemas.user import SecurityEnum
 from sqlalchemy.exc import IntegrityError
 from core.security import create_area_table_entry
+from core.communication import email_confirmation_communication
 from sqlalchemy import update
 import os as _os
 
@@ -48,7 +49,8 @@ async def create_new_user(user: UserCreate, db: Session):
   return user_being_saved
   # raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="user sign up and required user email confirmation does not match")
 
-async def update_user(user: UserUpdate, username: str, user_id: int, db: Session):  
+
+async def update_user(user: UserUpdate, current_email: str, username: str, user_id: int, db: Session):  
   if user['security_name'] == SecurityEnum.BORN_CITY:
       security_name = SecurityEnum.BORN_CITY
   if user['security_name'] == SecurityEnum.MOTHER_MAIDEN_NAME:
@@ -63,15 +65,19 @@ async def update_user(user: UserUpdate, username: str, user_id: int, db: Session
     security_name =  SecurityEnum.FIRST_CAR
 
   try:
+    EMAIL_CHANGED = False
+    if current_email != user["email"]:
+      email_confirmation_communication(current_email, db, user["email"])
+      EMAIL_CHANGED = True
+
     stmt = (update(User).where(User.id == user_id).values(
-                                                          username=user["username"],
-                                                          email=user["email"],
-                                                          hashed_password=Hasher.get_hash(user['password']),
-                                                          is_active=True,
-                                                          is_superuser=False,
-                                                          security_name= security_name,
-                                                          security_answer=Hasher.get_hash(user['security_answer'])
-                                                        ))
+                                                        username=user["username"],
+                                                        hashed_password=Hasher.get_hash(user['password']),
+                                                        is_active=True,
+                                                        is_superuser=False,
+                                                        security_name= security_name,
+                                                        security_answer=Hasher.get_hash(user['security_answer'])
+                                                      ))
     db.execute(stmt)
     _os.chdir("/home/bilen/Desktop/projects/fastapi/justlikenew/static/images")
     for file in _os.listdir("."):
@@ -80,7 +86,7 @@ async def update_user(user: UserUpdate, username: str, user_id: int, db: Session
           print(result)
           _os.rename(file, f"{user['username']}{result[1]}")
     db.commit()
-    return user["username"]
+    return user["username"], EMAIL_CHANGED
   except Exception as e:
     # if there is an exception occurred, rewinding back renaming of the folders...
     _os.chdir(r"../../static/images")
@@ -89,6 +95,18 @@ async def update_user(user: UserUpdate, username: str, user_id: int, db: Session
       if len(result) > 1:
           print(result)
           _os.rename(file, f"{username}{result[1]}")
+    print(e)
+
+
+def update_email(proposed_email: str, user_id: int, db: Session):  
+  try:
+    stmt = (update(User).where(User.id == user_id).values(
+                                                        email=proposed_email,
+                                                      ))
+    db.execute(stmt)
+    db.commit()
+    return 1
+  except Exception as e:
     print(e)
 
 

@@ -48,13 +48,15 @@ async def get_current_user_for_token_expiration(access_token_parsed:str, db: Ses
         print("access_token_parsed ", access_token_parsed)
         payload = jwt.decode(access_token_parsed, settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
         user_email: str = payload.get("sub")
+        user_id: str = payload.get("id")
         print("username/email extracted is", user_email)
-        print(user_email)
+        print("user id extracted is", user_id)
         user = db.query(User).filter(User.email == user_email).one_or_none()
         token_in_limit_table = db.query(Limit).filter(Limit.user_id == user.id).one_or_none()
         if token_in_limit_table.access_token is None:
           raise SQLAlchemyError
-        return token_in_limit_table.access_token
+        return token_in_limit_table.access_token, user_id
+
     except SQLAlchemyError as e:
         print("SQLAlchemyError ", e)
         return status.HTTP_205_RESET_CONTENT
