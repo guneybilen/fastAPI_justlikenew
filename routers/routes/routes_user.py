@@ -151,11 +151,12 @@ async def patch_user(
               }
 
               try:
-                returned_user_or_error = await update_user(user=user, user_id=current_user_or_access_token_error.id, db=db)
-                # return {
-                #           "username": returned_user_or_error, 
-                #           "result": "Profile updating completed. Please, click on a link."
-                #         }
+                returned_user_or_error = await update_user(
+                  user=user, username=current_user_or_access_token_error.username, user_id=current_user_or_access_token_error.id, db=db)
+                return {
+                          "username": returned_user_or_error, 
+                          "result": "Profile updating completed. Please, click on a link."
+                        }
               except AttributeError as e:
                 print(e)
                 return {"result": "email or username is present errror on server"}    

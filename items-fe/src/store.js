@@ -232,7 +232,7 @@ export default createStore({
     })
       .then((response) => {
         console.log(response.data.result);
-        cb(response.data.result);
+        cb(response.data.username, response.data.result);
       })
       .catch((error) => {
         console.log(error);

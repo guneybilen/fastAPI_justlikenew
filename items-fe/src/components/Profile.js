@@ -78,13 +78,13 @@ const Profile = () => {
 
     updateUser({
       user: data,
-      cb: (result) => {
-        console.log(result);
-        setShow(false);
-        setError(true);
-        setAlert(result);
-        return null;
-        // navigate('/');
+      cb: (username, result) => {
+        // console.log(result);
+        // setShow(false);
+        // setError(true);
+        // setAlert(result);
+        localStorage.setItem('loggedin_username', username);
+        navigate('/');
       },
       err: (error) => {
         console.log(error);

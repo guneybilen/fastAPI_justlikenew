@@ -6,6 +6,7 @@ from schemas.user import SecurityEnum
 from sqlalchemy.exc import IntegrityError
 from core.security import create_area_table_entry
 from sqlalchemy import update
+import os as _os
 
 
 async def create_new_user(user: UserCreate, db: Session):  
@@ -47,7 +48,7 @@ async def create_new_user(user: UserCreate, db: Session):
   return user_being_saved
   # raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="user sign up and required user email confirmation does not match")
 
-async def update_user(user: UserUpdate, user_id: int, db: Session):  
+async def update_user(user: UserUpdate, username: str, user_id: int, db: Session):  
   if user['security_name'] == SecurityEnum.BORN_CITY:
       security_name = SecurityEnum.BORN_CITY
   if user['security_name'] == SecurityEnum.MOTHER_MAIDEN_NAME:
@@ -61,9 +62,6 @@ async def update_user(user: UserUpdate, user_id: int, db: Session):
   if user['security_name'] == SecurityEnum.FIRST_CAR:
     security_name =  SecurityEnum.FIRST_CAR
 
-
-  print("user['username']", user["username"])
-
   try:
     stmt = (update(User).where(User.id == user_id).values(
                                                           username=user["username"],
@@ -75,9 +73,22 @@ async def update_user(user: UserUpdate, user_id: int, db: Session):
                                                           security_answer=Hasher.get_hash(user['security_answer'])
                                                         ))
     db.execute(stmt)
+    _os.chdir("/home/bilen/Desktop/projects/fastapi/justlikenew/static/images")
+    for file in _os.listdir("."):
+      result = file.split(username)
+      if len(result) > 1:
+          print(result)
+          _os.rename(file, f"{user['username']}{result[1]}")
     db.commit()
-    return 1  
+    return user["username"]
   except Exception as e:
+    # if there is an exception occurred, rewinding back renaming of the folders...
+    _os.chdir(r"../../static/images")
+    for file in _os.listdir("."):
+      result = file.split(user['username'])
+      if len(result) > 1:
+          print(result)
+          _os.rename(file, f"{username}{result[1]}")
     print(e)
 
 
