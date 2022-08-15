@@ -57,7 +57,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
                             status_code=status.HTTP_401_UNAUTHORIZED, 
                             detail="Incorrect username or password"
                           )
-                          print('user.id ', user.id)
+                          # print('user.id ', user.id)
 
                           access_token = create_acess_token_and_create_limit_table_entry(user= user.email, db=db, id=user.id)
                           

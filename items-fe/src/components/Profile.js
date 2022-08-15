@@ -23,11 +23,11 @@ const Profile = () => {
   const [alert, setAlert] = useState('');
   const [show, setShow] = useState(false);
 
-  // const scrollTo = (ref) => {
-  //   if (ref && ref.current /* + other conditions */) {
-  //     ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  //   }
-  // };
+  const scrollTo = (ref) => {
+    if (ref && ref.current /* + other conditions */) {
+      ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   const updateUser = useStoreActions((actions) => actions.updateUser);
 
@@ -80,15 +80,20 @@ const Profile = () => {
       user: data,
       cb: (username, EMAIL_CHANGED, result) => {
         // console.log(result);
-        // setShow(false);
-        // setError(true);
-        // setAlert(result);
+        setError(true);
+        localStorage.setItem('loggedin_username', username);
         if (EMAIL_CHANGED) {
           setAlert(
-            'Please confirm with the email send to your new email address.'
+            'Please confirm with the email send to your new email address'
           );
+          scrollTo(scrollRef);
+          setShow(false);
+        } else {
+          setAlert('Profile updating completed. You can click a link.');
+          scrollTo(scrollRef);
+          setShow(false);
         }
-        localStorage.setItem('loggedin_username', username);
+
         // navigate('/');
       },
       err: (error) => {

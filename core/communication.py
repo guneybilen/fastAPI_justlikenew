@@ -13,9 +13,8 @@ env_path = Path(".") / ".env"
 load_dotenv(dotenv_path = env_path)
 
 
-async def email_confirmation_communication(user: UserPreCreate, db, proposed_email: UserPreCreate = None):
+async def email_confirmation_communication_for_precreate_user(user: UserPreCreate, db):
 
-  if(inspect.stack()[1][3]=="pre_create_user"):
     searching_for_email_in_database = db.query(User).filter(User.email==user.email).first()
 
     if(searching_for_email_in_database is not None):
@@ -34,15 +33,26 @@ async def email_confirmation_communication(user: UserPreCreate, db, proposed_ema
     # expires_delta is measured in minutes
     access_token = create_access_token(
                                         data={"sub": user.email, "user_id": user.id}, expires_delta = timedelta(minutes=10)
-                                      )  
+                                      )
 
-  if(inspect.stack()[1][3]=="patch_user"):
+    URL_FOR = REQUIRED_URL + f"{access_token}"
+  
+    html = f"<br /><br /><br /><p>thanks for {FILLER} at our website.</p><p>please follow the link below to complete your process</p><a href={URL_FOR}>{URL_FOR}</a><p>sincerely,<br />admin</p>"
+    subject_line = f"for completing {FILLER}..."
+
+    await communicate(list, subject_line, html)
+
+    return user
+
+
+async def email_confirmation_communication_for_email_update(user_id: int, db, proposed_email: UserPreCreate = None):
+
     searching_for_email_in_database = db.query(User).filter(User.email==proposed_email).first()
 
     if(searching_for_email_in_database is not None):
       return False
 
-    FILLER = "update email procedure"
+    FILLER = "email update procedure"
     REQUIRED_URL = _os.getenv("UPDATE_EMAIL_URL")
 
     # creating list       
@@ -54,17 +64,22 @@ async def email_confirmation_communication(user: UserPreCreate, db, proposed_ema
 
     # expires_delta is measured in minutes
     access_token = create_access_token(
-                              data={"sub": proposed_email, "user_id": user.id}, expires_delta = timedelta(minutes=10)
-                            )  
+                              data={"sub": proposed_email, "user_id": user_id}, expires_delta = timedelta(minutes=10)
+                            ) 
 
-  URL_FOR = REQUIRED_URL + f"{access_token}"
-  
-  html = f"<br /><br /><br /><p>thanks for {FILLER} at our website.</p><p>please follow the link below to complete your process</p><a href={URL_FOR}>{URL_FOR}</a><p>sincerely,<br />admin</p>"
-  subject_line = f"for completing {FILLER}..."
+    print("access token", access_token)
 
-  await communicate(list, subject_line, html)
+    URL_FOR = REQUIRED_URL + f"{access_token}"
+    
+    html = f"<br /><br /><br /><p>thanks for {FILLER} at our website.</p><p>please follow the link below to complete your process</p><a href={URL_FOR}>{URL_FOR}</a><p>sincerely,<br />admin</p>"
+    subject_line = f"for completing {FILLER}..."
 
-  return user
+    print("list", list)
+    print("subject_line", subject_line)
+    print("html", html)
+    await communicate(list, subject_line, html)
+
+    return True
 
 
 async def communicate_for_forgotten_password(email):

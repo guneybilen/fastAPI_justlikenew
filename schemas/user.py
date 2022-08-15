@@ -45,9 +45,9 @@ class UserCreate(BaseModel):
 
 class UserUpdate(BaseModel):
   email: Optional[EmailStr]
-  username: Optional[constr(strip_whitespace=True, min_length=3, max_length=50)]
-  password: Optional[constr(strip_whitespace=True, min_length=7, max_length=50)]
-  password_confirm: Optional[constr(strip_whitespace=True, min_length=7, max_length=50)]
+  username: Optional[str] | constr(strip_whitespace=True, min_length=3, max_length=50)
+  password: Optional[str] | constr(strip_whitespace=True, min_length=7, max_length=50)
+  password_confirm: Optional[str] | constr(strip_whitespace=True, min_length=7, max_length=50)
   security_name: Optional[SecurityEnum]
   security_answer: Optional[str]
   
@@ -71,6 +71,7 @@ class UserResponse(BaseModel):
     username: Optional[str]
     result: Optional[str]
     access_token : Optional[str]
+    EMAIL_CHANGED: Optional[bool]
 
     class Config:
       orm_mode = True

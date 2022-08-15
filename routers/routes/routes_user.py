@@ -5,10 +5,11 @@ from db.session import get_db
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, status
 from core.communication import communicate_for_forgotten_password
-from core.communication import email_confirmation_communication
+from core.communication import email_confirmation_communication_for_precreate_user
 from core.security import get_current_user_from_token, get_current_user_from_token_during_signup, create_acess_token_and_create_limit_table_entry
+from core.security import get_current_user_from_token_with_user_id
 from db.session import get_db
-from db.repository.user import create_new_user, update_user, update_email
+from db.repository.user import create_new_user, update_user, update_email_address
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from fastapi import FastAPI, Request
@@ -31,7 +32,7 @@ app = FastAPI()
 
 @router.post("/precreate")
 async def pre_create_user(user: UserPreCreate, db: Session = Depends(get_db)):
-  user = await email_confirmation_communication(user=user, db=db)
+  user = await email_confirmation_communication_for_precreate_user(user=user, db=db)
   if user == False:
      return {"result": "this email is found in the database. <br />please, enroll with another email."}
   else:
@@ -138,9 +139,23 @@ async def patch_user(
                 "security_name": data.security_name,
               }
 
+              # for key in data.copy():
+              #   # print(key)
+              #   if key == "" or key is None:
+              #     del user[key]
+
+              # # print(user)
+
               try:
                 returned_user_or_error, EMAIL_CHANGED = await update_user(
-                  user=user, current_email=current_user_or_access_token_error.email, username=current_user_or_access_token_error.username, user_id=current_user_or_access_token_error.id, db=db)
+                                                                            user=user, 
+                                                                            current_email=current_user_or_access_token_error.email, 
+                                                                            username=current_user_or_access_token_error.username, 
+                                                                            user_id=current_user_or_access_token_error.id, 
+                                                                            db=db
+                                                                          )
+
+                print("EMAIL_CHANGED ", EMAIL_CHANGED)
                 return {
                           "username": returned_user_or_error, 
                           "EMAIL_CHANGED": EMAIL_CHANGED,
@@ -152,26 +167,32 @@ async def patch_user(
 
 
 @router.get("/update_email/{access_token}", response_model=UserResponse)
-async def patch_user(
-                      req: Request,
+async def update_email(
+                      access_token: str,
                       db: Session = Depends(get_db)
                     ):
 
-            current_user_or_access_token_error, user_id = await get_current_user_from_token(access_token= req.headers['access_token'], db=db)
+            user_id, email, username = await get_current_user_from_token_with_user_id(access_token, db=db)
+
+            print("current_user_or_access_token_error.email ",  email)
 
             try:
-              returned_user_or_error = await update_email(
-                                                          current_email = current_user_or_access_token_error.email,  
-                                                          user_id = user_id, 
-                                                          db = db
-                                                        )
+              await update_email_address(
+                                    proposed_email = email,  
+                                    user_id = user_id, 
+                                    db = db
+                                  )
               return {
-                        "username": returned_user_or_error, 
+                        "username": username, 
+                        "EMAIL_CHANGED": True,
                         "result": "Profile updating completed. Please, click on a link."
-                      }
+                    }
             except AttributeError as e:
               print(e)
-              return {"result": "email or username is present errror on server"}   
+              return {
+                        "EMAIL_CHANGED": False,
+                        "result": "email or username is present errror on server"
+                      }   
 
 
 @router.get("/security_questions")

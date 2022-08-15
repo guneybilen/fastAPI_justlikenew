@@ -134,17 +134,65 @@ async def get_current_user_from_token(access_token: str, db: Session = Depends(g
         return f"access_token_error {e}"
         #     raise credentials_exception
         # user = db.query(User).filter_by(username=token_data.username).first()
-    # if user is None:
-    #     raise credentials_exception
-    # for scope in scopes.scopes:
-    #     if scope not in token_data.scopes:
-    #         raise HTTPException(
-    #             status_code=status.HTTP_401_UNAUTHORIZED,
-    #             detail="Not enough permissions",
-    #             headers={"WWW-Authenticate": authenticate_value},
-    #        )
-    # else:
-    #   return user
+        # if user is None:
+        #     raise credentials_exception
+        # for scope in scopes.scopes:
+        #     if scope not in token_data.scopes:
+        #         raise HTTPException(
+        #             status_code=status.HTTP_401_UNAUTHORIZED,
+        #             detail="Not enough permissions",
+        #             headers={"WWW-Authenticate": authenticate_value},
+        #        )
+        # else:
+        #   return user
+
+
+async def get_current_user_from_token_with_user_id(access_token: str, db: Session = Depends(get_db)
+):
+    try:
+        print("access_token", access_token)
+        payload = jwt.decode(access_token, settings.SECRET_KEY, algorithms=(settings.ALGORITHM))
+        id: str = payload.get("user_id")
+        email: str = payload.get("sub")
+        user = db.query(User).filter(User.id == id).first()
+        print("id extracted is", id)
+        return user.id, email, user.username
+    except (JWTError, ValidationError, ExpiredSignatureError) as e:
+        return f"access_token_error {e}"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 async def get_current_active_user(

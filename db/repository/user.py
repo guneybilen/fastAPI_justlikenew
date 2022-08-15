@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from schemas.user import SecurityEnum
 from sqlalchemy.exc import IntegrityError
 from core.security import create_area_table_entry
-from core.communication import email_confirmation_communication
+from core.communication import email_confirmation_communication_for_email_update
 from sqlalchemy import update
 import os as _os
 
@@ -65,44 +65,50 @@ async def update_user(user: UserUpdate, current_email: str, username: str, user_
     security_name =  SecurityEnum.FIRST_CAR
 
   try:
+    print(current_email)
+    print(user["email"])
+
     EMAIL_CHANGED = False
     if current_email != user["email"]:
-      email_confirmation_communication(current_email, db, user["email"])
+      _user = await email_confirmation_communication_for_email_update(user_id, db, user["email"])
       EMAIL_CHANGED = True
+      print("EMAIL_CHANGED")
 
     stmt = (update(User).where(User.id == user_id).values(
-                                                        username=user["username"],
-                                                        hashed_password=Hasher.get_hash(user['password']),
-                                                        is_active=True,
-                                                        is_superuser=False,
-                                                        security_name= security_name,
-                                                        security_answer=Hasher.get_hash(user['security_answer'])
-                                                      ))
+                                                            username=user["username"],
+                                                            hashed_password=Hasher.get_hash(user['password']),
+                                                            is_active=True,
+                                                            is_superuser=False,
+                                                            security_name= security_name,
+                                                            security_answer=Hasher.get_hash(user['security_answer'])
+                                                         ))
     db.execute(stmt)
     _os.chdir("/home/bilen/Desktop/projects/fastapi/justlikenew/static/images")
     for file in _os.listdir("."):
       result = file.split(username)
       if len(result) > 1:
-          print(result)
+          # print(result)
           _os.rename(file, f"{user['username']}{result[1]}")
     db.commit()
+    print("EMAIL_CHANGED ", EMAIL_CHANGED)
     return user["username"], EMAIL_CHANGED
   except Exception as e:
     # if there is an exception occurred, rewinding back renaming of the folders...
-    _os.chdir(r"../../static/images")
+    _os.chdir("/home/bilen/Desktop/projects/fastapi/justlikenew/static/images")
     for file in _os.listdir("."):
       result = file.split(user['username'])
       if len(result) > 1:
-          print(result)
+          # print(result)
           _os.rename(file, f"{username}{result[1]}")
+    print("ERROR")
     print(e)
 
 
-def update_email(proposed_email: str, user_id: int, db: Session):  
+async def update_email_address(proposed_email: str, user_id: int, db: Session):  
   try:
-    stmt = (update(User).where(User.id == user_id).values(
-                                                        email=proposed_email,
-                                                      ))
+    print("id in update_email function", user_id)
+    print("proposed_email in update_email function", proposed_email)
+    stmt = (update(User).where(User.id == user_id).values(email=proposed_email))
     db.execute(stmt)
     db.commit()
     return 1
