@@ -166,7 +166,7 @@ async def patch_user(
                 return {"result": "email or username is present errror on server"}    
 
 
-@router.get("/update_email/{access_token}", response_model=UserResponse)
+@router.get("/update_email/{access_token}", response_class=RedirectResponse)
 async def update_email(
                       access_token: str,
                       db: Session = Depends(get_db)
@@ -182,17 +182,10 @@ async def update_email(
                                     user_id = user_id, 
                                     db = db
                                   )
-              return {
-                        "username": username, 
-                        "EMAIL_CHANGED": True,
-                        "result": "Profile updating completed. Please, click on a link."
-                    }
+              return RedirectResponse(f"{_os.getenv('FRONT_END_URL')}/EmailChanged", status_code=status.HTTP_302_FOUND)
             except AttributeError as e:
-              print(e)
-              return {
-                        "EMAIL_CHANGED": False,
-                        "result": "email or username is present errror on server"
-                      }   
+              return RedirectResponse(f"{_os.getenv('FRONT_END_URL')}/Error", status_code=status.HTTP_302_FOUND)
+  
 
 
 @router.get("/security_questions")

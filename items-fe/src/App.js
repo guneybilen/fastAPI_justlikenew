@@ -12,6 +12,7 @@ import Login from './auth/Login';
 import Signup from './auth/Signup';
 import Error from './auth/Error';
 import PreSignup from './auth/PreSignup';
+import EmailChanged from './auth/EmailChanged';
 import NewPassword from './auth/NewPassword';
 import ForgotPassword from './auth/ForgotPassword';
 import Activation from './auth/Activation';
@@ -37,6 +38,7 @@ function App() {
           }
         ></Route>
         <Route exact path="/login" element={<Login />} />
+        <Route exact path="/emailChanged" element={<EmailChanged />} />
         <Route exact path="/user_items/:user_id" element={<UserItems />} />
         <Route exact path="/items/:item_id" element={<ItemById />} />
         <Route
