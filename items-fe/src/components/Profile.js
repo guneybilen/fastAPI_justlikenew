@@ -11,8 +11,6 @@ const Profile = () => {
   const [email, setEmail] = useState('');
   const [error, setError] = useState(false);
   const [securityQuestion, setSecurityQuestion] = useState('');
-  const [securityDataComingFromServer, setSecurityDataComingFromServer] =
-    useState([]);
   const [securityQuestionGoingToServer, setSecurityQuestionGoingToServer] =
     useState('');
   const [securityAnswerGoingToServer, setSecurityAnswerGoingToServer] =
@@ -22,6 +20,8 @@ const Profile = () => {
   const [username, setUserName] = useState('');
   const [alert, setAlert] = useState('');
   const [show, setShow] = useState(false);
+  const [names, setNames] = useState([]);
+  const [values, setValues] = useState([]);
 
   const scrollTo = (ref) => {
     if (ref && ref.current /* + other conditions */) {
@@ -42,6 +42,7 @@ const Profile = () => {
       .then((response) => {
         setEmail(response.data['email']);
         setSecurityQuestion(response.data['security_name']);
+        setSecurityQuestionGoingToServer(response.data['security_name']);
         setUserName(response.data['username']);
         document.getElementById('password1').value = '';
         document.getElementById('password2').value = '';
@@ -58,7 +59,8 @@ const Profile = () => {
         },
       })
       .then((response) => {
-        setSecurityDataComingFromServer(response.data);
+        setNames(Object.keys(response.data));
+        setValues(Object.values(response.data));
       })
       .catch((error) => console.log(error));
   }, []);
@@ -88,13 +90,16 @@ const Profile = () => {
           );
           scrollTo(scrollRef);
           setShow(false);
+        }
+        if (result) {
+          setAlert(result);
+          scrollTo(scrollRef);
+          setShow(false);
         } else {
           setAlert('Profile updating completed. You can click a link.');
           scrollTo(scrollRef);
           setShow(false);
         }
-
-        // navigate('/');
       },
       err: (error) => {
         console.log(error);
@@ -202,45 +207,22 @@ const Profile = () => {
               Update For Your Security Question:
             </label>
             <br />
-            {securityDataComingFromServer && (
-              <select
-                id="security_question"
-                className="form-select"
-                aria-label="Default select example"
-                value={securityQuestionGoingToServer}
-                onChange={(e) =>
-                  setSecurityQuestionGoingToServer(e.target.value)
-                }
-              >
-                <>
-                  <option value="">Choose one from the list</option>
-                  <option value={securityDataComingFromServer['BORN_CITY']}>
-                    {securityDataComingFromServer['BORN_CITY']}
-                  </option>
-                  <option value={securityDataComingFromServer['FAVORITE_FOOD']}>
-                    {securityDataComingFromServer['FAVORITE_FOOD']}
-                  </option>
-                  <option value={securityDataComingFromServer['FAVORITE_PET']}>
-                    {securityDataComingFromServer['FAVORITE_PET']}
-                  </option>
-                  <option value={securityDataComingFromServer['FIRST_CAR']}>
-                    {securityDataComingFromServer['FIRST_CAR']}
-                  </option>
-                  <option
-                    value={
-                      securityDataComingFromServer['GRADUATED_HIGH_SCHOOL_NAME']
-                    }
-                  >
-                    {securityDataComingFromServer['GRADUATED_HIGH_SCHOOL_NAME']}
-                  </option>
-                  <option
-                    value={securityDataComingFromServer['MOTHER_MAIDEN_NAME']}
-                  >
-                    {securityDataComingFromServer['MOTHER_MAIDEN_NAME']}
-                  </option>
-                </>
-              </select>
-            )}
+            <select
+              id="security_question"
+              className="form-select"
+              aria-label="Default select example"
+              value={securityQuestionGoingToServer}
+              onChange={(e) => setSecurityQuestionGoingToServer(e.target.value)}
+            >
+              <>
+                <option value={names[0]}>{values[0]}</option>
+                <option value={names[1]}>{values[1]}</option>
+                <option value={names[2]}>{values[2]}</option>
+                <option value={names[3]}>{values[3]}</option>
+                <option value={names[4]}>{values[4]}</option>
+                <option value={names[5]}>{values[5]}</option>
+              </>
+            </select>
             <br />
             <label htmlFor="security_question_answer" className="form-label">
               Type Your Answer For The Updated Security Question:

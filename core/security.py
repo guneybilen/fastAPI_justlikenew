@@ -156,7 +156,7 @@ async def get_current_user_from_token_with_user_id(access_token: str, db: Sessio
         email: str = payload.get("sub")
         user = db.query(User).filter(User.id == id).first()
         print("id extracted is", id)
-        return user.id, email, user.username
+        return user.id, email
     except (JWTError, ValidationError, ExpiredSignatureError) as e:
         return f"access_token_error {e}"
 

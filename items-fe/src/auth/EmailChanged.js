@@ -4,7 +4,7 @@ const EmailChanged = () => {
       <div>
         <h1 className="about">
           Email Change Completed <br />
-          Please, click a link...
+          Please, log back in...
         </h1>
       </div>
     </main>

@@ -225,13 +225,21 @@ export default createStore({
       method: 'patch',
       url: 'http://localhost:8000/users/update_user',
       data: user,
+      // data: JSON.stringify({
+      //   email: user.email,
+      //   password: user.password,
+      //   password_confirm: user.password_confirm,
+      //   username: user.username,
+      //   security_name: user.security_name,
+      //   security_answer: user.security_answer,
+      // }),
       headers: {
         'content-type': 'application/json',
         access_token: `${localStorage.getItem('access_token')}`,
       },
     })
       .then((response) => {
-        console.log(response.data.result);
+        console.log(response);
         cb(
           response.data.username,
           response.data.EMAIL_CHANGED,
