@@ -105,8 +105,9 @@ async def update_user(user: UserUpdate, current_email: str, username: str, user_
                 _os.chdir("/home/bilen/Desktop/projects/fastapi/justlikenew/static/images")
                 for file in _os.listdir("."):
                     result = file.split(username)
+                    print(result)
                     if len(result) > 1:
-                        # print(result)
+                        print(result)
                         _os.rename(file, f"{user['username']}{result[1]}")
                 db.commit()
                 return user["username"], EMAIL_CHANGED

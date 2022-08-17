@@ -62,7 +62,7 @@ async def create_procedure():
 
 
 @router.post("/forgot_password_request_email")
-async def forgot_password(user: UserPreCreate):
+async def forgot_password(user: UserPreCreate, db: Session = Depends(get_db)):
 
     try:
         # Validate & take the normalized form of the email
@@ -70,12 +70,20 @@ async def forgot_password(user: UserPreCreate):
         # before going to a database query where equality
         # does not take into account normalization).
         email = validate_email(user.email).email
-        returned_boolean_result = await communicate_for_forgotten_password(email)
-        print(returned_boolean_result)
-        if returned_boolean_result:
-            return {"detail": "if there is an account associated with this email we will email a link for resetting your password."}
-
+        if_user_registered = db.query(User).filter(User.email == email).one_or_none()
+        if if_user_registered:
+            returned_boolean_result = await communicate_for_forgotten_password(email)
+            print(returned_boolean_result)
+            if returned_boolean_result:
+                return {"detail": "if there is an account associated with this email we will email a link for resetting your password."}
+        else:
+            raise Exception("Email address is not registered.")
     except EmailNotValidError as e:
+        # email is not valid, exception message is human-readable
+        print(str(e))
+        return {"detail": str(e)}
+
+    except Exception as e:
         # email is not valid, exception message is human-readable
         print(str(e))
         return {"detail": str(e)}
@@ -93,12 +101,6 @@ async def forgot_password_request_accept(access_token: str, db: Session = Depend
             raise AttributeError
     except AttributeError as e:
         return RedirectResponse(f"{_os.getenv('FRONT_END_URL')}/Error", status_code=status.HTTP_302_FOUND)
-
-    # return {"email": returned_user.email,
-    #         "username": returned_user.username,
-    #         "is_active": returned_user.is_active,
-    #         "result": "forgot password reset will complete after you set up a new password from the reactjs front end form"
-    #         }
 
 
 @router.post("/password_update")
@@ -152,8 +154,6 @@ async def post_user_create(data: UserCreate, db: Session = Depends(get_db)):
 
         try:
             returned_user_or_error = await create_new_user(user=user, db=db)
-            # print(returned_user_or_error.email)
-            # print(returned_user_or_error.id)
             access_token = create_acess_token_and_create_limit_table_entry(user=returned_user_or_error.email, db=db, id=returned_user_or_error.id)
             return {"username": returned_user_or_error.username,
                     "access_token": access_token,
@@ -177,13 +177,17 @@ async def patch_user(
         if user:
             return {"result": "selected username is in use by some other member please choose another username."}
 
-    if data.password != data.password_confirm:
+    dp = data.password.strip()
+    dpC = data.password.strip()
+    dU = data.username.strip()
+
+    if dp != dpC:
         return {"result": "password and password confirmation boxes do not match."}
 
-    if len(data.password) > 0 and len(data.password) < 8 or len(data.password) > 50:
+    if len(dp) > 0 and len(dp) < 8 or len(dp) > 50:
         return {"result": "password must be at least 8 characters and at most 50 charactrers long."}
 
-    if len(data.username) > 0 and len(data.username) < 3 or len(data.username) > 50:
+    if len(dU) > 0 and len(dU) < 3 or len(dU) > 50:
         return {"result": "username must be at least 3 characters and at most 50 charactrers long."}
 
     if current_user_or_access_token_error.security_name != data.security_name and data.security_answer == "":
@@ -191,9 +195,9 @@ async def patch_user(
 
     else:
         user = {
-            "email": data.email,
-            "password": data.password,
-            "username": data.username,
+            "email": data.email.strip(),
+            "password": dp,
+            "username": dU,
             "security_answer": data.security_answer,
             "security_name": data.security_name,
         }
