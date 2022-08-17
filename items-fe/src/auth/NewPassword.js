@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { GET_SECURITY_ENUM_URL } from '../constants';
+import { PASSWORD_UPDATE } from '../constants';
 import axios from 'axios';
 
 const NewPassword = () => {
@@ -8,8 +10,6 @@ const NewPassword = () => {
   const [answer, setAnswer] = useState('');
   let { token } = useParams();
   token = token ? token : window.location.pathname.split('/')[2];
-
-  let backend = `/secretquestion/${token}/`;
 
   const [password1, setPassword1] = useState('');
   const [password2, setPassword2] = useState('');
@@ -27,15 +27,18 @@ const NewPassword = () => {
   useEffect(() => {
     const grab = async () => {
       const result = axios
-        .post(backend, {
-          token: token,
+        .get(GET_SECURITY_ENUM_URL, {
+          headers: {
+            'Content-Type': 'application/json',
+            access_token: token,
+          },
         })
         .then((response) => {
           return response.data;
         })
         .then((data) => {
           console.log(data);
-          setSecretQuestion(data.secretquestion);
+          setSecretQuestion(data.security_name);
         })
         .catch((error) => {
           console.log(error.response.state);
@@ -47,7 +50,7 @@ const NewPassword = () => {
       return;
     };
     grab();
-  }, [backend, token]);
+  }, [token]);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -55,16 +58,14 @@ const NewPassword = () => {
     const user = {
       password: password1,
       passwordConfirm: password2,
-      token: token,
       answer: answer,
     };
 
-    let url = '/passwordresetcomplete/';
-
     axios
-      .post(url, user, {
+      .post(PASSWORD_UPDATE, user, {
         headers: {
           'Content-Type': 'application/json',
+          access_token: token,
         },
       })
       .then((response) => {
@@ -75,10 +76,11 @@ const NewPassword = () => {
         history('/login');
       })
       .catch((error) => {
-        console.log(error.statusCode);
+        console.log(error);
         setError(true);
-        setErrors(error.response.data.state);
+        setErrors(error.message);
         scrollTo(scrollRef);
+        history('/error');
       });
   };
 
@@ -137,7 +139,7 @@ const NewPassword = () => {
               type="text"
               className="form-control"
               value={secretquestion}
-              readonly
+              readOnly
             />
             <br />
             <label htmlFor="security_question_answer" className="form-label">

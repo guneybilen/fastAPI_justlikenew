@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { FORGOT_PASSWORD_REQUEST_EMAIL } from '../constants';
 import axios from 'axios';
 
-let url = '/passwordreset/';
-
 export default function ForgotPassword() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [notification, setNotification] = useState(false);
   const [camebackdata, setCameBackData] = useState('');
   const [link, setLink] = useState(false);
@@ -15,15 +14,15 @@ export default function ForgotPassword() {
   useEffect(() => {
     localStorage.clear();
     document.getElementById('submitButton').disabled = true;
-    document.getElementById('username').style.pointerEvents = 'none';
+    document.getElementById('email').style.pointerEvents = 'none';
   }, []);
 
   const sendRequestForReset = async (e) => {
     e.preventDefault();
     axios
       .post(
-        url,
-        { username: username },
+        FORGOT_PASSWORD_REQUEST_EMAIL,
+        { email: email },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -34,10 +33,10 @@ export default function ForgotPassword() {
         return response.data;
       })
       .then((data) => {
-        console.log(data.state);
+        console.log(data);
         setNotification(true);
         setCameBackData('');
-        setCameBackData(data.state);
+        setCameBackData(data.detail);
         setLink(true);
       })
       .catch((error) => {
@@ -55,7 +54,7 @@ export default function ForgotPassword() {
   const timeRequest = (e) => {
     if (!e.target.checked) {
       document.getElementById('submitButton').disabled = true;
-      document.getElementById('username').style.pointerEvents = 'none';
+      document.getElementById('email').style.pointerEvents = 'none';
     }
     setShow(true);
 
@@ -64,7 +63,7 @@ export default function ForgotPassword() {
       setShow(false);
       if (e.target.checked) {
         document.getElementById('submitButton').disabled = false;
-        document.getElementById('username').style.pointerEvents = 'auto';
+        document.getElementById('email').style.pointerEvents = 'auto';
       }
     }, 2000);
   };
@@ -89,7 +88,7 @@ export default function ForgotPassword() {
         )}
         <form>
           <div className="mb-3">
-            <label htmlFor="username" className="form-label">
+            <label htmlFor="email" className="form-label">
               Email
             </label>
             <input
@@ -97,12 +96,12 @@ export default function ForgotPassword() {
               type="email"
               className="form-control"
               required
-              id="username"
+              id="email"
               placeholder="example@example.com"
               onChange={(e) => {
-                setUsername(e.target.value);
+                setEmail(e.target.value);
               }}
-              value={username}
+              value={email}
             />
           </div>
 

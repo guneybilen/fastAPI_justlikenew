@@ -1,5 +1,6 @@
+from xml.dom.minidom import Attr
 from schemas.user import ShowUser, SecurityEnum, UserCreate, UserPreCreate, UserUpdate
-from schemas.user import SecurityEnum
+from schemas.user import SecurityEnum, PasswordUpdate
 from fastapi import APIRouter, Depends, Form
 from db.session import get_db
 from sqlalchemy.orm import Session
@@ -21,11 +22,13 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os as _os
 from core.security import logout_user
-from typing import Optional
+from core.hashing import Hasher
+from sqlalchemy import update
 
 
 env_path = Path(".") / ".env"
 load_dotenv(dotenv_path=env_path)
+
 
 router = APIRouter()
 
@@ -58,7 +61,7 @@ async def create_procedure():
     return {"email": app.state.current_user}
 
 
-@router.post("/forgot_password_request_email/")
+@router.post("/forgot_password_request_email")
 async def forgot_password(user: UserPreCreate):
 
     try:
@@ -70,23 +73,63 @@ async def forgot_password(user: UserPreCreate):
         returned_boolean_result = await communicate_for_forgotten_password(email)
         print(returned_boolean_result)
         if returned_boolean_result:
-            return {"detail": "if there is an account associated with that email we will email a link for resetting your password"}
+            return {"detail": "if there is an account associated with this email we will email a link for resetting your password."}
 
     except EmailNotValidError as e:
         # email is not valid, exception message is human-readable
         print(str(e))
-    raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Network problem occured")
+        return {"detail": str(e)}
 
 
-@router.get("/forgot_password_request_accept/{access_token}", response_model=ShowUser)
+@router.get("/forgot_password_request_accept/{access_token}", response_class=RedirectResponse)
 async def forgot_password_request_accept(access_token: str, db: Session = Depends(get_db)):
-    returned_user = await get_current_user_from_token(access_token=access_token, db=db)
 
-    return {"email": returned_user.email,
-            "username": returned_user.username,
-            "is_active": returned_user.is_active,
-            "result": "forgot password reset will complete after you set up a new password from the reactjs front end form"
-            }
+    try:
+        user = await get_current_user_from_token(access_token=access_token, db=db)
+        print("user ", user)
+        if user:
+            return RedirectResponse(f"{_os.getenv('FRONT_END_URL')}/NewPassword/{access_token}", status_code=status.HTTP_302_FOUND)
+        else:
+            raise AttributeError
+    except AttributeError as e:
+        return RedirectResponse(f"{_os.getenv('FRONT_END_URL')}/Error", status_code=status.HTTP_302_FOUND)
+
+    # return {"email": returned_user.email,
+    #         "username": returned_user.username,
+    #         "is_active": returned_user.is_active,
+    #         "result": "forgot password reset will complete after you set up a new password from the reactjs front end form"
+    #         }
+
+
+@router.post("/password_update")
+async def update_email(
+    req: Request,
+    user: PasswordUpdate,
+    db: Session = Depends(get_db)
+):
+    try:
+
+        returned_user = await get_current_user_from_token(req.headers['access_token'], db=db)
+
+        if user.password != user.passwordConfirm:
+            return {"result": "password and password confirmation boxes do not match."}
+
+        if len(user.password) > 0 and len(user.password) < 8 or len(user.password) > 50:
+            return {"result": "password must be at least 8 characters and at most 50 charactrers long."}
+
+        hashed_security_answer_that_is_coming_from_front_end = Hasher.verify_secret_question(user.answer, returned_user.security_answer)
+
+        if hashed_security_answer_that_is_coming_from_front_end:
+            stmt = (update(User).where(User.email == returned_user.email).values(hashed_password=Hasher.get_hash(user.password)))
+            db.execute(stmt)
+            db.commit()
+            return None
+        else:
+            return {"result": "security question's answer is incorrect."}
+
+    except AttributeError as e:
+        print(str(e))
+        return None
 
 
 @router.post("/user_create", response_model=UserResponse)
@@ -121,16 +164,6 @@ async def post_user_create(data: UserCreate, db: Session = Depends(get_db)):
 
 
 @router.patch("/update_user", response_model=UserResponse)
-# async def patch_user(
-#     req: Request,
-#     email: Optional[str],
-#     password: Optional[str],
-#     password_confirm: Optional[str],
-#     username: Optional[float],
-#     security_answer: Optional[str],
-#     security_name: Optional[str],
-#     db: Session = Depends(get_db)
-# ):
 async def patch_user(
     req: Request,
     data: UserUpdate,
@@ -208,7 +241,7 @@ async def update_email(
             user_id=user_id,
             db=db
         )
-        return RedirectResponse(f"{_os.getenv('FRONT_END_URL')}/EmailChanged", status_code=status.HTTP_302_FOUND)
+        return RedirectResponse(f"{_os.getenv('FRONT_END_URL')}/Login", status_code=status.HTTP_302_FOUND)
     except AttributeError as e:
         return RedirectResponse(f"{_os.getenv('FRONT_END_URL')}/Error", status_code=status.HTTP_302_FOUND)
 

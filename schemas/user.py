@@ -82,6 +82,16 @@ class UserResponse(BaseModel):
         use_enum_values = True
 
 
+class PasswordUpdate(BaseModel):
+    password: str
+    passwordConfirm: str
+    answer: str
+
+    class Config:
+        orm_mode = True
+        use_enum_values = True
+
+
 class ShowAllImportantDataAboutUser(BaseModel):
     id: Optional[str]
     email: Optional[EmailStr]

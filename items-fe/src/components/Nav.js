@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useStoreState, useStoreActions } from 'easy-peasy';
 import logout_api from '../api/logout_api';
 
@@ -8,8 +8,8 @@ const Nav = () => {
   const items = useStoreState((state) => state.items);
   const search = useStoreState((state) => state.search);
   const setSearch = useStoreActions((actions) => actions.setSearch);
-  const [show, setShow] = useState(false);
-  const [closeonclick, setCloseOnClick] = useState(false);
+  // const [show, setShow] = useState(false);
+  // const [closeonclick, setCloseOnClick] = useState(false);
 
   const setSearchResults = useStoreActions(
     (actions) => actions.setSearchResults
@@ -17,10 +17,10 @@ const Nav = () => {
 
   const handleLogout = (e) => {
     e.preventDefault();
-    setShow(true);
+    // setShow(true);
     logout_api();
     localStorage.clear();
-    setCloseOnClick(false);
+    // setCloseOnClick(false);
     history('/');
   };
 
@@ -41,20 +41,20 @@ const Nav = () => {
     }
   }, [items, setSearchResults]);
 
-  const displayNone = (e) => {
-    e.preventDefault();
-    setCloseOnClick(true);
-  };
+  // const displayNone = (e) => {
+  //   e.preventDefault();
+  //   setCloseOnClick(true);
+  // };
 
   return (
     <>
-      {show && !closeonclick && (
+      {/* {show && !closeonclick && (
         <div
           className="blur loader"
           role="status"
           onClick={(e) => displayNone(e)}
         />
-      )}
+      )} */}
       <nav className="Nav">
         <form action="" className="inline" onSubmit={(e) => e.preventDefault()}>
           <div className="form-group">

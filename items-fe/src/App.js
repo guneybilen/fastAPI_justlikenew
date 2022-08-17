@@ -65,8 +65,15 @@ function App() {
         <Route exact path="/error" element={<Error />} />
         <Route exact path="/presignup" element={<PreSignup />} />
         <Route exact path="/forgotpassword" element={<ForgotPassword />} />
-        {/* profile path has to be protected by RequireAuth after implementation complete */}
-        <Route exact path="/profile" element={<Profile />} />
+        <Route
+          exact
+          path="/profile"
+          element={
+            <RequireAuth>
+              <Profile />
+            </RequireAuth>
+          }
+        />
 
         <Route exact path="/newpassword/:id" element={<NewPassword />} />
         <Route path="/*" element={<Home />} />

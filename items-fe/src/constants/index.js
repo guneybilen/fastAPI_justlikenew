@@ -11,6 +11,7 @@ export const SECURITY_ENUM_URL =
 export const UPDATE_USER_URL = 'http://localhost:8000/users/update_user';
 export const GET_SECURITY_ENUM_URL =
   'http://localhost:8000/users/security_question';
+export const PASSWORD_UPDATE = 'http://localhost:8000/users/password_update';
 export const ITEMS_ALL = 'http://localhost:8000/items/total/collection/all';
 export const ITEM_DELETE = 'http://localhost:8000/items/collection/all/item';
 export const ITEM_ID = 'http://localhost:8000/items/particular';
@@ -19,3 +20,5 @@ export const CHECK_IF_TOKEN_EXPIRED =
   'http://localhost:8000/login/check_if_token_expired';
 export const PRE_CREATE_URL = 'http://localhost:8000/users/precreate';
 export const CREATE_PROCEDURE = 'http://localhost:8000/users/create_procedure';
+export const FORGOT_PASSWORD_REQUEST_EMAIL =
+  'http://localhost:8000/users/forgot_password_request_email';
